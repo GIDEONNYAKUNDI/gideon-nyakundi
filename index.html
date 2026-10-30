@@ -402,6 +402,21 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 .vidgrid>*{min-width:0}
 @media (max-width:820px){.vidgrid{grid-template-columns:1fr}}
 .vidwrap .caption b{color:var(--banana)}
+
+/* ---------- Page one anthem film ---------- */
+.anthem{position:relative;isolation:isolate;overflow:hidden;background:#05080f;min-height:clamp(340px,52vw,640px);display:flex;align-items:flex-end;border-top:3px solid var(--banana);border-bottom:3px solid var(--banana)}
+.anthem video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2}
+.anthem-veil{position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,rgba(5,8,15,.82) 0%,rgba(5,8,15,.25) 38%,rgba(5,8,15,0) 60%),linear-gradient(90deg,rgba(5,8,15,.45) 0%,rgba(5,8,15,0) 50%)}
+@media (max-width:640px){.anthem{min-height:420px}.anthem-veil{background:linear-gradient(0deg,rgba(5,8,15,.9) 0%,rgba(5,8,15,.6) 45%,rgba(5,8,15,.1) 75%)}.anthem video{object-position:50% 30%}}
+.anthem-text{position:relative;padding-block:48px 44px;display:grid;gap:8px;color:#fff;width:100%}
+.anthem-text .eyebrow{color:var(--banana)}
+.anthem-line{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,4.2vw,3.2rem);line-height:1.05;letter-spacing:-.01em;text-shadow:0 2px 18px rgba(0,0,0,.6)}
+.anthem-sub{font-family:var(--body);font-weight:300;font-size:clamp(1.05rem,1.8vw,1.35rem);color:var(--banana)}
+.anthem-btn{justify-self:start;margin-top:12px;display:inline-flex;align-items:center;gap:12px;background:rgba(5,8,15,.55);color:#fff;border:1.5px solid var(--banana);border-radius:999px;padding:10px 20px 10px 12px;font:600 .9rem var(--display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);transition:background .2s}
+.anthem-btn:hover{background:rgba(212,176,76,.22)}
+.anthem-btn .ico{width:30px;height:30px;border-radius:50%;background:var(--banana);position:relative;flex:none}
+.anthem-btn .ico::after{content:"";position:absolute;left:11px;top:8px;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #0b1424}
+.anthem-btn[aria-pressed="true"] .ico::after{left:9px;top:9px;width:4px;height:12px;border:0;border-left:4px solid #0b1424;border-right:4px solid #0b1424;box-sizing:content-box}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -480,6 +495,20 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
       <div class="facts"><span><b>20+</b>years in healthcare</span><span><b>12</b>pillars of change</span><span><b>20</b>wards</span><span><b>5</b>books</span></div>
     </div>
     <img class="portrait" src="img/portrait-hero.webp" alt="Dr. Gideon Moseti Nyakundi in front of the Kenyan flag" width="802" height="1080">
+  </div>
+</section>
+
+<!-- ANTHEM VIDEO (page one) -->
+<section class="anthem" id="anthem" aria-label="A young girl sings for Nyamira">
+  <video id="anthemVid" autoplay muted loop playsinline preload="auto" poster="media/anthem-poster.jpg" width="1600" height="900">
+    <source src="media/anthem.mp4" type="video/mp4">
+  </video>
+  <div class="anthem-veil" aria-hidden="true"></div>
+  <div class="wrap anthem-text">
+    <p class="eyebrow">The new Nyamira</p>
+    <p class="anthem-line">A new song for a new Nyamira.</p>
+    <p class="anthem-sub">Omonto, Nabanto. Omonto bw'Abanto.</p>
+    <button type="button" class="anthem-btn" id="anthemBtn" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
   </div>
 </section>
 
@@ -1611,6 +1640,15 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
     if(deskTab==='pledges') body.innerHTML=t([['Name','name'],['Phone','phone'],['Amount (Ksh)','amountKsh'],['Method','method'],['Date','submittedAt']],rows.pledges);
   }
 
+
+  /* ---------- Anthem film ---------- */
+  (function(){ const v=$('anthemVid'), b=$('anthemBtn'); if(!v||!b) return;
+    const lbl=b.querySelector('.lbl');
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ v.removeAttribute('autoplay'); try{v.pause();}catch(e){} }
+    const sync=()=>{ const on=!v.muted&&!v.paused; b.setAttribute('aria-pressed',on); lbl.textContent=on?'Pause sound':'Play with sound'; };
+    b.addEventListener('click',()=>{ if(!v.muted&&!v.paused){ v.muted=true; } else { v.muted=false; v.currentTime=0; v.play().catch(()=>{}); } sync(); });
+    v.addEventListener('volumechange',sync); v.addEventListener('play',sync); v.addEventListener('pause',sync);
+  })();
 })();
 </script>
 
