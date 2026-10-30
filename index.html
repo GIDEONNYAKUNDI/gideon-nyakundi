@@ -398,6 +398,10 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 .vidwrap video{width:100%;height:auto;aspect-ratio:16/9;background:#000;border-radius:3px;box-shadow:0 18px 44px rgba(0,0,0,.45)}
 #viwanda.split::before{display:none}
 #viwanda{padding-top:88px}
+.vidgrid{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+.vidgrid>*{min-width:0}
+@media (max-width:820px){.vidgrid{grid-template-columns:1fr}}
+.vidwrap .caption b{color:var(--banana)}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -423,7 +427,7 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
             <a href="#hospital"><b>★</b>New Nyamira hospital</a>
             <a href="#university"><b>★</b>Nyamira University</a>
             <a href="#sironga"><b>★</b>Sironga value-addition hub</a>
-            <a href="#viwanda"><b>★</b>Industrialisation: Viwanda = Ajira</a>
+            <a href="#viwanda"><b>★</b>Production videos: Viwanda = Ajira</a>
             <a href="#stadiums"><b>★</b>Manga and Nyamaiya stadiums</a>
             <a href="#airport"><b>★</b>Ekiendege Airport</a>
             <a href="#roads-failing"><b>★</b>Manga–Mote–Momwamu road</a>
@@ -799,16 +803,24 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 <section class="page dark photo split" id="viwanda" style="--bg:url(img/sironga-hub.webp)">
   <div class="wrap">
     <div class="head">
-      <p class="eyebrow">Industrialisation · Sironga value-addition hub</p>
+      <p class="eyebrow">Production and industrialisation</p>
       <h2>Viwanda = Ajira. Factories mean jobs.</h2>
-      <p class="lede">Young people from Nyamira running modern processing lines: our bananas, tea, avocado and milk packed and sold from home, not shipped out raw.</p>
+      <p class="lede">Young people from Nyamira running modern processing lines, then sending our produce to market: bananas, tea, avocado and milk processed at home and flown out fresh, not shipped out raw.</p>
     </div>
+    <div class="vidgrid">
     <figure class="vidwrap">
       <video controls muted loop playsinline preload="metadata" poster="media/viwanda-ajira-poster.jpg" width="1280" height="720" aria-label="Young people operating a banana processing factory">
         <source src="media/viwanda-ajira.mp4" type="video/mp4">
       </video>
-      <figcaption class="caption">Artist's impression · tap play for sound</figcaption>
+      <figcaption class="caption"><b>Processing:</b> banana lines at the Sironga hub · Artist's impression</figcaption>
     </figure>
+    <figure class="vidwrap">
+      <video controls muted loop playsinline preload="metadata" poster="media/milk-export-poster.jpg" width="1280" height="720" aria-label="Chilled milk containers loaded onto a Nyamira Airways cargo plane">
+        <source src="media/milk-export.mp4" type="video/mp4">
+      </video>
+      <figcaption class="caption"><b>To market:</b> chilled Nyamira milk loaded onto a cargo flight at Ekiendege Airport · Artist's impression</figcaption>
+    </figure>
+    </div>
   </div>
 </section>
 
