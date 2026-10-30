@@ -394,6 +394,10 @@ section.page.dark.photo.split:nth-of-type(even){background:#122042}
 section.photo.split:nth-of-type(even)::before{background:linear-gradient(180deg,rgba(18,32,66,0) 72%,#122042 100%),var(--bg) center/cover no-repeat}
 section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.split .ways div,section.photo.split .stationlist li,section.photo.split .trace span:not(:first-child),section.photo.split .tablewrap,section.photo.split .contact.card,#change .contact{background:rgba(255,255,255,.05);-webkit-backdrop-filter:none;backdrop-filter:none}
 @media (max-width:640px){section.photo.split::before{margin-bottom:36px}}
+.vidwrap{margin:0;display:grid;gap:10px;max-width:980px}
+.vidwrap video{width:100%;height:auto;aspect-ratio:16/9;background:#000;border-radius:3px;box-shadow:0 18px 44px rgba(0,0,0,.45)}
+#viwanda.split::before{display:none}
+#viwanda{padding-top:88px}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -419,6 +423,7 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
             <a href="#hospital"><b>★</b>New Nyamira hospital</a>
             <a href="#university"><b>★</b>Nyamira University</a>
             <a href="#sironga"><b>★</b>Sironga value-addition hub</a>
+            <a href="#viwanda"><b>★</b>Industrialisation: Viwanda = Ajira</a>
             <a href="#stadiums"><b>★</b>Manga and Nyamaiya stadiums</a>
             <a href="#airport"><b>★</b>Ekiendege Airport</a>
             <a href="#roads-failing"><b>★</b>Manga–Mote–Momwamu road</a>
@@ -787,6 +792,23 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
       <p class="statement">Dr Gideon will introduce pyrethrum to Nyamira.</p>
       <p class="caption">Artist's impression</p>
     </div>
+  </div>
+</section>
+
+<!-- VIDEO: VIWANDA = AJIRA -->
+<section class="page dark photo split" id="viwanda" style="--bg:url(img/sironga-hub.webp)">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Industrialisation · Sironga value-addition hub</p>
+      <h2>Viwanda = Ajira. Factories mean jobs.</h2>
+      <p class="lede">Young people from Nyamira running modern processing lines: our bananas, tea, avocado and milk packed and sold from home, not shipped out raw.</p>
+    </div>
+    <figure class="vidwrap">
+      <video controls muted loop playsinline preload="metadata" poster="media/viwanda-ajira-poster.jpg" width="1280" height="720" aria-label="Young people operating a banana processing factory">
+        <source src="media/viwanda-ajira.mp4" type="video/mp4">
+      </video>
+      <figcaption class="caption">Artist's impression · tap play for sound</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -1438,7 +1460,7 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrops(); setNav(false); } });
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ closeDrops(); setNav(false); }));
   const topLinks=[...nav.querySelectorAll(':scope > ul > li > a')];
-  const groupOf=id=>{ if(['why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['change','volunteer','agents','faq','vote'].includes(id)) return 'involvedMenu'; return null; };
+  const groupOf=id=>{ if(['why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['change','volunteer','agents','faq','vote'].includes(id)) return 'involvedMenu'; return null; };
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) return;
       const id=en.target.id; topLinks.forEach(l=>l.classList.remove('active')); drops.forEach(d=>d.querySelector('.drop').classList.remove('active'));
