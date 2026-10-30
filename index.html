@@ -493,6 +493,37 @@ section.photo.split.hasvid::before{display:none}
 .bio-vision p:not(.eyebrow):not(.slogan){font-size:1.15rem;line-height:1.7;color:#fff}
 @media (max-width:900px){.bio-head{grid-template-columns:1fr}.bio-head .portrait{justify-self:start;max-width:300px;order:-1}.bio-stats{grid-template-columns:1fr 1fr}.bio-stats>div:nth-child(2){border-right:0}.bio-grid{grid-template-columns:1fr}.bio-systems,.bio-edu{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.bio-systems,.bio-edu{grid-template-columns:1fr}}
+
+/* ---------- Page 4: career climb ---------- */
+.career-h{font-size:clamp(2.6rem,6vw,4.6rem)!important}
+.career-lede{font-size:clamp(1.15rem,2vw,1.4rem)!important;max-width:58ch}
+.climb{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:repeat(6,1fr);gap:14px;align-items:end;position:relative}
+.climb::before{content:"";position:absolute;left:4%;right:4%;bottom:-18px;height:3px;background:linear-gradient(90deg,var(--sage),var(--banana));border-radius:2px}
+.climb::after{content:"";position:absolute;right:calc(4% - 6px);bottom:-24px;border-style:solid;border-width:7.5px 0 7.5px 13px;border-color:transparent transparent transparent var(--banana)}
+.climb li{position:relative;display:grid;gap:8px;align-content:start;padding:20px 18px 22px;min-height:calc(180px + var(--i) * 46px);background:rgba(255,255,255,.05);border-top:4px solid var(--sage);border-radius:2px;min-width:0;transition:transform .25s ease,background .25s ease}
+.climb li:hover{transform:translateY(-6px);background:rgba(255,255,255,.09)}
+.climb li::after{content:"";position:absolute;left:50%;bottom:-25px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#0e1a33;border:3px solid var(--sage)}
+.climb .yr{font-family:var(--display);font-weight:700;font-size:clamp(1.15rem,1.6vw,1.45rem);color:var(--banana)}
+.climb .role{font-family:var(--display);font-weight:700;font-size:clamp(1.15rem,1.55vw,1.4rem);line-height:1.2;color:#fff}
+.climb .org{font-size:clamp(1rem,1.25vw,1.12rem);line-height:1.45;color:#dfe5ee}
+.climb .tag{margin-top:auto;font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;color:#aab6ca}
+.climb li.next{background:linear-gradient(180deg,rgba(212,176,76,.22),rgba(212,176,76,.06));border-top-color:var(--banana);box-shadow:0 0 0 1.5px var(--banana) inset}
+.climb li.next::after{border-color:var(--banana);background:var(--banana)}
+.climb li.next .role{color:var(--banana);font-size:clamp(1.3rem,1.9vw,1.7rem)}
+.climb li.next .org{font-family:var(--body);font-style:italic;color:#fff}
+.climb li.next .tag{color:var(--banana)}
+.climb-edu{margin-top:56px;font-size:clamp(1.05rem,1.6vw,1.25rem);color:#e6ebf3;line-height:1.6}
+.climb-edu b{color:var(--banana);font-family:var(--display)}
+@media (max-width:1000px){
+  .climb{grid-template-columns:1fr;gap:16px;padding-left:34px}
+  .climb::before{left:12px;right:auto;top:6px;bottom:6px;width:3px;height:auto;background:linear-gradient(0deg,var(--sage),var(--banana))}
+  .climb::after{right:auto;left:5px;top:-10px;bottom:auto;border-width:0 8.5px 13px 8.5px;border-color:transparent transparent var(--banana) transparent}
+  .climb{display:flex;flex-direction:column-reverse;align-items:stretch}
+  .climb li{min-height:0}
+  .climb li::after{left:-29px;top:24px;bottom:auto;margin-left:0}
+  .climb li:hover{transform:none}
+}
+@media (prefers-reduced-motion: reduce){.climb li{transition:none}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -654,16 +685,18 @@ section.photo.split.hasvid::before{display:none}
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Career</p>
-      <h2>From the bench to the boardroom</h2>
+      <h2 class="career-h">From the bench to the boardroom</h2>
+      <p class="lede career-lede">Every step up was earned: from repairing life-saving machines to running whole health systems, and now to serving Nyamira.</p>
     </div>
-    <ol class="career">
-          <li><div class="when">Early career · 3 yrs</div><div class="what">Clinical Engineering Technologist</div><div class="where">Mayo Clinic Healthcare System</div></li>
-          <li><div class="when">4 yrs</div><div class="what">Open-Heart Surgery Technologist</div><div class="where">Hennepin County Medical Center</div></li>
-          <li><div class="when">2017 – 2022</div><div class="what">Director, Clinical Engineering</div><div class="where">Denver Health (County of Denver Healthcare System)</div></li>
-          <li><div class="when">2023 – 2024</div><div class="what">Senior Manager, Clinical Engineering</div><div class="where">University of Maryland Medical System</div></li>
-          <li><div class="when">Today</div><div class="what">Director, Emergency Management Coordination &amp; Biomedical Engineering</div><div class="where">Rural regional health system, West Texas</div></li>
-          <li><div class="when">Education</div><div class="what">DHA · MHA · MS Clinical Engineering · BS Healthcare Management · BS Biomedical Engineering</div><div class="where">Certified Healthcare Trustee Leader (CHTL) · ACHE</div></li>
-        </ol>
+    <ol class="climb" aria-label="Career steps, from first role to today">
+      <li style="--i:0"><span class="yr">3 years</span><b class="role">Clinical Engineering Technologist</b><span class="org">Mayo Clinic Healthcare System</span><span class="tag">The bench</span></li>
+      <li style="--i:1"><span class="yr">4 years</span><b class="role">Open-Heart Surgery Technologist</b><span class="org">Hennepin County Medical Center</span><span class="tag">The operating theatre</span></li>
+      <li style="--i:2"><span class="yr">2017 – 2022</span><b class="role">Director, Clinical Engineering</b><span class="org">Denver Health</span><span class="tag">Leading departments</span></li>
+      <li style="--i:3"><span class="yr">2023 – 2024</span><b class="role">Senior Manager, Clinical Engineering</b><span class="org">University of Maryland Medical System</span><span class="tag">Running systems</span></li>
+      <li style="--i:4"><span class="yr">Today</span><b class="role">Director, Emergency Management Coordination &amp; Biomedical Engineering</b><span class="org">West Texas</span><span class="tag">The boardroom</span></li>
+      <li style="--i:5" class="next"><span class="yr">2027</span><b class="role">Governor, Nyamira County</b><span class="org">Omonto, Nabanto. Omonto bw'Abanto.</span><span class="tag">Coming home to serve</span></li>
+    </ol>
+    <p class="climb-edu"><b>Education:</b> DHA · MHA · MS Clinical Engineering · BS Healthcare Management · BS Biomedical Engineering · CHTL · ACHE</p>
   </div>
 </section>
 
