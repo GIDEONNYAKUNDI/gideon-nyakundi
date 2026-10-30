@@ -458,6 +458,41 @@ section.photo.split.hasvid::before{display:none}
 .gapcard .fix{color:#e6ebf3}
 .gapcard a{color:var(--banana);font-weight:600}
 @media (prefers-reduced-motion: reduce){.gapbtn .track i{transition:none}}
+
+/* ---------- Page 3: executive bio ---------- */
+#about.bio::before{background:linear-gradient(180deg,rgba(6,11,22,.35) 0%,rgba(6,11,22,.72) 34%,rgba(6,11,22,.86) 100%)}
+.bio{background-attachment:scroll}
+.bio-head{display:grid;grid-template-columns:1.25fr .75fr;gap:36px;align-items:end;margin-bottom:40px}
+.bio-head>*{min-width:0}
+.bio-head .portrait{max-width:380px;justify-self:end;margin:0;border-bottom:3px solid var(--banana)}
+.bio-title{display:grid;gap:12px}
+.bio-title h2{font-size:clamp(2.4rem,5.6vw,4.4rem);color:var(--banana);line-height:1.02}
+.bio-creds{font-family:var(--mono);font-size:.9rem;letter-spacing:.18em;color:#fff}
+.bio-tag{font-family:var(--body);font-style:italic;font-weight:300;font-size:clamp(1.25rem,2.4vw,1.7rem);color:#fff}
+.bio-intro{font-size:1.12rem;line-height:1.7;max-width:62ch;color:#e6ebf3}
+.bio-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:2px solid var(--banana);border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:44px}
+.bio-stats>div{padding:20px 16px;display:grid;gap:4px;border-right:1px solid rgba(255,255,255,.12)}
+.bio-stats>div:last-child{border-right:0}
+.bio-stats b{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,4.6vw,3.4rem);line-height:1;color:var(--banana)}
+.bio-stats span{color:#dfe5ee;font-size:.95rem}
+.bio-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:44px}
+.bio-grid>*{min-width:0}
+.bio-card{align-content:start;background:rgba(8,16,34,.62);border-top:3px solid var(--sage);padding:24px 26px;display:grid;gap:12px;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.bio-card h3,.bio-sub{font-size:1.35rem;color:#fff}
+.bio-card p{line-height:1.7;color:#e6ebf3}
+.bio-sub{margin:0 0 16px;display:flex;align-items:center;gap:14px}
+.bio-sub::after{content:"";flex:1;height:1px;background:rgba(255,255,255,.2)}
+.bio-systems{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:44px}
+.bio-systems>div,.bio-edu>div{align-content:start;background:rgba(8,16,34,.55);padding:16px 18px;display:grid;gap:6px;border-left:3px solid var(--banana);min-width:0;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.bio-systems b{font-family:var(--display);font-size:1.1rem;color:var(--banana)}
+.bio-systems span,.bio-edu span{color:#dfe5ee;font-size:.95rem;line-height:1.55}
+.bio-edu{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:44px}
+.bio-edu>div{border-left-color:var(--sage)}
+.bio-edu b{font-family:var(--display);font-size:1rem;color:#fff;line-height:1.3}
+.bio-vision{border:1.5px solid var(--banana);padding:28px 30px;display:grid;gap:12px;background:rgba(8,16,34,.66);max-width:900px}
+.bio-vision p:not(.eyebrow):not(.slogan){font-size:1.15rem;line-height:1.7;color:#fff}
+@media (max-width:900px){.bio-head{grid-template-columns:1fr}.bio-head .portrait{justify-self:start;max-width:300px;order:-1}.bio-stats{grid-template-columns:1fr 1fr}.bio-stats>div:nth-child(2){border-right:0}.bio-grid{grid-template-columns:1fr}.bio-systems,.bio-edu{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.bio-systems,.bio-edu{grid-template-columns:1fr}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -553,21 +588,63 @@ section.photo.split.hasvid::before{display:none}
   </div>
 </section>
 
-<!-- 2 ABOUT -->
-<section class="page dark photo" id="about" style="--bg:url(img/about.webp)">
-  <div class="wrap about-grid">
-    <img class="portrait" src="img/portrait-about.webp" alt="Dr. Gideon Moseti Nyakundi" width="640" height="628" loading="lazy">
-    <div>
-      <div class="head">
-        <p class="eyebrow">About Dr. Gideon</p>
-        <h2>A son of Manga who learned to fix systems</h2>
+<!-- 2 ABOUT: EXECUTIVE BIO -->
+<section class="page dark photo bio" id="about" style="--bg:url(img/about.webp)">
+  <div class="wrap">
+    <div class="bio-head">
+      <div class="bio-title">
+        <p class="eyebrow">Nyamira County, Kenya · The new Nyamira</p>
+        <h2>Dr. Gideon Moseti Nyakundi</h2>
+        <p class="bio-creds">DHA · MHA · ENG · CHTL</p>
+        <p class="bio-tag">A son of Manga who learned to fix systems.</p>
+        <p class="bio-intro">Dr. Gideon Moseti Nyakundi is a global healthcare executive and health-policy technocrat with more than two decades of leadership in leading U.S. health systems and international health reform. He has led operations spanning hundreds of facilities, evaluated national healthcare systems across the world, and authored books on health policy and governance. A native of Manga, Nyamira County, he is a candidate for Governor of Nyamira County.</p>
       </div>
-      <div class="prose">
-        <p>Gideon Moseti Nyakundi's umbilical cord was cut at Manga. He grew up in Nyamira's villages and was born into the Abagusii. As a boy he was being prepared to become an <em>omobari</em>, a traditional healer of the head. From age four to nine he watched that practice closely and learned resilience from it. He was also the child called on to tear <em>Ekerundu</em> to stop the rain at ceremonies.</p>
-        <p>When modern life ended that tradition, Gideon turned to formal schooling and became a clinical engineer. He kept the lessons of whole-body healing he grew up with and joined them to modern medicine.</p>
-        <p>He then worked his way up through some of the most demanding health systems in the United States. He started at the bench repairing life-saving equipment, moved into operating theatres and hospital operations, and became a senior health executive. He has worked on the evaluation of the Affordable Care Act and has studied health systems across the world.</p>
-        <p>He has written five books, on Kenyan healthcare, global health policy, the Kenyan school system and Gusii history and song. Each book asks the same question he now brings to Nyamira: what would it take to make this system work for ordinary families?</p>
-      </div>
+      <img class="portrait" src="img/portrait-about.webp" alt="Dr. Gideon Moseti Nyakundi" width="640" height="628" loading="lazy">
+    </div>
+
+    <div class="bio-stats">
+      <div><b>20+</b><span>years in healthcare leadership</span></div>
+      <div><b>17</b><span>hospitals led regionally</span></div>
+      <div><b>350+</b><span>community health centers</span></div>
+      <div><b>50+</b><span>facilities directed</span></div>
+    </div>
+
+    <div class="bio-grid">
+      <article class="bio-card">
+        <h3>Executive leadership</h3>
+        <p>Dr. Nyakundi rose from biomedical engineering and cardiac surgery at world-renowned institutions to executive leadership of large, complex health systems, directing strategy, multimillion-dollar budgets, capital projects and procurement. Today he leads regional emergency management in West Texas, uniting hospitals, EMS, law enforcement, schools, public health and state agencies to protect whole communities. His leadership is defined by accountability, measurable results and systems that serve people reliably.</p>
+      </article>
+      <article class="bio-card">
+        <h3>Policy author and educator</h3>
+        <p>Author of <em>Strategic Empathy: Leadership and Decision-Making in High-Reliability Healthcare Systems</em>, <em>GLocal Healthcare Policy</em>, and <em>Healing Kenya's Healthcare System: From the SHA Crisis to Healthcare360</em>, with scholarly reviews on hospital governance, rural health networks and AI-enabled early warning. In academia, he trains emerging leaders in healthcare administration, quality improvement and emergency management, and is a Quality and Process Improvement Silver Fellow of the Mayo Clinic School of Medicine.</p>
+        <p>As President of <b>Global Health and Sustainable Development</b>, he leads medical mission and health-system strengthening work in Kenya.</p>
+      </article>
+    </div>
+
+    <h3 class="bio-sub">Reviewer of world healthcare systems</h3>
+    <div class="bio-systems">
+      <div><b>Kenya</b><span>Analysis of the shift from NHIF to the Social Health Authority (SHA); author of the Healthcare360 reform framework.</span></div>
+      <div><b>United States</b><span>Key role in evaluating the Affordable Care Act's effect on access, cost and quality.</span></div>
+      <div><b>United Kingdom</b><span>The National Health Service's tax-funded universal model.</span></div>
+      <div><b>Canada</b><span>Single-payer provincial health insurance.</span></div>
+      <div><b>Germany</b><span>Social health insurance through competing sickness funds.</span></div>
+      <div><b>Rwanda</b><span>Community-based health insurance that reached near-universal coverage.</span></div>
+    </div>
+
+    <h3 class="bio-sub">Education and credentials</h3>
+    <div class="bio-edu">
+      <div><b>Doctor of Health Administration (DHA)</b><span>Public Health Administration</span></div>
+      <div><b>Master of Health Administration (MHA)</b><span>Public Health and Human Services Administration</span></div>
+      <div><b>Master of Science (MS)</b><span>Clinical Engineering</span></div>
+      <div><b>Bachelor of Science (BS)</b><span>Healthcare Management</span></div>
+      <div><b>Bachelor of Science (BS)</b><span>Biomedical Engineering</span></div>
+      <div><b>Certified Healthcare Trustee Leader (CHTL)</b><span>Member, American College of Healthcare Executives (ACHE)</span></div>
+    </div>
+
+    <div class="bio-vision">
+      <p class="eyebrow">Vision for the new Nyamira</p>
+      <p>Rooted in Gusii culture and proven in world-class institutions, Dr. Nyakundi brings executive discipline in budgets, accountability, emergency response and service delivery. His mission is a Nyamira where healthcare, education and public services deliver measurable results for every family.</p>
+      <p class="slogan">Omonto, Nabanto. Omonto bw'Abanto.</p>
     </div>
   </div>
 </section>
@@ -585,7 +662,7 @@ section.photo.split.hasvid::before{display:none}
           <li><div class="when">2017 – 2022</div><div class="what">Director, Clinical Engineering</div><div class="where">Denver Health (County of Denver Healthcare System)</div></li>
           <li><div class="when">2023 – 2024</div><div class="what">Senior Manager, Clinical Engineering</div><div class="where">University of Maryland Medical System</div></li>
           <li><div class="when">Today</div><div class="what">Director, Emergency Management Coordination &amp; Biomedical Engineering</div><div class="where">Rural regional health system, West Texas</div></li>
-          <li><div class="when">Education</div><div class="what">Doctor of Health Administration · Master of Health Administration · MBA</div><div class="where">Public health administration, health and human services</div></li>
+          <li><div class="when">Education</div><div class="what">DHA · MHA · MS Clinical Engineering · BS Healthcare Management · BS Biomedical Engineering</div><div class="where">Certified Healthcare Trustee Leader (CHTL) · ACHE</div></li>
         </ol>
   </div>
 </section>
