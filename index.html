@@ -430,6 +430,34 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
   .hero.office .office-space{display:block;order:-1;height:clamp(240px,62vw,460px);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));background:var(--bg) 52% 40%/cover no-repeat;background-image:url(img/hero-office-sm.webp)}
   .hero.office>.hero-grid{grid-template-columns:1fr;padding-block:0 40px;gap:28px}
 }
+
+/* ---------- Video bands (pages 4-6) ---------- */
+section.photo.split.hasvid::before{display:none}
+.vband{position:relative;height:clamp(240px,40vw,520px);margin-bottom:56px;overflow:hidden;background:#05080f}
+.vband video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.vband::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,26,51,0) 60%,rgba(14,26,51,.85) 100%);pointer-events:none}
+.vband .vsound{position:absolute;z-index:2;right:max(16px,env(safe-area-inset-right,0px));bottom:18px}
+.vband .vcap{position:absolute;z-index:2;left:max(16px,env(safe-area-inset-left,0px));bottom:22px;right:220px;margin:0;font-family:var(--body);font-size:clamp(.95rem,1.6vw,1.15rem);color:#fff;text-shadow:0 2px 10px rgba(0,0,0,.7)}
+@media (min-width:1152px){.vband .vcap{left:calc((100vw - 1120px)/2 + 16px)}.vband .vsound{right:calc((100vw - 1120px)/2 + 16px)}}
+.vsound,.anthem-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(5,8,15,.6);color:#fff;border:1.5px solid var(--banana);border-radius:999px;padding:8px 16px 8px 10px;font:600 .82rem var(--display);letter-spacing:.06em;text-transform:uppercase;cursor:pointer;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.vsound .ico{width:26px;height:26px;border-radius:50%;background:var(--banana);position:relative;flex:none}
+.vsound .ico::after{content:"";position:absolute;left:10px;top:7px;border-style:solid;border-width:6px 0 6px 9px;border-color:transparent transparent transparent #0b1424}
+.vsound[aria-pressed="true"] .ico::after{left:8px;top:8px;width:3px;height:10px;border:0;border-left:3px solid #0b1424;border-right:3px solid #0b1424;box-sizing:content-box}
+@media (max-width:640px){.vband{margin-bottom:36px}.vband .vcap{right:16px;bottom:64px}}
+/* ---------- Interactive gap chart ---------- */
+.gaplist{display:grid;gap:8px}
+.gapbtn{display:grid;gap:6px;text-align:left;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:10px 12px;color:#fff;cursor:pointer;font:inherit;transition:background .15s,border-color .15s}
+.gapbtn:hover{background:rgba(255,255,255,.08)}
+.gapbtn[aria-selected="true"]{border-color:var(--banana);background:rgba(212,176,76,.12)}
+.gapbtn .row{display:flex;justify-content:space-between;gap:12px;font-size:.92rem;flex-wrap:wrap}
+.gapbtn .pct{font-family:var(--display);font-weight:700;color:var(--banana)}
+.gapbtn .track{height:12px}
+.gapbtn .track i{transition:width .6s ease}
+.gapcard{margin-top:6px;padding:18px 20px;border-left:4px solid var(--earth);background:rgba(8,16,34,.6);display:grid;gap:8px}
+.gapcard .big{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,3.4vw,2.6rem);line-height:1;color:var(--earth)}
+.gapcard .fix{color:#e6ebf3}
+.gapcard a{color:var(--banana);font-weight:600}
+@media (prefers-reduced-motion: reduce){.gapbtn .track i{transition:none}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -563,7 +591,13 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 </section>
 
 <!-- 3 WHY GIDEON -->
-<section class="page dark photo split" id="why" style="--bg:url(img/why.webp)">
+<section class="page dark photo split hasvid" id="why" style="--bg:url(img/why.webp)">
+  <div class="vband">
+    <video autoplay muted loop playsinline preload="metadata" poster="media/elders-poster.jpg" width="1280" height="720" aria-label="An elder speaking to young people in a Nyamira village"><source src="media/elders.mp4" type="video/mp4"></video>
+    <button type="button" class="vsound" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+    <p class="vcap">Elders and youth together: the wisdom of our clans guiding the next generation.</p>
+  </div>
+
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Why Gideon</p>
@@ -582,7 +616,13 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 </section>
 
 <!-- 4 NYAMIRA TODAY -->
-<section class="page dark photo split" id="today" style="--bg:url(img/today.webp)">
+<section class="page dark photo split hasvid" id="today" style="--bg:url(img/today.webp)">
+  <div class="vband">
+    <video autoplay muted loop playsinline preload="metadata" poster="media/children-poster.jpg" width="1280" height="720" aria-label="Children dancing on a school field in Nyamira"><source src="media/children.mp4" type="video/mp4"></video>
+    <button type="button" class="vsound" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+    <p class="vcap">Nyamira's children: the reason we build.</p>
+  </div>
+
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Nyamira Today</p>
@@ -603,7 +643,13 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 </section>
 
 <!-- 5 CHALLENGES -->
-<section class="page dark photo split" id="challenges" style="--bg:url(img/challenges.webp)">
+<section class="page dark photo split hasvid" id="challenges" style="--bg:url(img/challenges.webp)">
+  <div class="vband">
+    <video autoplay muted loop playsinline preload="metadata" poster="media/market-poster.jpg" width="1280" height="720" aria-label="Dr. Gideon greeting traders at a Nyamira market"><source src="media/market.mp4" type="video/mp4"></video>
+    <button type="button" class="vsound" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+    <p class="vcap">Listening at the market: traders tell us what has to change.</p>
+  </div>
+
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">The Challenges</p>
@@ -611,13 +657,11 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
       <p class="lede">The county's 2026/27 budget plans for Ksh 8.85 billion. About 76% of that comes from the national equitable share. Seven of every ten shillings go to recurrent costs, and the services people use most have been cut hardest.</p>
     </div>
     <div class="grid2">
-      <div class="bars" aria-label="Development ceilings compared with planned amounts, 2026/27">
+      <div class="bars" id="gapChart" aria-label="Development ceilings compared with planned amounts, 2026/27">
         <h3 style="font-size:1.2rem">Planned vs. funded, 2026/27 development</h3>
-        <div class="bar-row"><div class="lbl"><span><b>Water:</b> Ksh 55M funded of Ksh 441M planned</span><span>12%</span></div><div class="track"><i style="width:12.5%"></i></div></div>
-        <div class="bar-row"><div class="lbl"><span><b>Medical services:</b> Ksh 340M of Ksh 1,555M requested</span><span>22%</span></div><div class="track"><i style="width:21.9%"></i></div></div>
-        <div class="bar-row"><div class="lbl"><span><b>Crop development:</b> Ksh 145M of Ksh 375M planned</span><span>39%</span></div><div class="track"><i style="width:38.7%"></i></div></div>
-        <div class="bar-row"><div class="lbl"><span><b>Roads &amp; public works:</b> Ksh 489M of Ksh 798M planned</span><span>61%</span></div><div class="track"><i style="width:61.3%"></i></div></div>
-        <div class="bar-row"><div class="lbl"><span><b>Health products fund:</b> Ksh 100M of Ksh 500M proposed</span><span>20%</span></div><div class="track"><i style="width:20%"></i></div></div>
+        <p class="note" style="margin-top:-6px">Tap a sector to see the gap and the plan to close it.</p>
+        <div class="gaplist" role="tablist" aria-label="Sectors"></div>
+        <div class="gapcard" id="gapCard" role="tabpanel" aria-live="polite"></div>
         <p class="note">Source: Nyamira County Fiscal Strategy Paper 2026/27, popular version</p>
       </div>
       <div class="prose">
@@ -1661,6 +1705,30 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
     const sync=()=>{ const on=!v.muted&&!v.paused; b.setAttribute('aria-pressed',on); lbl.textContent=on?'Pause sound':'Play with sound'; };
     b.addEventListener('click',()=>{ if(!v.muted&&!v.paused){ v.muted=true; } else { v.muted=false; v.currentTime=0; v.play().catch(()=>{}); } sync(); });
     v.addEventListener('volumechange',sync); v.addEventListener('play',sync); v.addEventListener('pause',sync);
+  })();
+
+  /* ---------- Video bands: sound toggles ---------- */
+  document.querySelectorAll('.vband').forEach(band=>{ const v=band.querySelector('video'), b=band.querySelector('.vsound'), l=b.querySelector('.lbl');
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){ v.removeAttribute('autoplay'); try{v.pause();}catch(e){} }
+    const sync=()=>{ const on=!v.muted&&!v.paused; b.setAttribute('aria-pressed',on); l.textContent=on?'Pause sound':'Play with sound'; };
+    b.addEventListener('click',()=>{ if(!v.muted&&!v.paused){ v.muted=true; } else { document.querySelectorAll('video').forEach(o=>{ if(o!==v) o.muted=true; }); v.muted=false; v.currentTime=0; v.play().catch(()=>{}); } sync(); });
+    v.addEventListener('volumechange',sync); v.addEventListener('play',sync); v.addEventListener('pause',sync); });
+
+  /* ---------- Interactive gap chart ---------- */
+  (function(){ const list=document.querySelector('#gapChart .gaplist'), card=$('gapCard'); if(!list) return;
+    const D=[
+      {k:'Water',f:55,p:441,w:'planned',pl:'p3',fix:'Protect every spring in all 20 wards, finish stalled water projects first and bring piped water to schools and health facilities.'},
+      {k:'Medical services',f:340,p:1555,w:'requested',pl:'p1',fix:'Build the new Nyamira hospital, make Level 4 hospitals real Level 4s, and keep every machine working with a county biomedical unit.'},
+      {k:'Health products fund',f:100,p:500,w:'proposed',pl:'p1',fix:'Ring-fence the drugs budget so no patient is told to buy basic essential medicines elsewhere.'},
+      {k:'Crop development',f:145,p:375,w:'planned',pl:'p4',fix:'Value addition at home through the Sironga hub, an extension officer in every ward and fair prices for tea, bananas, avocado and milk.'},
+      {k:'Roads & public works',f:489,p:798,w:'planned',pl:'p2',fix:'Tarmac the Manga–Mote–Momwamu road, maintain every feeder road with ward crews and pay local contractors within 60 days.'}];
+    const fmt=n=>'Ksh '+n.toLocaleString()+'M';
+    D.forEach((d,i)=>{ const pct=Math.round(d.f/d.p*100); const b=document.createElement('button'); b.type='button'; b.className='gapbtn'; b.setAttribute('role','tab'); b.id='gap-'+i;
+      b.innerHTML='<span class="row"><span><b>'+esc(d.k)+'</b> · '+fmt(d.f)+' of '+fmt(d.p)+' '+d.w+'</span><span class="pct">'+pct+'%</span></span><span class="track"><i style="width:0%"></i></span>';
+      b.addEventListener('click',()=>show(i)); list.append(b); setTimeout(()=>{ b.querySelector('i').style.width=(d.f/d.p*100)+'%'; },120*i+200); });
+    function show(i){ const d=D[i], gap=d.p-d.f; [...list.children].forEach((b,j)=>b.setAttribute('aria-selected',j===i));
+      card.innerHTML='<p class="eyebrow">'+esc(d.k)+'</p><p class="big">'+fmt(gap)+' short</p><p>Only '+Math.round(d.f/d.p*100)+'% of what was '+d.w+' is funded for 2026/27.</p><p class="fix"><b>Dr. Gideon\'s plan:</b> '+esc(d.fix)+'</p><p><a href="#'+d.pl+'">Read the full pillar →</a></p>'; }
+    show(0);
   })();
 })();
 </script>
