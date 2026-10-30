@@ -417,6 +417,19 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 .anthem-btn .ico{width:30px;height:30px;border-radius:50%;background:var(--banana);position:relative;flex:none}
 .anthem-btn .ico::after{content:"";position:absolute;left:11px;top:8px;border-style:solid;border-width:7px 0 7px 11px;border-color:transparent transparent transparent #0b1424}
 .anthem-btn[aria-pressed="true"] .ico::after{left:9px;top:9px;width:4px;height:12px;border:0;border-left:4px solid #0b1424;border-right:4px solid #0b1424;box-sizing:content-box}
+
+/* ---------- Page one: office photograph ---------- */
+.hero.office{background-position:8% center;min-height:clamp(560px,52vw,760px);display:flex;align-items:stretch}
+.hero.office>.hero-grid{width:100%;grid-template-columns:minmax(0,36%) 1fr;align-items:center;padding-block:56px}
+.hero.office .hero-text{padding-bottom:0}
+.hero.office.photo::before{background:linear-gradient(90deg,rgba(6,11,22,.88) 0%,rgba(6,11,22,.72) 30%,rgba(6,11,22,.2) 42%,rgba(6,11,22,0) 50%)}
+.hero.office h1{font-size:clamp(2.3rem,4.6vw,4.2rem)}
+@media (max-width:900px){
+  .hero.office{display:block;min-height:0;background:#0b1424;padding-top:0}
+  .hero.office::before{display:none}
+  .hero.office .office-space{display:block;order:-1;height:clamp(240px,62vw,460px);margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px)));background:var(--bg) 52% 40%/cover no-repeat;background-image:url(img/hero-office-sm.webp)}
+  .hero.office>.hero-grid{grid-template-columns:1fr;padding-block:0 40px;gap:28px}
+}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -480,7 +493,7 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
 
 <main>
 <!-- 1 HOME -->
-<section class="hero photo" id="home" style="--bg:url(img/hero.webp)">
+<section class="hero photo office" id="home" style="--bg:url(img/hero-office.webp)">
   <div class="wrap hero-grid">
     <div class="hero-text">
       <p class="eyebrow">Nyamira County · 2027</p>
@@ -494,7 +507,7 @@ section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.
       </div>
       <div class="facts"><span><b>20+</b>years in healthcare</span><span><b>12</b>pillars of change</span><span><b>20</b>wards</span><span><b>5</b>books</span></div>
     </div>
-    <img class="portrait" src="img/portrait-hero.webp" alt="Dr. Gideon Moseti Nyakundi in front of the Kenyan flag" width="802" height="1080">
+    <div class="office-space" role="img" aria-label="Dr. Gideon Moseti Nyakundi at his desk, with the flags of Kenya and the East African Community"></div>
   </div>
 </section>
 
