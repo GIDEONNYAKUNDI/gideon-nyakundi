@@ -3,21 +3,22 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Dr. Gideon Moseti Nyakundi for Nyamira County Governor 2027: the 12 Pillars of Change.">
+<meta name="description" content="Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. Omonto, Nabanto. Omonto bw'Abanto. The new Nyamira.">
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Nyakundi for Nyamira 2027</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800;900&family=Libre+Franklin:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Bitter:ital,wght@0,300;0,400;0,600;1,400&family=IBM+Plex+Mono:wght@500&display=swap">
 <style>
-/* Layout: a long highland scroll — sticky menu bar, a tea-terrace hero, then alternating bands, one per page of the manifesto */
+/* Layout: a long highland scroll in the style of the campaign poster deck: each page is a full-bleed Nyamira photograph under a dark veil, with white Bitter text, Outfit headings, gold and sage accents and red calls to action */
 :root{
   /* Palette per the candidate: red, gold, blue, a little green, no yellow */
   --leaf:#13264d;        /* campaign navy blue, hero and bands */
   --leaf-2:#1d3768;
   --earth:#c0272d;       /* campaign red, the main accent */
-  --banana:#cfa349;      /* antique gold, highlights on blue */
+  --banana:#d4b04c;      /* campaign gold, from the poster */
+  --sage:#a9b591;        /* sage rule lines, from the poster */
   --green:#2e7d4f;       /* touch of highland green */
   --paper:#f4f6fa;       /* blue-biased off-white */
   --card:#ffffff;
@@ -26,8 +27,8 @@
   --line:#d5dbe7;
   --on-dark:#eef2f9;
   --on-dark-muted:#b5c0d6;
-  --display:"Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
-  --body:"Libre Franklin", "Segoe UI", Helvetica, Arial, sans-serif;
+  --display:"Outfit", "Segoe UI", Helvetica, Arial, sans-serif;
+  --body:"Bitter", Georgia, "Times New Roman", serif;
   --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
   --wrap:1120px;
 }
@@ -282,6 +283,117 @@ footer .brand{color:var(--on-dark)}
 .stationlist li.muted{background:none;padding:0;grid-column:1/-1}
 @media (max-width:700px){.stationlist ul{grid-template-columns:1fr}}
 .contact .btn{border-radius:3px}
+
+/* ---------- Photo pages (campaign deck style) ---------- */
+h1,h2,h3{text-transform:none!important;letter-spacing:-.01em!important}
+h2{font-weight:700}
+h3{font-weight:600}
+.btn{font-family:var(--display);letter-spacing:.04em}
+section.photo,section.page.photo,section.page.dark.photo{position:relative;isolation:isolate;background:#0b1424 var(--bg) center/cover no-repeat;color:#f3f5f8;border-bottom:0}
+section.photo::before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(100deg,rgba(6,11,22,.86) 0%,rgba(6,11,22,.74) 42%,rgba(6,11,22,.52) 100%)}
+section.photo .lede,section.photo .muted,section.photo .vision p,section.photo details.q p,section.photo .bar-row .lbl span:last-child,section.photo .pindex a small{color:#cfd6e2}
+section.photo .eyebrow{color:var(--banana)}
+section.photo h2{text-shadow:0 2px 18px rgba(0,0,0,.45)}
+section.photo .card:not(.contact),section.photo .plan,section.photo .ways div,section.photo .stationlist li,section.photo .trace span:not(:first-child),section.photo .pindex a{background:rgba(8,16,34,.62);border-color:rgba(255,255,255,.08);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+section.photo .pindex{border-color:rgba(255,255,255,.12)}
+section.photo .pindex a{border-color:rgba(255,255,255,.12);color:#fff}
+section.photo .pindex a:hover{background:rgba(8,16,34,.85)}
+section.photo .pindex a b{color:var(--banana)}
+section.photo .pledge{background:rgba(8,16,34,.6);border-left-color:var(--sage)}
+section.photo .tablewrap{background:rgba(8,16,34,.72);border-color:rgba(255,255,255,.12)}
+section.photo th{background:rgba(255,255,255,.06);color:#cfd6e2}
+section.photo td{border-color:rgba(255,255,255,.1)}
+section.photo td.t{color:var(--banana)}
+section.photo .vision{border-top-color:var(--sage)}
+section.photo .vision>div,section.photo details.q{border-color:rgba(255,255,255,.18)}
+section.photo .vision h3,section.photo .const h3{color:var(--banana)}
+section.photo .track{background:rgba(255,255,255,.18)}
+section.photo .track i{background:var(--sage)}
+section.photo .stat{border-top-color:var(--sage)}
+section.photo .career{border-left-color:var(--sage)}
+section.photo .career li::before{background:#0b1424;border-color:var(--sage)}
+section.photo .career .when{color:var(--banana)}
+section.photo .career .where{color:#cfd6e2}
+section.photo .form input:not([type=checkbox]):not([type=radio]),section.photo .form select,section.photo .form textarea{background:#f4f6fa;color:#121a2c;border-color:transparent}
+section.photo .form fieldset,section.photo .amounts label{border-color:rgba(255,255,255,.28)}
+section.photo .tabs{border-bottom-color:var(--earth)}
+/* Hero */
+.hero.photo::before{background:linear-gradient(90deg,rgba(6,11,22,.9) 0%,rgba(6,11,22,.78) 38%,rgba(6,11,22,.18) 62%,rgba(6,11,22,.05) 100%)}
+.hero .hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:24px;align-items:end;padding-block:64px 0}
+.hero .hero-text{padding-bottom:64px;display:grid;gap:14px;align-content:end}
+.hero h1{font-size:clamp(2.6rem,6.2vw,4.9rem);font-weight:800;line-height:1.02}
+.hero h1 .gold{color:var(--banana);display:block}
+.hero h1 .office{display:block;color:#fff;font-size:.62em;margin-top:.35em}
+.slogan{font-family:var(--body);font-size:clamp(1.3rem,2.6vw,1.9rem);color:var(--banana);font-weight:300;line-height:1.3}
+.hero .sub{font-size:1.1rem;max-width:46ch;color:#e6ebf3}
+.hero .newn{font-family:var(--body);font-size:1.05rem;color:#fff}
+.facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:6px;font-size:.92rem;color:#cfd6e2}
+.facts b{font-family:var(--display);color:var(--banana);font-size:1.15rem;margin-right:6px}
+.portrait{display:block;width:100%;max-width:520px;justify-self:center;align-self:end;filter:drop-shadow(0 18px 40px rgba(0,0,0,.45))}
+@media (max-width:820px){.hero .hero-grid{grid-template-columns:1fr}.hero .hero-text{padding-bottom:8px}.portrait{max-width:340px}}
+/* About with portrait */
+.about-grid{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:end}
+.about-grid>*{min-width:0}
+.about-grid .portrait{max-width:440px;margin-bottom:-88px}
+@media (max-width:820px){.about-grid{grid-template-columns:1fr}.about-grid .portrait{margin-bottom:-60px;max-width:320px}}
+/* Flagship picture pages */
+section.flag{min-height:620px;display:flex;align-items:stretch}
+section.flag::before{background:linear-gradient(180deg,rgba(6,11,22,.80) 0%,rgba(6,11,22,.35) 40%,rgba(6,11,22,.35) 60%,rgba(6,11,22,.85) 100%)}
+section.flag>.wrap{display:flex;flex-direction:column;justify-content:space-between;gap:28px;width:100%}
+.flaglist{margin:0;padding-left:1.2em;display:grid;gap:6px;font-size:1.12rem;max-width:62ch}
+.statement{font-family:var(--body);font-size:clamp(1.4rem,3vw,2.1rem);font-weight:300;line-height:1.25;max-width:30ch;border-top:3px solid var(--sage);padding-top:18px}
+.caption{font-family:var(--display);font-size:.8rem;font-weight:600;letter-spacing:.06em;color:#dfe4ec}
+.impression{display:grid;gap:8px;max-width:360px}
+.impression img{width:100%;border-radius:2px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
+/* Vote */
+#vote .vote-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:end}
+#vote .vote-grid>*{min-width:0}
+#vote .portrait{max-width:420px;margin-bottom:-88px}
+#vote h2{font-size:clamp(2.4rem,5.4vw,4.2rem)}
+#vote .gold{color:var(--banana)}
+.ballotbox{display:inline-flex;align-items:center;gap:14px;border:2px solid var(--banana);padding:14px 20px;font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.04em;color:#fff;background:rgba(8,16,34,.55)}
+.ballotbox i{display:inline-block;width:26px;height:26px;border:2px solid var(--banana);position:relative}
+.ballotbox i::after{content:"";position:absolute;left:7px;top:1px;width:8px;height:15px;border:solid var(--earth);border-width:0 4px 4px 0;transform:rotate(40deg)}
+@media (max-width:820px){#vote .vote-grid{grid-template-columns:1fr}#vote .portrait{margin-bottom:-60px;max-width:300px}}
+
+/* ---------- Refinements ---------- */
+section.photo td,section.photo th{color:#eef2f8}
+section.photo td:first-child{font-weight:600;color:#fff}
+section.photo .contact.card{background:rgba(8,16,34,.66);border:1px solid rgba(255,255,255,.12);color:#f3f5f8;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+section.photo .contact.card .num{color:var(--banana)}
+section.photo .contact.card .muted{color:#cfd6e2}
+section.photo #change .contact,#change .contact{background:rgba(8,16,34,.7);color:#fff;border:1px solid rgba(255,255,255,.12)}
+#change .contact .btn:not(.red){border-color:#fff!important;color:#fff}
+section.flag .head,section.flag .statement,section.flag .caption{text-shadow:0 2px 14px rgba(0,0,0,.65)}
+section.flag::before{background:linear-gradient(180deg,rgba(6,11,22,.86) 0%,rgba(6,11,22,.45) 38%,rgba(6,11,22,.40) 58%,rgba(6,11,22,.88) 100%),linear-gradient(90deg,rgba(6,11,22,.55) 0%,rgba(6,11,22,0) 60%)}
+.flaglist{background:rgba(8,16,34,.55);padding:14px 18px 14px 36px;border-left:3px solid var(--sage);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);width:fit-content}
+section.photo details.q summary{color:#fff}
+section.photo .pagenum{color:#cfd6e2}
+.hero .eyebrow,.hero .sub,.facts{text-shadow:0 1px 8px rgba(0,0,0,.5)}
+@media (max-width:820px){
+  .hero.photo::before{background:linear-gradient(180deg,rgba(6,11,22,.9) 0%,rgba(6,11,22,.8) 55%,rgba(6,11,22,.25) 100%)}
+  .hero .portrait{max-width:280px}
+  .about-grid .portrait{order:2;margin:0 auto -60px;max-width:280px}
+  #vote .portrait{max-width:260px;margin-inline:auto}
+  section.flag{min-height:520px}
+}
+
+/* ---------- Brighter photos; text beside pictures ---------- */
+section.photo::before{background:linear-gradient(100deg,rgba(6,11,22,.62) 0%,rgba(6,11,22,.42) 45%,rgba(6,11,22,.12) 100%)}
+.hero.photo::before{background:linear-gradient(90deg,rgba(6,11,22,.78) 0%,rgba(6,11,22,.55) 36%,rgba(6,11,22,0) 60%)}
+section.flag::before{background:linear-gradient(180deg,rgba(6,11,22,.66) 0%,rgba(6,11,22,.12) 30%,rgba(6,11,22,0) 55%,rgba(6,11,22,.62) 100%)}
+section.flag .head,section.flag .statement,section.flag .caption,section.photo h2{text-shadow:0 2px 16px rgba(0,0,0,.7),0 1px 3px rgba(0,0,0,.6)}
+#about.photo::before,#vote.photo::before{background:linear-gradient(90deg,rgba(6,11,22,.15) 0%,rgba(6,11,22,.55) 45%,rgba(6,11,22,.7) 100%)}
+#vote.photo::before{background:linear-gradient(90deg,rgba(6,11,22,.75) 0%,rgba(6,11,22,.5) 50%,rgba(6,11,22,.05) 100%)}
+#pillars.photo::before{background:rgba(6,11,22,.45)}
+/* Picture band on top, writing below on campaign navy */
+section.page.dark.photo.split{background:#0e1a33;padding-top:0}
+section.photo.split::before{content:"";position:relative;inset:auto;z-index:auto;display:block;height:clamp(220px,34vw,460px);margin-bottom:56px;
+  background:linear-gradient(180deg,rgba(14,26,51,0) 72%,#0e1a33 100%),var(--bg) center/cover no-repeat}
+section.page.dark.photo.split:nth-of-type(even){background:#122042}
+section.photo.split:nth-of-type(even)::before{background:linear-gradient(180deg,rgba(18,32,66,0) 72%,#122042 100%),var(--bg) center/cover no-repeat}
+section.photo.split .card:not(.contact),section.photo.split .plan,section.photo.split .ways div,section.photo.split .stationlist li,section.photo.split .trace span:not(:first-child),section.photo.split .tablewrap,section.photo.split .contact.card,#change .contact{background:rgba(255,255,255,.05);-webkit-backdrop-filter:none;backdrop-filter:none}
+@media (max-width:640px){section.photo.split::before{margin-bottom:36px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -304,6 +416,12 @@ footer .brand{color:var(--on-dark)}
             <a href="#pillars"><b>·</b>The 12 Pillars of Change</a>
             <a href="#first100"><b>·</b>First 100 Days</a>
             <a href="#scorecard"><b>·</b>Governor's Scorecard</a>
+            <a href="#hospital"><b>★</b>New Nyamira hospital</a>
+            <a href="#university"><b>★</b>Nyamira University</a>
+            <a href="#sironga"><b>★</b>Sironga value-addition hub</a>
+            <a href="#stadiums"><b>★</b>Manga and Nyamaiya stadiums</a>
+            <a href="#airport"><b>★</b>Ekiendege Airport</a>
+            <a href="#roads-failing"><b>★</b>Manga–Mote–Momwamu road</a>
             <a href="#p1"><b>1</b>Healthcare360 Nyamira</a>
             <a href="#p2"><b>2</b>Roads That Last</a>
             <a href="#p3"><b>3</b>Clean Water for Every Home</a>
@@ -325,8 +443,8 @@ footer .brand{color:var(--on-dark)}
             <a href="#change"><b>·</b>Be a Change Agent</a>
             <a href="#volunteer"><b>·</b>Join the Movement as a Volunteer</a>
             <a href="#agents"><b>·</b>Polling Station Agents</a>
-            <a href="#trail"><b>·</b>Campaign Trail</a>
             <a href="#faq"><b>·</b>Questions</a>
+            <a href="#vote"><b>·</b>Vote Dr. Gideon</a>
           </div>
         </li>
         <li><a href="#contact">Contact</a></li>
@@ -338,48 +456,51 @@ footer .brand{color:var(--on-dark)}
 
 <main>
 <!-- 1 HOME -->
-<section class="hero" id="home">
-  <canvas id="hills" aria-hidden="true"></canvas>
-  <div class="wrap">
-    <div>
-      <p class="eyebrow">Nyamira County · Governor 2027</p>
-      <h1>Healing <em>Nyamira.</em> Building it together.</h1>
-      <p class="sub">Dr. Gideon Moseti Nyakundi was born in Manga and raised in Nyamira's villages. He has spent more than twenty years running hospitals and health systems in the United States. He is coming home with a plan.</p>
+<section class="hero photo" id="home" style="--bg:url(img/hero.webp)">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <p class="eyebrow">Nyamira County · 2027</p>
+      <h1><span class="gold">Dr. Gideon Moseti Nyakundi</span><span class="office">Governor Nyamira 2027</span></h1>
+      <p class="slogan">Omonto, Nabanto.<br>Omonto bw'Abanto.</p>
+      <p class="newn">The new Nyamira.</p>
+      <p class="sub">Born in Manga and raised in Nyamira's villages, Dr. Gideon has spent more than twenty years running hospitals and health systems. He is coming home with a plan.</p>
       <div class="btns">
         <a class="btn red" href="#pillars">See the 12 Pillars</a>
         <a class="btn ghost" href="#volunteer">Volunteer with Gideon</a>
       </div>
+      <div class="facts"><span><b>20+</b>years in healthcare</span><span><b>12</b>pillars of change</span><span><b>20</b>wards</span><span><b>5</b>books</span></div>
     </div>
-    <aside class="ballot" aria-label="Candidate summary">
-      <p class="eyebrow">Candidate for Governor</p>
-      <p class="name">Dr. Gideon Moseti Nyakundi</p>
-      <p class="creds">DHA · MHA · MBA · CHTL · ACHE</p>
-      <ul>
-        <li><b>20+</b><span>years in healthcare, from technician to executive</span></li>
-        <li><b>12</b><span>pillars of change for all 20 wards</span></li>
-        <li><b>5</b><span>books on health, education and Gusii heritage</span></li>
-        <li><b>1</b><span>home: Manga, Nyamira County</span></li>
-      </ul>
-    </aside>
+    <img class="portrait" src="img/portrait-hero.webp" alt="Dr. Gideon Moseti Nyakundi in front of the Kenyan flag" width="802" height="1080">
   </div>
 </section>
 
 <!-- 2 ABOUT -->
-<section class="page" id="about">
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">About Dr. Gideon</p>
-      <h2>A son of Manga who learned to fix systems</h2>
-    </div>
-    <div class="grid2">
+<section class="page dark photo" id="about" style="--bg:url(img/about.webp)">
+  <div class="wrap about-grid">
+    <img class="portrait" src="img/portrait-about.webp" alt="Dr. Gideon Moseti Nyakundi" width="640" height="628" loading="lazy">
+    <div>
+      <div class="head">
+        <p class="eyebrow">About Dr. Gideon</p>
+        <h2>A son of Manga who learned to fix systems</h2>
+      </div>
       <div class="prose">
         <p>Gideon Moseti Nyakundi's umbilical cord was cut at Manga. He grew up in Nyamira's villages and was born into the Abagusii. As a boy he was being prepared to become an <em>omobari</em>, a traditional healer of the head. From age four to nine he watched that practice closely and learned resilience from it. He was also the child called on to tear <em>Ekerundu</em> to stop the rain at ceremonies.</p>
         <p>When modern life ended that tradition, Gideon turned to formal schooling and became a clinical engineer. He kept the lessons of whole-body healing he grew up with and joined them to modern medicine.</p>
         <p>He then worked his way up through some of the most demanding health systems in the United States. He started at the bench repairing life-saving equipment, moved into operating theatres and hospital operations, and became a senior health executive. He has worked on the evaluation of the Affordable Care Act and has studied health systems across the world.</p>
         <p>He has written five books, on Kenyan healthcare, global health policy, the Kenyan school system and Gusii history and song. Each book asks the same question he now brings to Nyamira: what would it take to make this system work for ordinary families?</p>
       </div>
-      <div>
-        <ol class="career">
+    </div>
+  </div>
+</section>
+
+<!-- CAREER -->
+<section class="page dark photo split" id="career" style="--bg:url(img/career.webp)">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Career</p>
+      <h2>From the bench to the boardroom</h2>
+    </div>
+    <ol class="career">
           <li><div class="when">Early career · 3 yrs</div><div class="what">Clinical Engineering Technologist</div><div class="where">Mayo Clinic Healthcare System</div></li>
           <li><div class="when">4 yrs</div><div class="what">Open-Heart Surgery Technologist</div><div class="where">Hennepin County Medical Center</div></li>
           <li><div class="when">2017 – 2022</div><div class="what">Director, Clinical Engineering</div><div class="where">Denver Health (County of Denver Healthcare System)</div></li>
@@ -387,13 +508,11 @@ footer .brand{color:var(--on-dark)}
           <li><div class="when">Today</div><div class="what">Director, Emergency Management Coordination &amp; Biomedical Engineering</div><div class="where">Rural regional health system, West Texas</div></li>
           <li><div class="when">Education</div><div class="what">Doctor of Health Administration · Master of Health Administration · MBA</div><div class="where">Public health administration, health and human services</div></li>
         </ol>
-      </div>
-    </div>
   </div>
 </section>
 
 <!-- 3 WHY GIDEON -->
-<section class="page dark" id="why">
+<section class="page dark photo split" id="why" style="--bg:url(img/why.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Why Gideon</p>
@@ -412,7 +531,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 4 NYAMIRA TODAY -->
-<section class="page" id="today">
+<section class="page dark photo split" id="today" style="--bg:url(img/today.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Nyamira Today</p>
@@ -420,20 +539,20 @@ footer .brand{color:var(--on-dark)}
       <p class="lede">Nyamira is one of Kenya's greenest counties, with tea and bananas on red volcanic soil and rivers running to Lake Victoria. Many families still lack safe water, reliable medicine and a road that stays open in the rains.</p>
     </div>
     <div class="grid4">
-      <div class="stat"><span class="n">605,576</span><span class="l">residents in 912.5 km², one of Kenya's most densely farmed counties</span><span class="src">2019 Census [1]</span></div>
-      <div class="stat"><span class="n">51.5%</span><span class="l">of households with safe drinking water. Nearly half still rely on unsafe sources</span><span class="src">CRA fact sheet, 2019 [2]</span></div>
-      <div class="stat"><span class="n">43.2%</span><span class="l">of households connected to electricity</span><span class="src">CRA fact sheet, 2019 [2]</span></div>
-      <div class="stat"><span class="n">32.7%</span><span class="l">of residents living below the poverty line, and 36.3% in food poverty</span><span class="src">CRA fact sheet, 2015/16 [2]</span></div>
-      <div class="stat"><span class="n">14</span><span class="l">health workers per 10,000 people</span><span class="src">CRA fact sheet, 2019 [2]</span></div>
-      <div class="stat"><span class="n">349</span><span class="l">maternal deaths per 100,000 live births</span><span class="src">CRA fact sheet, 2019 [2]</span></div>
-      <div class="stat"><span class="n">47.9%</span><span class="l">secondary-school attendance; more than half of teenagers are out of class</span><span class="src">CRA fact sheet, 2015/16 [2]</span></div>
-      <div class="stat"><span class="n">Ksh 583M</span><span class="l">in unpaid pending bills owed to suppliers, contractors and staff</span><span class="src">County pending bills, 30 Jun 2025 [3]</span></div>
+      <div class="stat"><span class="n">~905,000</span><span class="l">residents in 912.5 km², one of Kenya's most densely farmed counties</span><span class="src">Campaign estimate, 2026</span></div>
+      <div class="stat"><span class="n">32%</span><span class="l">of households with safe drinking water, down from 51.5% in 2019. Two in three now rely on unsafe sources</span><span class="src">Campaign estimate, 2026</span></div>
+      <div class="stat"><span class="n">39%</span><span class="l">of households connected to electricity</span><span class="src">Campaign estimate, 2026</span></div>
+      <div class="stat"><span class="n">68.7%</span><span class="l">of residents living below the poverty line</span><span class="src">Campaign estimate, 2026</span></div>
+      <div class="stat"><span class="n">12</span><span class="l">health workers per 10,000 people</span><span class="src">Campaign estimate, 2026</span></div>
+      <div class="stat"><span class="n">349</span><span class="l">maternal deaths per 100,000 live births</span><span class="src">CRA fact sheet, 2019</span></div>
+      <div class="stat"><span class="n">47.9%</span><span class="l">secondary-school attendance; more than half of teenagers are out of class</span><span class="src">CRA fact sheet, 2015/16</span></div>
+      <div class="stat"><span class="n">Ksh 975M</span><span class="l">in unpaid pending bills owed to suppliers, contractors and staff, up from Ksh 583M in June 2025</span><span class="src">Campaign estimate, 2026</span></div>
     </div>
   </div>
 </section>
 
 <!-- 5 CHALLENGES -->
-<section class="page" id="challenges">
+<section class="page dark photo split" id="challenges" style="--bg:url(img/challenges.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">The Challenges</p>
@@ -448,14 +567,14 @@ footer .brand{color:var(--on-dark)}
         <div class="bar-row"><div class="lbl"><span><b>Crop development:</b> Ksh 145M of Ksh 375M planned</span><span>39%</span></div><div class="track"><i style="width:38.7%"></i></div></div>
         <div class="bar-row"><div class="lbl"><span><b>Roads &amp; public works:</b> Ksh 489M of Ksh 798M planned</span><span>61%</span></div><div class="track"><i style="width:61.3%"></i></div></div>
         <div class="bar-row"><div class="lbl"><span><b>Health products fund:</b> Ksh 100M of Ksh 500M proposed</span><span>20%</span></div><div class="track"><i style="width:20%"></i></div></div>
-        <p class="note">Source: Nyamira County Fiscal Strategy Paper 2026/27, popular version [4]</p>
+        <p class="note">Source: Nyamira County Fiscal Strategy Paper 2026/27, popular version</p>
       </div>
       <div class="prose">
         <h3 style="font-size:1.2rem">What residents tell us</h3>
         <p><b>"There are no drugs."</b> Patients arrive at Level 4 hospitals and are sent to buy medicine and supplies in private chemists.</p>
-        <p><b>Roads that swallow vehicles.</b> In November 2025 residents marched on the Manga–Mote–Momwamu road, where vehicles stick in mud every rainy season despite years of promises to tarmac it [5].</p>
-        <p><b>Unpaid debts that kill local business.</b> More than Ksh 260 million of the county's pending bills are over two years old. Local contractors and suppliers who did the work are still waiting [3].</p>
-        <p><b>Own revenue is collapsing.</b> Locally collected revenue was budgeted at Ksh 300M in 2024/25 and Ksh 150M in 2025/26. That leaves the county almost entirely dependent on Nairobi [4].</p>
+        <p><b>Roads that swallow vehicles.</b> In November 2025 residents marched on the Manga–Mote–Momwamu road, where vehicles stick in mud every rainy season despite years of promises to tarmac it.</p>
+        <p><b>Unpaid debts that kill local business.</b> More than Ksh 260 million of the county's pending bills are over two years old. Local contractors and suppliers who did the work are still waiting.</p>
+        <p><b>Own revenue is collapsing.</b> Locally collected revenue was budgeted at Ksh 300M in 2024/25 and Ksh 150M in 2025/26. That leaves the county almost entirely dependent on Nairobi.</p>
         <p><b>Young people with no work.</b> Graduates and school-leavers ride boda bodas or leave for Nairobi and Kisumu because there are no jobs at home.</p>
       </div>
     </div>
@@ -463,7 +582,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 6 PILLARS INDEX -->
-<section class="page dark" id="pillars">
+<section class="page dark photo" id="pillars" style="--bg:url(img/pillars.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">The 12 Pillars of Change</p>
@@ -488,16 +607,16 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 7 PILLAR 1 -->
-<section class="page pillar" id="p1">
+<section class="page pillar dark photo split" id="p1" style="--bg:url(img/health.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">01</span><div class="head" style="margin:0"><span class="pagenum">Pillar One</span><h2>Healthcare360 Nyamira</h2><p class="lede">A county health system that works from the village health promoter to the referral hospital.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Medicine stock-outs send patients to private chemists. The county's health products fund for 2026/27 was cut to Ksh 100M from Ksh 500M proposed [4].</li>
-          <li>The medical services development budget is Ksh 340M against Ksh 1.55 billion requested, which delays CT and MRI scanners, X-ray, eye units and oxygen plants [4].</li>
-          <li>There are only 14 health workers per 10,000 residents, and maternal mortality is 349 per 100,000 births [2].</li>
+          <li>Medicine stock-outs send patients to private chemists. The county's health products fund for 2026/27 was cut to Ksh 100M from Ksh 500M proposed.</li>
+          <li>The medical services development budget is Ksh 340M against Ksh 1.55 billion requested, which delays CT and MRI scanners, X-ray, eye units and oxygen plants.</li>
+          <li>There are only 12 health workers per 10,000 residents, and maternal mortality is 349 per 100,000 births.</li>
           <li>Hospital equipment breaks down and stays broken, with no maintenance plan.</li>
         </ul>
         <div><span class="fig">Ksh 100M</span><p class="note">Health products fund ceiling 2026/27, down from Ksh 500M proposed</p></div>
@@ -518,8 +637,23 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
+<!-- FLAGSHIP: hospital -->
+<section class="page dark photo flag" id="hospital" style="--bg:url(img/hospital.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">Flagship project · Health</p>
+      <h2>A new hospital Dr Gideon will build</h2>
+      <ul class="flaglist"><li>A new hospital for Nyamira, built close to the people who need it</li><li>Modern care in every ward catchment area</li></ul>
+    </div>
+    <div>
+      <p class="statement">Dr Gideon will build the new hospital for Nyamira.</p>
+      <p class="caption">Artist's impression</p>
+    </div>
+  </div>
+</section>
+
 <!-- 8 PILLAR 2 -->
-<section class="page pillar dark" id="p2">
+<section class="page pillar dark photo split" id="p2" style="--bg:url(img/roads.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">02</span><div class="head" style="margin:0"><span class="pagenum">Pillar Two</span><h2>Roads That Last</h2><p class="lede">Every farm, school and clinic within reach of a road that stays open in the long rains.</p></div></div>
     <div class="cols">
@@ -527,8 +661,8 @@ footer .brand{color:var(--on-dark)}
         <h4>The challenge</h4>
         <ul>
           <li>Feeder roads turn to mud every rainy season, and tea and bananas rot before they reach buyers.</li>
-          <li>Residents protested on the Manga–Mote–Momwamu road in November 2025 after years of unfulfilled tarmac promises [5].</li>
-          <li>The 2026/27 roads development ceiling is Ksh 489M against Ksh 798M planned [4].</li>
+          <li>Residents protested on the Manga–Mote–Momwamu road in November 2025 after years of unfulfilled tarmac promises.</li>
+          <li>The 2026/27 roads development ceiling is Ksh 489M against Ksh 798M planned.</li>
           <li>Roads are graded once and then left to wash away. Culverts and bridges fail.</li>
         </ul>
         <div><span class="fig">61%</span><p class="note">Share of the planned roads development budget actually funded, 2026/27</p></div>
@@ -543,22 +677,39 @@ footer .brand{color:var(--on-dark)}
           <li><b>Local contractors, paid on time.</b> Reserve labour-based works for youth and women groups, and pay certified work within 60 days.</li>
           <li><b>Bridges and footbridges</b> on river crossings where children cross to school.</li>
         </ol>
+        <p class="pledge"><b>Flagship pledge:</b> Dr Gideon will build the stalled Manga–Mote–Momwamu road into a modern tarmacked road.</p>
         <p class="pledge">Pledge: every road contract, its cost and its progress posted online and on the ward notice board.</p>
+        <figure class="impression" style="margin:6px 0 0"><img src="img/road-impression.webp" alt="Artist's impression of a new tarmac road through Nyamira's tea hills" loading="lazy" width="570" height="864"><figcaption class="caption">Artist's impression</figcaption></figure>
       </div>
     </div>
   </div>
 </section>
 
+<!-- FLAGSHIP: roads-failing -->
+<section class="page dark photo flag" id="roads-failing" style="--bg:url(img/roads-failing.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">The roads today</p>
+      <h2>Our roads are failing us</h2>
+      <ul class="flaglist"><li>Matatus stuck in mud for days</li><li>Boda boda riders choking on dust</li><li>Accidents on broken, unmaintained roads</li></ul>
+    </div>
+    <div>
+      <p class="statement">Dr Gideon pledges to fix the roads so they stop swallowing vehicles.</p>
+      <p class="caption">Illustrative image</p>
+    </div>
+  </div>
+</section>
+
 <!-- 9 PILLAR 3 -->
-<section class="page pillar" id="p3">
+<section class="page pillar dark photo split" id="p3" style="--bg:url(img/water.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">03</span><div class="head" style="margin:0"><span class="pagenum">Pillar Three</span><h2>Clean Water for Every Home</h2><p class="lede">Our hills are full of springs and rivers. No family should walk for dirty water.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Only 51.5% of households have safe drinking water [2].</li>
-          <li>The 2026/27 water development ceiling is Ksh 55M against Ksh 441M planned, the deepest cut of any major sector [4].</li>
+          <li>Only 32% of households now have safe drinking water, down from 51.5% in 2019.</li>
+          <li>The 2026/27 water development ceiling is Ksh 55M against Ksh 441M planned, the deepest cut of any major sector.</li>
           <li>Water projects stall half-built, and boreholes break and are abandoned.</li>
           <li>Women and girls lose hours each day fetching water, and waterborne disease fills clinics.</li>
         </ul>
@@ -580,19 +731,19 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 10 PILLAR 4 -->
-<section class="page pillar dark" id="p4">
+<section class="page pillar dark photo split" id="p4" style="--bg:url(img/farming.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">04</span><div class="head" style="margin:0"><span class="pagenum">Pillar Four</span><h2>Farming That Pays</h2><p class="lede">Most Nyamira families farm. Farming should make them richer, not poorer.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Tea and bananas are our main cash crops [1], but farmers sell raw produce at low farm-gate prices to middlemen.</li>
-          <li>The crop development budget for 2026/27 is Ksh 145M, down from Ksh 318M the year before [4].</li>
+          <li>Tea and bananas are our main cash crops, but farmers sell raw produce at low farm-gate prices to middlemen.</li>
+          <li>The crop development budget for 2026/27 is Ksh 145M, down from Ksh 318M the year before.</li>
           <li>Farms keep shrinking through subdivision, soil is tired, and fertiliser and seed are expensive.</li>
           <li>There are too few extension officers, and farmers face pests and climate shocks alone.</li>
         </ul>
-        <div><span class="fig">73%</span><p class="note">Share of households engaged in farming [2]</p></div>
+        <div><span class="fig">73%</span><p class="note">Share of households engaged in farming</p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -610,8 +761,37 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
+<!-- FLAGSHIP: sironga-today -->
+<section class="page dark photo flag" id="sironga-today" style="--bg:url(img/sironga-today.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">Sironga, Nyamira</p>
+      <h2>Sironga Industrial Zone today</h2>
+      <ul class="flaglist"><li>Stalled promises and unfinished buildings</li><li>Overgrown land where factories were planned</li><li>Farmers still selling raw produce far from local markets</li></ul>
+    </div>
+    <div>
+      <p class="statement">Nyamira deserves factories that work, not ruins.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FLAGSHIP: sironga -->
+<section class="page dark photo flag" id="sironga" style="--bg:url(img/sironga-hub.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">Flagship project · Farming</p>
+      <h2>Sironga: a modern value-addition hub</h2>
+      <ul class="flaglist"><li>Tea processing from Tombe and Nyankoba tea factories</li><li>Bananas, avocado and dairy processed locally</li><li>Pyrethrum newly introduced to Nyamira</li></ul>
+    </div>
+    <div>
+      <p class="statement">Dr Gideon will introduce pyrethrum to Nyamira.</p>
+      <p class="caption">Artist's impression</p>
+    </div>
+  </div>
+</section>
+
 <!-- 11 PILLAR 5 -->
-<section class="page pillar" id="p5">
+<section class="page pillar dark photo split" id="p5" style="--bg:url(img/youth-education.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">05</span><div class="head" style="margin:0"><span class="pagenum">Pillar Five</span><h2>Youth Jobs and Enterprise</h2><p class="lede">Our young people are educated and ready. They need work, tools and a fair chance.</p></div></div>
     <div class="cols">
@@ -641,19 +821,19 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 12 PILLAR 6 -->
-<section class="page pillar dark" id="p6">
+<section class="page pillar dark photo split" id="p6" style="--bg:url(img/youth-education.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">06</span><div class="head" style="margin:0"><span class="pagenum">Pillar Six</span><h2>Education and Skills</h2><p class="lede">From the first ECDE classroom to the vocational college, every child learns and every youth gains a trade.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Secondary-school attendance was 47.9% in 2015/16 [2].</li>
+          <li>Secondary-school attendance was 47.9% in 2015/16.</li>
           <li>ECDE centres lack trained teachers, meals and materials, and ECDE teachers' terms are insecure.</li>
           <li>Vocational training centres are underfunded and teach outdated trades.</li>
           <li>Bursaries are thinly spread and often allocated by patronage.</li>
         </ul>
-        <div><span class="fig">47.9%</span><p class="note">Secondary net attendance, 2015/16 [2]</p></div>
+        <div><span class="fig">47.9%</span><p class="note">Secondary net attendance, 2015/16</p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -670,20 +850,35 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
+<!-- FLAGSHIP: university -->
+<section class="page dark photo flag" id="university" style="--bg:url(img/university.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">Flagship project · Education</p>
+      <h2>Nyamira University, built and completed</h2>
+      <ul class="flaglist"><li>Dr Gideon will build Nyamira University</li><li>He will complete the university for Nyamira's young people</li></ul>
+    </div>
+    <div>
+      <p class="statement">Dr Gideon will build and complete Nyamira University.</p>
+      <p class="caption">Artist's impression</p>
+    </div>
+  </div>
+</section>
+
 <!-- 13 PILLAR 7 -->
-<section class="page pillar" id="p7">
+<section class="page pillar dark photo split" id="p7" style="--bg:url(img/money-families.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">07</span><div class="head" style="margin:0"><span class="pagenum">Pillar Seven</span><h2>Clean Money, Open Books</h2><p class="lede">Every shilling belongs to the people of Nyamira. They have a right to see where it goes.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Pending bills stood at Ksh 582.7M on 30 June 2025, and Ksh 261M of that was more than two years old [3].</li>
-          <li>About 76% of the 2026/27 revenue comes from the national equitable share. Own-source revenue fell from Ksh 300M budgeted in 2024/25 to Ksh 150M in 2025/26 [4].</li>
-          <li>Recurrent costs take about 70% of spending, leaving about 30% for development [4].</li>
+          <li>Pending bills now stand at about Ksh 975M. On 30 June 2025 they were Ksh 582.7M, and Ksh 261M of that was more than two years old.</li>
+          <li>About 76% of the 2026/27 revenue comes from the national equitable share. Own-source revenue fell from Ksh 300M budgeted in 2024/25 to Ksh 150M in 2025/26.</li>
+          <li>Recurrent costs take about 70% of spending, leaving about 30% for development.</li>
           <li>Residents see money allocated but few finished projects.</li>
         </ul>
-        <div><span class="fig">Ksh 582.7M</span><p class="note">Total pending bills, 30 June 2025 [3]</p></div>
+        <div><span class="fig">Ksh 975M</span><p class="note">Unpaid pending bills today, campaign estimate</p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -702,19 +897,19 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 14 PILLAR 8 -->
-<section class="page pillar dark" id="p8">
+<section class="page pillar dark photo split" id="p8" style="--bg:url(img/money-families.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">08</span><div class="head" style="margin:0"><span class="pagenum">Pillar Eight</span><h2>Women, Families and Care</h2><p class="lede">A strong county is built on safe mothers, thriving women and cared-for elders.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Maternal mortality is 349 per 100,000 live births [2], even though most mothers deliver in health facilities.</li>
+          <li>Maternal mortality is 349 per 100,000 live births, even though most mothers deliver in health facilities.</li>
           <li>Women do most of the farm work but have little access to credit, land titles or markets.</li>
           <li>Elders, widows and people with disabilities are often left without support.</li>
-          <li>Child poverty affects about one in three children [2].</li>
+          <li>Child poverty affects about one in three children.</li>
         </ul>
-        <div><span class="fig">349</span><p class="note">Maternal deaths per 100,000 live births, 2019 [2]</p></div>
+        <div><span class="fig">349</span><p class="note">Maternal deaths per 100,000 live births, 2019</p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -732,7 +927,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 15 PILLAR 9 -->
-<section class="page pillar" id="p9">
+<section class="page pillar dark photo split" id="p9" style="--bg:url(img/safe-green.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">09</span><div class="head" style="margin:0"><span class="pagenum">Pillar Nine</span><h2>Safe and Ready County</h2><p class="lede">When disaster strikes, Nyamira will have a plan, trained people and vehicles that start.</p></div></div>
     <div class="cols">
@@ -762,19 +957,19 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 16 PILLAR 10 -->
-<section class="page pillar dark" id="p10">
+<section class="page pillar dark photo split" id="p10" style="--bg:url(img/safe-green.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">10</span><div class="head" style="margin:0"><span class="pagenum">Pillar Ten</span><h2>Land, Climate and Energy</h2><p class="lede">Protect the hills, rivers and soil that feed us, and bring power to every home.</p></div></div>
     <div class="cols">
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
-          <li>Only 43.2% of households have electricity [2].</li>
+          <li>Only 39% of households have electricity.</li>
           <li>Steep slopes, deforestation and encroachment on river banks cause soil loss and landslides.</li>
           <li>Changing rains hurt tea, bananas and maize yields.</li>
           <li>Land disputes and unclear titles hold back investment.</li>
         </ul>
-        <div><span class="fig">43.2%</span><p class="note">Households with electricity, 2019 [2]</p></div>
+        <div><span class="fig">39%</span><p class="note">Households with electricity, campaign estimate 2026</p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -792,7 +987,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 17 PILLAR 11 -->
-<section class="page pillar" id="p11">
+<section class="page pillar dark photo split" id="p11" style="--bg:url(img/markets.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">11</span><div class="head" style="margin:0"><span class="pagenum">Pillar Eleven</span><h2>Markets, Towns and Investment</h2><p class="lede">Planned towns and modern markets where business grows and traders are respected.</p></div></div>
     <div class="cols">
@@ -802,7 +997,7 @@ footer .brand{color:var(--on-dark)}
           <li>Traders sell in open, muddy markets without shade, water, toilets or lighting.</li>
           <li>Towns are growing without plans, drainage or waste collection.</li>
           <li>Investors find few incentives and slow licensing.</li>
-          <li>The two municipalities collect little revenue: about Ksh 96M combined in 2026/27 [4].</li>
+          <li>The two municipalities collect little revenue: about Ksh 96M combined in 2026/27.</li>
         </ul>
       </div>
       <div class="plan">
@@ -821,7 +1016,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 18 PILLAR 12 -->
-<section class="page pillar dark" id="p12">
+<section class="page pillar dark photo split" id="p12" style="--bg:url(img/markets.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">12</span><div class="head" style="margin:0"><span class="pagenum">Pillar Twelve</span><h2>Gusii Culture, Sport and Diaspora</h2><p class="lede">Proud of where we come from, connected to where our people have gone.</p></div></div>
     <div class="cols">
@@ -848,8 +1043,23 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
+<!-- FLAGSHIP: stadiums -->
+<section class="page dark photo flag" id="stadiums" style="--bg:url(img/stadium.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">Flagship project · Sport</p>
+      <h2>Manga and Nyamaiya stadiums, built and completed</h2>
+      <ul class="flaglist"><li>Stalled stadiums in Manga and Nyamaiya</li><li>Sports for every ward, finished and in use</li></ul>
+    </div>
+    <div>
+      <p class="statement">Dr Gideon will build and complete the stalled Manga and Nyamaiya stadiums.</p>
+      <p class="caption">Artist's impression</p>
+    </div>
+  </div>
+</section>
+
 <!-- 19 FIRST 100 DAYS -->
-<section class="page dark" id="first100" style="background:var(--leaf-2)">
+<section class="page dark photo split" id="first100" style="--bg:url(img/first100.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">The First 100 Days</p>
@@ -857,7 +1067,7 @@ footer .brand{color:var(--on-dark)}
     </div>
     <div class="days">
       <div><span class="when">Days 1–10</span><ul><li>Publish the full county debt and pending bills list</li><li>Freeze new tenders pending review</li><li>Emergency drug procurement for all hospitals</li></ul></div>
-      <div><span class="when">Days 11–30</span><ul><li>Audit of stalled projects, staff and equipment</li><li>Launch the county biomedical repair unit</li><li>Ward development forums in all 20 wards</li></ul></div>
+      <div><span class="when">Days 11–30</span><ul><li>Audit of stalled projects, staff and equipment</li><li>All medical systems and equipment up and running</li><li>Launch the county biomedical repair unit</li><li>Ward development forums in all 20 wards</li></ul></div>
       <div><span class="when">Days 31–60</span><ul><li>Digital revenue collection pilot in main markets</li><li>Begin pending bills payment schedule</li><li>Routine road maintenance crews deployed</li></ul></div>
       <div><span class="when">Days 61–100</span><ul><li>First public Governor's scorecard</li><li>Emergency operations plan drafted</li><li>Budget re-aligned to the 12 Pillars</li></ul></div>
     </div>
@@ -865,11 +1075,11 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- THE NEW NYAMIRA -->
-<section class="page" id="new">
+<section class="page dark photo split" id="new" style="--bg:url(img/vision.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">The New Nyamira</p>
-      <h2>Picture Nyamira in 2032</h2>
+      <h2>Picture Nyamira from 2027 and beyond</h2>
       <p class="lede">This is the county the 12 Pillars are built to deliver by the end of the first term. It is ambitious, and every part of it can be measured.</p>
     </div>
     <div class="vision">
@@ -883,8 +1093,23 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
+<!-- FLAGSHIP: airport -->
+<section class="page dark photo flag" id="airport" style="--bg:url(img/airport.webp)">
+  <div class="wrap">
+    <div class="head" style="margin:0">
+      <p class="eyebrow">Flagship project · Connection</p>
+      <h2>Nyamira Airways over Ekiendege Airport</h2>
+      <ul class="flaglist"><li>An airport at Ekiendege to open Nyamira to investors, visitors and the diaspora</li><li>Fresh produce flown to national and export markets</li></ul>
+    </div>
+    <div>
+      <p class="statement">Connecting Nyamira to the country and the world.</p>
+      <p class="caption">Artist's impression</p>
+    </div>
+  </div>
+</section>
+
 <!-- 20 CONSTITUENCIES -->
-<section class="page" id="wards">
+<section class="page dark photo split" id="wards" style="--bg:url(img/wards.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Four Constituencies, Twenty Wards</p>
@@ -901,7 +1126,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- 21 SCORECARD -->
-<section class="page" id="scorecard">
+<section class="page dark photo split" id="scorecard" style="--bg:url(img/scorecard.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Our Promise to You</p>
@@ -912,10 +1137,10 @@ footer .brand{color:var(--on-dark)}
       <table>
         <thead><tr><th>Pillar</th><th>What we will measure</th><th>Baseline today</th><th>Published</th></tr></thead>
         <tbody>
-          <tr><td>Health</td><td>Essential medicines in stock at every facility; equipment working</td><td>Health products fund cut to Ksh 100M [4]</td><td class="t">Quarterly</td></tr>
-          <tr><td>Roads</td><td>Kilometres graded, gravelled and maintained per ward</td><td>61% of roads plan funded [4]</td><td class="t">Quarterly</td></tr>
-          <tr><td>Water</td><td>Households with safe water; springs protected</td><td>51.5% safe water [2]</td><td class="t">Annually</td></tr>
-          <tr><td>Finance</td><td>Pending bills cleared; own-source revenue collected</td><td>Ksh 582.7M owed [3]</td><td class="t">Quarterly</td></tr>
+          <tr><td>Health</td><td>Essential medicines in stock at every facility; equipment working</td><td>Health products fund cut to Ksh 100M</td><td class="t">Quarterly</td></tr>
+          <tr><td>Roads</td><td>Kilometres graded, gravelled and maintained per ward</td><td>61% of roads plan funded</td><td class="t">Quarterly</td></tr>
+          <tr><td>Water</td><td>Households with safe water; springs protected</td><td>32% safe water</td><td class="t">Annually</td></tr>
+          <tr><td>Finance</td><td>Pending bills cleared; own-source revenue collected</td><td>Ksh 975M owed</td><td class="t">Quarterly</td></tr>
           <tr><td>Youth</td><td>Young people trained, placed or funded</td><td>To be set in first 100 days</td><td class="t">Annually</td></tr>
           <tr><td>Education</td><td>ECDE teachers on secure terms; bursary lists</td><td>To be set in first 100 days</td><td class="t">Annually</td></tr>
           <tr><td>Safety</td><td>Ambulance response times; emergency plan tested</td><td>No county emergency plan</td><td class="t">Annually</td></tr>
@@ -925,25 +1150,8 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
-<!-- 22 CAMPAIGN TRAIL -->
-<section class="page dark" id="trail">
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">On the Campaign Trail</p>
-      <h2>Coming home to listen</h2>
-      <p class="lede">Gideon will travel across Nyamira to meet residents, elders, farmers, traders and young people. Venues and times will be announced locally.</p>
-    </div>
-    <ul class="trail">
-      <li><span class="d">2025</span><div class="e"><b>Manga rally</b><span class="muted">A packed homecoming rally in Manga, where it all began.</span></div></li>
-      <li><span class="d">20 Dec 2026</span><div class="e"><b>Homecoming tour begins</b><span class="muted">Meetings in all four constituencies, with clan elders and community leaders.</span></div></li>
-      <li><span class="d">1 Jan 2027</span><div class="e"><b>New Year rally, Rigoma grounds, Kitutu Masaba</b><span class="muted">Presentation of the 12 Pillars of Change to the people.</span></div></li>
-      <li><span class="d">9 Jan 2027</span><div class="e"><b>Tour concludes</b><span class="muted">Listening sessions with youth, women's groups and traders.</span></div></li>
-    </ul>
-  </div>
-</section>
-
 <!-- 23 FAQ -->
-<section class="page" id="faq">
+<section class="page dark photo split" id="faq" style="--bg:url(img/trail.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Questions</p>
@@ -960,7 +1168,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- BE A CHANGE AGENT -->
-<section class="page dark" id="change">
+<section class="page dark photo split" id="change" style="--bg:url(img/join.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Get Involved</p>
@@ -985,14 +1193,14 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- VOLUNTEER -->
-<section class="page" id="volunteer">
+<section class="page dark photo split" id="volunteer" style="--bg:url(img/residents.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Join the Movement</p>
       <h2>Volunteer sign-up</h2>
       <p class="lede">Tell us where you are and how you would like to help. A ward coordinator will call you.</p>
     </div>
-    <form class="form" id="volForm" novalidate>
+    <form class="form on-dark" id="volForm" novalidate>
       <div class="frow">
         <label for="v-name">Full name<input id="v-name" name="name" required autocomplete="name"></label>
         <label for="v-phone">Phone (Safaricom/Airtel)<input id="v-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
@@ -1000,6 +1208,10 @@ footer .brand{color:var(--on-dark)}
       <div class="frow">
         <label for="v-const">Constituency<select id="v-const" name="constituency" required></select></label>
         <label for="v-ward">Ward<select id="v-ward" name="ward" required disabled><option value="">Choose constituency first</option></select></label>
+      </div>
+      <div class="frow">
+        <label for="v-station">Polling station<select id="v-station" name="station" disabled><option value="">Choose ward first</option></select></label>
+        <label for="v-stream">Stream<select id="v-stream" name="stream" disabled><option value="">Choose polling station first</option></select></label>
       </div>
       <div class="frow">
         <label for="v-village">Village or sub-location<input id="v-village" name="village"></label>
@@ -1025,12 +1237,12 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- POLLING STATION AGENTS -->
-<section class="page dark" id="agents">
+<section class="page dark photo split" id="agents" style="--bg:url(img/wards.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Protect the Vote</p>
       <h2>Polling station agents</h2>
-      <p class="lede">Every stream in every polling station needs a trained agent from 6 a.m. until the results form is signed. Choose your constituency tab, then your ward, polling station and stream.</p>
+      <p class="lede">Nyamira has 354 polling centres with 641 streams and 323,047 registered voters. Every stream needs a trained agent from 6 a.m. until the results form is signed. Choose your constituency tab, then your ward, polling station and stream.</p>
     </div>
     <div class="trace" aria-label="Agent location">
       <span><small>County</small><b>Nyamira</b></span>
@@ -1072,7 +1284,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- CONTACT -->
-<section class="page" id="contact">
+<section class="page dark photo split" id="contact" style="--bg:url(img/hero.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Contact</p>
@@ -1101,7 +1313,7 @@ footer .brand{color:var(--on-dark)}
 </section>
 
 <!-- DONATE -->
-<section class="page dark" id="donate">
+<section class="page dark photo split" id="donate" style="--bg:url(img/markets.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Donate</p>
@@ -1139,13 +1351,33 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
+<!-- VOTE -->
+<section class="page dark photo" id="vote" style="--bg:url(img/trail.webp)">
+  <div class="wrap vote-grid">
+    <div class="prose" style="max-width:none">
+      <p class="eyebrow">A humble request</p>
+      <h2>Nyamira, I humbly ask for <span class="gold">your vote.</span></h2>
+      <p class="lede" style="max-width:56ch">To every mother and father, every farmer and trader, every young person and every elder in our twenty wards: I come home to serve, not to be served. With your vote, together we will heal Nyamira and build the new Nyamira.</p>
+      <blockquote lang="guz" style="margin:4px 0;padding:14px 0 14px 18px;border-left:4px solid var(--banana);font-size:1.18rem;line-height:1.55;color:#fff">Abana ba minto, nachire na ogwa'kenosi nkobasaba amagoro! Kamoranche ing'a okoboko kwaini buna omorai oino e'gabana. Ase oboamo nimbatinyie amariga. Ninyeagache Nyamira etogwenere naende egwenere ebiare biria bigocha. Nyasae abasesenie botambe.</blockquote>
+      <p class="slogan">Omonto, Nabanto.<br>Omonto bw'Abanto.</p>
+      <p class="ballotbox"><i aria-hidden="true"></i>Vote Dr. Gideon Moseti Nyakundi · Governor, Nyamira 2027</p>
+      <p style="font-size:1.05rem">Thank you, and God bless Nyamira.</p>
+      <div class="btns" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:8px">
+        <a class="btn red" href="#agents">Protect the vote: be an agent</a>
+        <a class="btn ghost" href="#volunteer">Volunteer in my ward</a>
+      </div>
+    </div>
+    <img class="portrait" src="img/portrait-join.webp" alt="Dr. Gideon Moseti Nyakundi" width="640" height="628" loading="lazy">
+  </div>
+</section>
+
 <!-- CAMPAIGN DESK (owner only) -->
 <section class="page" id="desk" hidden>
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Campaign Desk · visible only to you</p>
       <h2>Sign-ups and polling stations</h2>
-      <p class="lede">Volunteers, agents and pledges submitted on this site. Load each ward's polling stations from the IEBC register below and they will appear in the agent form.</p>
+      <p class="lede">Volunteers, agents and pledges submitted on this site. All 354 polling centres from the IEBC gazette are built in. Use the polling stations tab only to correct a ward's list; your saved version replaces the built-in one for that ward.</p>
     </div>
     <div class="grid3" id="deskCounts"></div>
     <div class="tabs" id="deskTabs" style="margin-top:28px">
@@ -1166,22 +1398,6 @@ footer .brand{color:var(--on-dark)}
   </div>
 </section>
 
-<!-- SOURCES -->
-<section class="page sources" id="sources">
-  <div class="wrap">
-    <div class="head" style="margin-bottom:24px">
-      <p class="eyebrow">Sources</p>
-      <h3>Where our figures come from</h3>
-    </div>
-    <ol>
-      <li><a href="https://en.wikipedia.org/wiki/Nyamira_County" target="_blank" rel="noopener">Nyamira County overview (2019 Census population, area, constituencies, wards, main crops)</a></li>
-      <li><a href="https://ipfglobal.or.ke/wp-content/uploads/2023/10/Nyamira-County-Kenya-County-Fact-Sheets-3rd-Edition-by-CRA.pdf" target="_blank" rel="noopener">Commission on Revenue Allocation, Kenya County Fact Sheets, 3rd Edition: Nyamira</a></li>
-      <li><a href="https://www.nyamira.go.ke/static/documents/25_05_2026_PENDING_BILLS_SUMMARY_FINAL%20.pdf" target="_blank" rel="noopener">County Government of Nyamira, Pending Bills Summary as at 30 June 2025</a></li>
-      <li><a href="https://www.nyamira.go.ke/static/documents/23_02_2026_02_41_12_pm_Popular_version-1.pdf" target="_blank" rel="noopener">County Government of Nyamira, County Fiscal Strategy Paper 2026/27, popular version</a></li>
-      <li><a href="https://www.citizen.digital/news/rutos-unfulfilled-promise-to-fix-roads-sparks-protests-in-nyamira-bungoma-n372860" target="_blank" rel="noopener">Citizen Digital, residents protest the state of the Manga–Mote–Momwamu road (November 2025)</a></li>
-    </ol>
-  </div>
-</section>
 </main>
 
 <footer>
@@ -1202,6 +1418,8 @@ footer .brand{color:var(--on-dark)}
     "Borabu":["Mekenene","Esise","Nyansiongo","Kiabonyoru"]
   };
   const CONSTS=Object.keys(WARDS);
+  /* IEBC Gazette, 1 July 2022: Nyamira County polling centres. Per ward: code (county+constituency+ward) and centres as [name, centre code, [registered voters per stream]] */
+  const IEBC={"wards":{"Rigoma":{"code":"0462701346","centres":[["Rikenye D.E.B Primary School","001",[603]],["Embaro D.O.K Primary School","002",[472,472]],["Keroka Farmers Co-Op Society","003",[590,590,590,590,589]],["Nyasore S.D.A Primary School","004",[516]],["Bocharia P.A.G Primary School","005",[542,541]],["Kierira Dok Primary School","006",[511,510]],["Nyanchonori Dok Primary School","007",[503,503,502]],["Mong'oni D.E.B Primary School","008",[526,525]],["Nyankoba Sda Primary School","009",[646]],["Biticha D.O.K Primary School","010",[417,416]],["Kenyerere Dok Primary School","011",[387,387]],["Borabu D.E.B Primary School","012",[511,511]],["Mobamba Tea Buying Centre","013",[457,457]],["Riabore D.O.K Primary School","014",[454]],["Kegogi P.A.G Primary School","015",[358,358]],["Matangi D.O.K Primary School","016",[691]],["Riyabe D.E.B Primary School","017",[408,408]],["Botana D.O.K Primary School","018",[262]],["Nyaigesa D.O.K Primary School","019",[351,350]],["Eronge D.O.K Priimary School","020",[407,407]],["Metamaywa Primary School","021",[483,483]],["Itongo Sengera D.E.B Primary School","022",[524]]]},"Gachuba":{"code":"0462701347","centres":[["Bonyunyu D.O.K Primary School","023",[413,412]],["Nyagancha D.E.B Primary School","024",[625,625]],["Rigoma D.E.B Primary School","025",[617,616]],["Miriri D.O.K Primary School","026",[678,677]],["Sengereri D.E.B Primary School","027",[515,514]],["Guja D.O.K Primary School","028",[529,528]],["Kebirichi D.E.B Primary School","029",[627]],["Girango D.O.K Primary School","030",[499,499]],["Geteni D.O.K Primary School","031",[555]],["Kiamogiti Primary School","032",[495,494]],["Kiomonso Primary School","033",[374,374]],["Nyasumi D.O.K Primary School","034",[360,359]],["Nyabigege D.O.K Primary School","035",[492,492]],["Girango Farmers' Co-Operative Society","036",[563,563]],["Nyaibasa D.O.K Primary School","037",[363,362]],["Riamisi Tea Buying Centre","038",[409,409]],["Nyariacho D.E.B Primary School","039",[378,377]],["Nyangorora Deb Primary School","112",[276]],["Kegogi D.O.K Primary School","113",[176]]]},"Kemera":{"code":"0462701348","centres":[["Kerora D.O.K Primary School","040",[402,401]],["Kiomakondo D.O.K Primary School","041",[355,354]],["Kiabiraa D.E.B Primary School","042",[394,394]],["Kerongo D.O.K Primary School","043",[661,661]],["Mokorongosi Primary School","044",[433,433]],["Nyachichi D.O.K Primary School","045",[393,392]],["Kiendege D.E.B Primary School","046",[515,514]],["Irianyi D.E.B Primary School","047",[493]],["Ikonge S.D.A Primary School","048",[556,556]],["Nyagechenche D.O.K Primary School","049",[557,556]],["Ekerubo D.O.K Primary School","050",[519,519,518]],["Moitunya S.D.A Primary School","051",[506,505,505]],["Mokwerero D.E.B Primary School","052",[470,470]],["Motembe Dok Primary School","054",[354,354]],["Riomoro Dok Primary School","055",[559,559,559,558]],["Nyangena D.O.K. Primary School","056",[542]],["Amaiga Tea Buying Centre","057",[381,381]],["Entanda D.E.B Primary School","058",[691]],["Kebogora D.O.K Primary School","114",[294]]]},"Magombo":{"code":"0462701349","centres":[["Riong'uti D.O.K Primary School","059",[458,458]],["Sirate D.O.K Primary School","060",[469]],["Nyamwanga D.O.K Primary School","061",[516,516]],["Riogoro P.A.G Primary School","062",[417,416]],["Bogwendo P.A.G Primary School","063",[561,561]],["Nyambogo S.D.A Primaryschool","064",[443,442]],["Nyambaria D.E.B Primary School","065",[630,630,630]],["Riaranga D.O.K Primary School","066",[506,506]],["Riamachana D.E.B Primary School","067",[547]],["Kenyerere P.A.G Primary School","068",[700]],["Nyamanagu Tea Buying Centre","069",[442,442]],["Sirate Tea Buying Centre (Tombe)","070",[460]],["Kenyamware D.E.B Primary School","071",[676]],["Gekano D.O.K Primary School","072",[385,384]],["Riegechure D.E.B Primary School","073",[639]],["Nyaguku D.O.K Primary School","074",[464]],["Chitago Tea Buying Centre","115",[162]],["Kiamarita Tea Buying Centre","116",[223]]]},"Manga":{"code":"0462701350","centres":[["Irianyi Tea Buying Centre","053",[626,625]],["Gesure E.L.C.K Primary School","075",[396,396]],["Nyakongo D.O.K Primary. School","076",[559,558]],["Ogango D.E.B Primary School","077",[374,374]],["Morako D.E.B Primary School","078",[582,582]],["Kiogutwa S.D.A Primary School","079",[572,571]],["Tombe S.D.A Primary School","080",[650,649,649]],["Ikobe D.E.B Primary School","081",[519,519,519]],["Sengera D.E.B Primary School","082",[628,627]],["Nyaisa S.D.A Primary School","083",[542,542,542]],["Nyamare S.D.A Primary School","084",[452]],["Iringa Tea Buying Centre","085",[556,556]],["Nyabioto Tea Buying Centre","086",[505,504]],["Manga Tea Collection Centre","087",[555,555]],["Nyamache Mange S.D.A Primary School","088",[608]],["Gesonso Coffee Factory","089",[556,556]],["Nyaikuro D.E.B Primary School","090",[604,604]]]},"Gesima":{"code":"0462701351","centres":[["Gesima Primary School","091",[531,531,530,530]],["Riamoni D.E.B Primary School","092",[484,484]],["Ritibo D.E.B Primary School","093",[427,427]],["Nyatieno D.E.B Primary School","094",[614,613]],["Nyamakoroto D.O.K Primary School","095",[462,462]],["Iranya P.A.G Primary School","096",[448,447]],["Mosobeti D.O.K Primary School","097",[539,539]],["Esani D.E.B Primary School","098",[475,474]],["Mochenwa D.E.B Primary School","099",[509,508]],["Karantini S.D.A Primary School","100",[534]],["Machururiati Primary School","101",[439,439]],["Risa D.E.B Primary School","102",[521]],["Matongo Tea Buying Centre","103",[469]],["Nyabiosi (K) D.O.K Primary School","104",[670,670]],["Riakworo S.D.A Primary School","105",[697]],["Nyakongo D.E.B Primary School","106",[398,398]],["Nyabuya D.E.B Primary School","107",[611]],["Sungututa Primary School","108",[542]],["Enchoro Primary School","109",[588,588,588]],["Matutu P.A.G Primary School","110",[362]],["Nyabogoye D.O.K. Primary School","111",[338]],["Kebuko D.O.K Primary School","117",[171]]]},"Nyamaiya":{"code":"0462711352","centres":[["Tonga Deb Pri Sch","001",[556,556]],["Matierio Deb Pri Sch","002",[574]],["Gekomoni Deb Pri Sch","003",[577]],["Marara Sda Pri Sch","004",[377,377]],["Getaari Deb Pri Sch","005",[578,577]],["Rangenyo Dok Pri Sch","006",[528,528,528]],["Bondeka Elck Pri Sch","007",[667]],["Egesieri Dok Pri Sch","008",[596,596,595]],["Kemasare Dok Pri Sch","009",[576]],["Omokonge Deb Pri Sch","010",[635]],["Ratandi Deb Pri Sch","011",[498]],["Miruka Market","012",[599,598,598]],["Masosa Aic Pri Sch","013",[575,575]],["Bugo Dok Pri Sch","014",[562]],["Bonyaiguba Dok Pri Sch","015",[615,614]],["Rateti Dok Pri Sch","016",[563]],["Nyaigesa Elck Pri Sch","017",[398]],["Mang'ong'o Elck Pri Sch","018",[568]],["Nyasore Market","085",[247]]]},"Bogichora":{"code":"0462711353","centres":[["Bosiango Elck Pri Sch","019",[679,679]],["Makairo Deb Pri Sch","020",[485,484]],["Ibucha Deb Pri Sch","021",[461,460]],["Sironga Deb Pri Sch","022",[425,424]],["Kenyambi Deb Pri Sch","023",[571,570]],["Otanyore Elck Pri Sch","024",[656,656]],["Etono Dok Pri Sch","025",[444,443]],["Nyamotentemi Dok Pri Sch","026",[448,448]],["Gianchore Pag Pri Sch","027",[497,497,496]],["Nyaisa Dok Pri Sch","028",[595,595]],["Bomorito Pag Pri Sch","029",[696]],["Embonga Dok Pri Sch","030",[614,613]],["Bonyunyu Sda Pri Sch","031",[561]],["Nyameru Deb Pri Sch","032",[586]],["Ikurucha Dok Pri Sch","033",[389,388]],["Ikonge Deb Pri Sch","034",[427]],["Omosasa Deb Pri Sch","035",[445]],["Getare Tbc (Tea Buying Centre)","036",[394,394]],["Geta Pag Pri Sch","037",[564,563]],["Mongorisia Dok Pri Sch","038",[549,549]],["Kiambere Deb Pri Sch","039",[566]],["Ekerama Deb Pri Sch","040",[465]],["Ramba Elck Pri Sch","041",[602]],["Marindi Deb Pri Sch","042",[445,444]]]},"Bosamaro":{"code":"0462711354","centres":[["Nyantaro Dok Pri Sch","043",[364,363]],["Kianyabao Deb Pri Sch","044",[612]],["Kiang'inda Deb Pri Sch","045",[386,386]],["Riamandere Deb Pri Sch","046",[365,365]],["Nyakoria Deb Pri Sch","047",[442,442]],["Nyachogochogo Deb Pri Sch","048",[455,455]],["Gucha Sda Pri Sch","049",[396,396]],["Moruga Elck Pri Sch","050",[407,407]],["Kianungu Pag Pri Sch","051",[481,481]],["Tinga Dok Pri Sch","052",[610,610,610]],["Gesiaga Deb Pri Sch","053",[591,590]],["Kuura Deb Pri Sch","054",[517,516]],["Girigiri Deb Pri Sch","055",[452,451]],["Nyangena Tbc (Tea Buying Centre)","056",[459,458]],["Ekoro Pag Pri Sch","057",[407,406]],["Riakimai Deb Pri Sch","058",[519]],["Kegogi Deb Pri Sch","059",[426]],["Igenaitambe Deb Pri Sch","060",[391,390]],["Nyagachi Deb Primary School","061",[654,654]],["Motagara Deb Primary School","062",[680,679]],["Enchoro Dok Primary School","063",[532,531]],["Nyanturago Primary School","086",[169]],["Ikobe Tea Buying Centre","087",[523]]]},"Bonyamatuta":{"code":"0462711355","centres":[["Kebirigo Sda Pri Sch","064",[690,690,690,690]],["Nyakeore Deb Pri Sch","065",[495,495,494]],["Mobamba Dok Pri Sch","066",[632,631]],["Riasindani Deb Pri Sch","067",[415]],["Kianyabongere Pag Pri Sch","068",[391]],["Kabatia Deb Pri Sch","069",[691]],["Nyainogu Deb Pri Sch","070",[490,490]],["Rirumi Sda Pri Sch","071",[384,383]],["Ekenyoro Deb Pri Sch","072",[685,685]],["Kenyenya Sda Pri Sch","073",[479,479]],["Nyakemincha D.O.K Pri. Sch","074",[409,408]],["Nyabisimba Deb Pri Sch","075",[478,478]],["Nyamwetureko Dok Pri Sch","076",[551,551,550]],["Bosose Elck Pri Sch","077",[476,475]]]},"Township":{"code":"0462711356","centres":[["Bomondo C.O.G Pri Sch","078",[682,681]],["Nyairicha Deb Pri Sch","079",[502,502,501]],["Gesore Pag Pri Sch","080",[502,502,502]],["Nyamira Deb Pri Sch","081",[698,698,698,697,697,697,697,697]],["Tente Cog Pri Sch","082",[591,591,591,590]],["Nyangoso Deb Pri Sch","083",[694,693]],["Bundo Dok Pri Sch","084",[658,657]]]},"Itibo":{"code":"0462721357","centres":[["Tombe Primary School","001",[528,527]],["Iteresi Primary School","002",[682]],["Nyagokiani Primary School","003",[421,421]],["Chaina Primary School","004",[494]],["Nyamauro Primary School","005",[511,510]],["Nyasio Primary School","006",[542]],["Omokirondo Pri. Sch","007",[436]],["Kiangombe Pri. Sch","008",[505]],["Matierio Pri. Sch","009",[367]],["Kebabe Pri. Sch","010",[416,416]],["Nyamwanchania Pri. Sch","011",[643,642]],["Enkinda Pri. Sch","012",[576,575,575]],["Getengereirie Pri. Sch","013",[477,477]],["Getangwa Pri. Sch","014",[653]],["Kenyoro Pri. Sch","015",[668,667]],["Ekerubo Pri. Sch","016",[611,610]]]},"Bomwagamo":{"code":"0462721358","centres":[["Mageri Pri. Sch","017",[379,379]],["Monga Pri. Sch","018",[457,456]],["Nyanchoka Pri. Sch","019",[560,559]],["Eronge Pri. Sch","020",[562,561,561]],["Kiabiraa Pri. Sch","021",[408,408]],["Itibo Pri. Sch","022",[698]],["Etono Pri. Sch","023",[419]],["Kebariga Pri. Sch","024",[377,376]],["Nyakenimo Pri. Sch","025",[462,462]],["Kiomachingi Pri. Sch","026",[308]],["Monyara Pri. Sch","027",[655]],["Ntana Pri. Sch","028",[433]],["Nyamonuri Deb Primary School","074",[502]],["Kegogi Deb Primary School","075",[170]]]},"Bokeira":{"code":"0462721359","centres":[["Nyaututu Pri. Sch","029",[647,646]],["Matongo Pri. Sch","030",[500,499,499]],["Sakwa Pri. Sch","031",[463,463]],["Orwaki Pri. Sch","032",[378,378]],["Nyamonge Pri. Sch","033",[665,665]],["Gesura Pri. Sch","034",[541,541]],["Omobiro Pri. Sch","035",[591]],["Kiomanga Pri. Sch","036",[452]],["Gekonge Pri. Sch","037",[379,378]],["Giosoya Pri. Sch","038",[491]],["Nyaobe Pri. Sch","039",[361,361]],["Nyabione Pri. Sch","040",[456,455]],["Egetonto Pri. Sch","041",[426,425]],["Kiabora Pri. Sch","042",[208]],["Nyamusi Pri. Sch","043",[534]],["Riomooria Pri. Sch","044",[386,386]],["Ongera Deb Primary School","076",[226]],["Engoto Primary School","077",[195]]]},"Magwagwa":{"code":"0462721360","centres":[["Esanige Pri. Sch","045",[606,606,605]],["Gitwebe Pri. Sch","046",[425,425]],["Nyakenyomisia Pri. Sch","047",[485,485]],["Misambi Pri. Sch","048",[469,469]],["Mogongo Pri. Sch","049",[412,412]],["Getare Pri. Sch","050",[409,408]],["Esamba Pag Pri. Sch","051",[553,552]],["Riomego Pag Pri. Sch","052",[581]],["Rianyamage Pri. Sch","053",[560,560]],["Geturi Pri. Sch","054",[602]],["Nyamatuta Pri. Sch","055",[453,453]],["Nyabwororo Pri. Sch","056",[475]],["Kenyerere Pri. Sch","057",[398,398]],["Mesobwa Pri. Sch","058",[357,356]],["Magwagwa Deb Primary School","078",[126]],["Morembe Primary School","079",[140]]]},"Ekerenyo":{"code":"0462721361","centres":[["Nyamotaro Pri. Sch","059",[434]],["Maagonga Pri. Sch","060",[377,376]],["Omorare Pri. Sch","061",[300]],["Ekerenyo Edn Centre","062",[692,692,691]],["Kiamogake Pri. Sch","063",[553]],["Kea Deb Pri. Sch","064",[369,369]],["Mwancha Pri. Sch","065",[486,486]],["Gekendo Dok Pri. Sch","066",[470,469,469]],["Kenguso Pri. Sch","067",[523]],["Nyairang'a Pri. Sc","068",[494,494]],["Kiemuma Pri. Sch","069",[352,351]],["Nyameko Pri. Sch","070",[269]],["Gesweswe Pri. Sch","071",[317]],["Ikonge Pri. Sch","072",[619,618,618,618,618,618]],["Chisaaria Deb Pri. Sch","073",[531]]]},"Mekenene":{"code":"0462731362","centres":[["Mwongori Youth Polytechnic","001",[569,568,568,568]],["Mwongori Primary School","002",[374,373]],["Nyagacho Primary School","003",[466,466]],["Mogusii Primary School","004",[412,412]],["Nyaronge Primary School","005",[384]],["Mekenene Primary School","006",[338]],["Nyankono Primary School","007",[500]],["Kerito Primary School","008",[343]],["Kerumbe Tea Buying Centre","009",[389]],["Sotik Highlands Primary School","010",[446]],["Kitaru D.O.K Primary School","011",[393,392]],["Kiptenden Primary School","012",[165]],["Kipkebe Primary School","013",[546,545]],["Magura D.E.B Primary School","014",[439]],["Nyankono Tea Buying Centre","066",[435]],["Riabaruoti Market","067",[639]]]},"Kiabonyoru":{"code":"0462731363","centres":[["Nyangoge Primary School","015",[626,626,625]],["Ibara Primary School","016",[673,673,673]],["Nyaramba Primary School","017",[564,564,563,563]],["Chinche Primary School","018",[381,381]],["Biego Primary School","019",[538,537]],["Endiba D.E.B Primary School","020",[623,622]],["Kerema Primary School","021",[585,584]],["Nyamiranga Primary School","022",[602,602]],["Mokomoni Tea Buying Centre","023",[562,562,562,562]],["Omonono Primary School","025",[668,667]],["Nyankongo Primary School","026",[589,589,588]],["Nyabikomu Primary School","027",[590,589]],["Amakura D.E.B Primary School","028",[464,463]],["Rianyakangi D.E.B. Primary School","029",[516]],["Egentubi Primary School","030",[495]],["Mokomoni D.O.K Primary School","031",[482]],["Kiabonyoru Primary School","065",[548,548]],["Nyanchoka Tea Buying Centre","068",[258]],["Nyageita Primary School","069",[475]],["Nyagware Primary School","070",[243]]]},"Nyansiongo":{"code":"0462731364","centres":[["Menyenya Primary School","032",[680,680,679,679,679]],["Tinderet Primary School","033",[672,672,672]],["Nyansiongo D.O.K Primary School","034",[674,674]],["Keginga Primary School","035",[453,453]],["Riensune Primary School","036",[493,493,492]],["Gesebei Primary School","037",[613,613,612]],["Nyansiongo D.E.B Primary School","038",[664]],["Rigena Primary School","039",[466]],["Nyandoche Ibere Pri. Sch","040",[572,572]],["Riamanoti Primary School","041",[429]],["Nyaronde D.O.K Primary School","042",[509,508,508]],["Ribaita Primary School","043",[266]],["Kenyerere Tea Buying Centre","071",[338]],["Masige Deb Primary School","072",[235]]]},"Esise":{"code":"0462731365","centres":[["Lietigo Primary School","044",[380,380]],["Magombo Primary School","045",[426]],["Memisi Deb Primary School","046",[356,356]],["Kebuse Primary School","047",[478]],["Saiga Ngiya D.E.B.Primary School","048",[438]],["Nderema Deb Primary School","049",[443]],["Esise Primary School","050",[284]],["Kineni Lck Primary School","051",[385,385]],["Kahawa Primary School","052",[636]],["Riangombe Primary School","053",[518,518]],["Ensoko Primary School","054",[413,412]],["Manga Girlsprimary School","055",[522,522,521]],["Mecheo Primary School","056",[465,465]],["Endemu D.E.B. Primary School","057",[320]],["Nyansakia Primary School","058",[608]],["Matunwa Primary School","059",[432]],["Gesabakwa Tea Buying Centre","060",[327]],["Ensakia Primary School","061",[601,601]],["Itumbe Sda Primary School","062",[617]],["Isoge Primary School","063",[436,435]],["Rianyaemo D.E.B. Primary School","064",[372,372]]]}}};
   const slug=w=>w.toLowerCase().replace(/[^a-z0-9]+/g,'-');
   const constOf=w=>CONSTS.find(c=>WARDS[c].includes(w));
   const esc=t=>String(t??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1220,7 +1438,7 @@ footer .brand{color:var(--on-dark)}
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrops(); setNav(false); } });
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ closeDrops(); setNav(false); }));
   const topLinks=[...nav.querySelectorAll(':scope > ul > li > a')];
-  const groupOf=id=>{ if(['why','today','challenges','pillars','first100','scorecard'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['change','volunteer','agents','trail','faq'].includes(id)) return 'involvedMenu'; return null; };
+  const groupOf=id=>{ if(['why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['change','volunteer','agents','faq','vote'].includes(id)) return 'involvedMenu'; return null; };
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) return;
       const id=en.target.id; topLinks.forEach(l=>l.classList.remove('active')); drops.forEach(d=>d.querySelector('.drop').classList.remove('active'));
@@ -1240,10 +1458,22 @@ footer .brand{color:var(--on-dark)}
   const vC=$('v-const'), vW=$('v-ward');
   vC.append(opt('','Select constituency')); CONSTS.forEach(c=>vC.append(opt(c)));
   vC.addEventListener('change',()=>{ vW.innerHTML=''; if(!vC.value){ vW.disabled=true; vW.append(opt('','Choose constituency first')); return; }
-    vW.disabled=false; vW.append(opt('','Select ward')); WARDS[vC.value].forEach(w=>vW.append(opt(w))); });
+    vW.disabled=false; vW.append(opt('','Select ward')); WARDS[vC.value].forEach(w=>vW.append(opt(w))); fillVStations(); });
+  const vS=$('v-station'), vSt=$('v-stream');
+  function fillVStations(){ const w=vW.value, keep=vS.value; vS.innerHTML='';
+    if(!w){ vS.disabled=true; vS.append(opt('','Choose ward first')); fillVStreams(); return; }
+    const list=stations[slug(w)]||[]; vS.disabled=false; vS.append(opt('','Select polling station (optional)'));
+    list.forEach(s=>vS.append(opt(s.name,s.name,s.name===keep))); fillVStreams(); }
+  function fillVStreams(){ const w=vW.value, s=(stations[slug(w)]||[]).find(x=>x.name===vS.value); vSt.innerHTML='';
+    if(!s){ vSt.disabled=true; vSt.append(opt('','Choose polling station first')); return; }
+    vSt.disabled=false; vSt.append(opt('','Select stream (optional)'));
+    for(let i=1;i<=s.streams;i++) vSt.append(opt(String(i),'Stream '+i+' · '+streamCode(s,i))); }
+  vW.addEventListener('change',fillVStations); vS.addEventListener('change',fillVStreams);
 
   /* ---------- Agent form: constituency tabs → ward → station → stream ---------- */
-  let stations={}; // slug(ward) -> [{name,streams}]
+  const BASE={}; Object.keys(IEBC.wards).forEach(w=>{ const W=IEBC.wards[w]; BASE[slug(w)]=W.centres.map(([name,cc,v])=>({name,streams:v.length,code:W.code+cc,voters:v})); });
+  let stations=Object.assign({},BASE); // slug(ward) -> [{name,streams,code,voters}]
+  const streamCode=(s,i)=>s&&s.code?s.code+String(i).padStart(2,'0'):'';
   let curConst=CONSTS[0];
   const tabs=$('constTabs'), aW=$('a-ward'), aS=$('a-station'), aSt=$('a-stream'), otherRow=$('a-other-row'), aO=$('a-other');
   CONSTS.forEach((c,i)=>{ const b=document.createElement('button'); b.type='button'; b.className='tab'; b.setAttribute('role','tab'); b.textContent=c; b.setAttribute('aria-selected',i===0); b.addEventListener('click',()=>selectConst(c)); tabs.append(b); });
@@ -1262,7 +1492,7 @@ footer .brand{color:var(--on-dark)}
   function fillStreams(){
     const w=aW.value, list=stations[slug(w)]||[], s=list.find(x=>x.name===aS.value);
     const n=s&&s.streams?s.streams:8; const prev=aSt.value; aSt.innerHTML=''; aSt.append(opt('','Select stream'));
-    for(let i=1;i<=n;i++) aSt.append(opt(String(i),'Stream '+i,prev===String(i)));
+    for(let i=1;i<=n;i++) aSt.append(opt(String(i),'Stream '+i+(s&&s.code?' · '+streamCode(s,i)+(s.voters?' · '+s.voters[i-1]+' voters':''):''),prev===String(i)));
     aSt.append(opt('unknown','Not sure yet',prev==='unknown'));
   }
   function stationName(){ return aS.value==='__other'?aO.value.trim():aS.value; }
@@ -1271,7 +1501,7 @@ footer .brand{color:var(--on-dark)}
   function renderList(){ const w=aW.value, ul=$('sl-list'); $('sl-ward').textContent=w?w+' Ward':'this ward';
     if(!w){ ul.innerHTML='<li class="muted">Choose a ward to see its polling stations.</li>'; return; }
     const list=stations[slug(w)]||[];
-    ul.innerHTML=list.length?list.map(s=>'<li>'+esc(s.name)+(s.streams?' · '+s.streams+' stream'+(s.streams>1?'s':''):'')+'</li>').join(''):'<li class="muted">The campaign is loading this ward\'s polling stations from the IEBC register. Until then, choose "My station is not listed" and type your station name.</li>';
+    ul.innerHTML=list.length?list.map(s=>'<li>'+esc(s.name)+(s.streams?' · '+s.streams+' stream'+(s.streams>1?'s':''):'')+(s.voters?' · '+s.voters.reduce((a,b)=>a+b,0).toLocaleString()+' voters':'')+'</li>').join(''):'<li class="muted">The campaign is loading this ward\'s polling stations from the IEBC register. Until then, choose "My station is not listed" and type your station name.</li>';
   }
   aW.addEventListener('change',fillStations);
   aS.addEventListener('change',()=>{ otherRow.hidden=aS.value!=='__other'; fillStreams(); trace(); });
@@ -1283,7 +1513,7 @@ footer .brand{color:var(--on-dark)}
   const ready=(async()=>{ try{ if(!window.claude||!claude.use) return; [db,user]=await Promise.all([claude.use('db'),claude.use('user')]); if(user) uid=await user.id(); }catch(e){ db=null; } })();
   ready.then(()=>{
     if(!db) return;
-    db.collection('stations').onSnapshot(snap=>{ const m={}; snap.docs.forEach(d=>{ const x=d.data(); if(x&&Array.isArray(x.list)) m[d.id]=x.list; }); stations=m; const keepS=aS.value; fillStations(); if([...aS.options].some(o=>o.value===keepS)){ aS.value=keepS; otherRow.hidden=aS.value!=='__other'; fillStreams(); trace(); } if(deskOn) renderDesk(); },()=>{});
+    db.collection('stations').onSnapshot(snap=>{ const m={}; snap.docs.forEach(d=>{ const x=d.data(); if(x&&Array.isArray(x.list)) m[d.id]=x.list; }); stations=Object.assign({},BASE,m); const keepS=aS.value; fillVStations(); fillStations(); if([...aS.options].some(o=>o.value===keepS)){ aS.value=keepS; otherRow.hidden=aS.value!=='__other'; fillStreams(); trace(); } if(deskOn) renderDesk(); },()=>{});
     if(user&&user.isOwner()) startDesk();
   });
 
@@ -1299,16 +1529,16 @@ footer .brand{color:var(--on-dark)}
 
   $('volForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('volMsg'), d=formData(e.target);
     if(!d.name||!phoneOk(d.phone)||!d.constituency||!d.ward){ say(m,'Please enter your name, a valid phone number, your constituency and ward.','err'); return; }
-    d.county='Nyamira';
-    const ok=await save('volunteers',d,m,'Thank you, '+d.name.split(' ')[0]+'. Your '+d.ward+' Ward coordinator will call you.', d.name+', '+d.phone+', '+d.ward+' Ward, '+d.constituency);
+    d.county='Nyamira'; if(d.station&&d.stream){ d.stationCode=streamCode((stations[slug(d.ward)]||[]).find(x=>x.name===d.station),Number(d.stream)); }
+    const ok=await save('volunteers',d,m,'Thank you, '+d.name.split(' ')[0]+'. Your '+d.ward+' Ward coordinator will call you.', d.name+', '+d.phone+', '+d.ward+' Ward, '+d.constituency+(d.station?', '+d.station+(d.stream?' stream '+d.stream:''):''));
     if(ok) e.target.reset(), vC.dispatchEvent(new Event('change'));
   });
 
   $('agentForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('agentMsg'), d=formData(e.target);
     const st=stationName();
     if(!d.name||!phoneOk(d.phone)||!aW.value||!st||!d.stream){ say(m,'Please choose your ward, polling station and stream, and enter your name and a valid phone number.','err'); return; }
-    const rec={county:'Nyamira',constituency:curConst,ward:aW.value,station:st,stationCode:d.stationCode||'',stream:d.stream,registeredHere:d.registeredHere||'',name:d.name,phone:d.phone,experience:d.experience||'',training:d.training||''};
-    await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream);
+    const rec={county:'Nyamira',constituency:curConst,ward:aW.value,station:st,stationCode:(aS.value!=='__other'?streamCode((stations[slug(aW.value)]||[]).find(x=>x.name===st),Number(d.stream))||'':'')||d.stationCode||'',stream:d.stream,registeredHere:d.registeredHere||'',name:d.name,phone:d.phone,experience:d.experience||'',training:d.training||''};
+    await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream+(rec.stationCode?' ('+rec.stationCode+')':''));
   });
 
   $('pledgeForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('pledgeMsg'), d=formData(e.target);
@@ -1342,27 +1572,11 @@ footer .brand{color:var(--on-dark)}
     $('stationEditor').hidden=deskTab!=='stations'; const body=$('deskBody'); body.hidden=deskTab==='stations';
     const t=(heads,data)=>'<table><thead><tr>'+heads.map(h=>'<th>'+h[0]+'</th>').join('')+'</tr></thead><tbody>'+(data.length?data.map(r=>'<tr>'+heads.map(h=>'<td>'+esc(Array.isArray(r[h[1]])?r[h[1]].join(', '):r[h[1]])+'</td>').join('')+'</tr>').join(''):'<tr><td colspan="'+heads.length+'">No submissions yet.</td></tr>')+'</tbody></table>';
     const byPlace=(a,b)=>[a.constituency,a.ward,a.station,a.stream].join('|').localeCompare([b.constituency,b.ward,b.station,b.stream].join('|'));
-    if(deskTab==='agents') body.innerHTML=t([['Constituency','constituency'],['Ward','ward'],['Polling station','station'],['Stream','stream'],['Name','name'],['Phone','phone'],['Registered here','registeredHere'],['Training','training']],rows.agents.slice().sort(byPlace));
-    if(deskTab==='volunteers') body.innerHTML=t([['Constituency','constituency'],['Ward','ward'],['Village','village'],['Name','name'],['Phone','phone'],['Roles','roles'],['Priority','message']],rows.volunteers.slice().sort(byPlace));
+    if(deskTab==='agents') body.innerHTML=t([['Constituency','constituency'],['Ward','ward'],['Polling station','station'],['Stream','stream'],['Stream code','stationCode'],['Name','name'],['Phone','phone'],['Registered here','registeredHere'],['Training','training']],rows.agents.slice().sort(byPlace));
+    if(deskTab==='volunteers') body.innerHTML=t([['Constituency','constituency'],['Ward','ward'],['Polling station','station'],['Stream','stream'],['Village','village'],['Name','name'],['Phone','phone'],['Roles','roles'],['Priority','message']],rows.volunteers.slice().sort(byPlace));
     if(deskTab==='pledges') body.innerHTML=t([['Name','name'],['Phone','phone'],['Amount (Ksh)','amountKsh'],['Method','method'],['Date','submittedAt']],rows.pledges);
   }
 
-  /* ---------- Hero: terraced hills, blue with a touch of green ---------- */
-  const c=$('hills'), ctx=c.getContext('2d');
-  function draw(){
-    const r=c.getBoundingClientRect(), dpr=Math.min(window.devicePixelRatio||1,2);
-    c.width=r.width*dpr; c.height=r.height*dpr; ctx.setTransform(dpr,0,0,dpr,0,0);
-    const w=r.width,h=r.height; ctx.clearRect(0,0,w,h);
-    const hills=[{base:.62,amp:.10,f:1.3,ph:.4,col:'rgba(29,55,104,0.95)'},{base:.72,amp:.08,f:2.1,ph:1.9,col:'rgba(38,70,128,0.9)'},{base:.84,amp:.06,f:2.9,ph:3.1,col:'rgba(46,125,79,0.75)'}];
-    hills.forEach((hl,k)=>{
-      const y=x=>h*(hl.base+hl.amp*Math.sin(x/w*Math.PI*hl.f+hl.ph)+hl.amp*.4*Math.sin(x/w*Math.PI*hl.f*2.7+hl.ph*2));
-      ctx.beginPath(); ctx.moveTo(0,h); for(let x=0;x<=w;x+=6) ctx.lineTo(x,y(x)); ctx.lineTo(w,h); ctx.closePath(); ctx.fillStyle=hl.col; ctx.fill();
-      ctx.strokeStyle=k===0?'rgba(207,163,73,0.28)':'rgba(238,242,249,0.10)'; ctx.lineWidth=1;
-      for(let row=1;row<14;row++){ ctx.beginPath(); for(let x=0;x<=w;x+=6){ const yy=y(x)+row*9+row*row*.6; if(yy>h) break; x===0?ctx.moveTo(x,yy):ctx.lineTo(x,yy);} ctx.stroke(); }
-    });
-    ctx.beginPath(); ctx.arc(w*.82,h*.28,Math.min(w,h)*.09,0,Math.PI*2); ctx.fillStyle='rgba(192,39,45,0.7)'; ctx.fill();
-  }
-  draw(); let tm; window.addEventListener('resize',()=>{ clearTimeout(tm); tm=setTimeout(draw,120); });
 })();
 </script>
 
