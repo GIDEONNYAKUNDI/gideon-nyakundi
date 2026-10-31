@@ -160,7 +160,7 @@ function sms_send(array $phones, string $message, string $kind, string $by = 'we
     foreach ($phones as $p) {
         $ins->execute([now(), $p, $message, $kind, 'queued', $ref[0], (int)$ref[1], $by]);
         $id = (int)db()->lastInsertId();
-        if (empty($c['enabled'])) { $upd->execute(['disabled', null, 'SMS is switched off in config.php', now(), $id]); $res['failed']++; $res['error'] = 'SMS is switched off in config.php'; continue; }
+        if (empty($c['enabled'])) { $upd->execute(['disabled', null, 'SMS is switched off in Settings', now(), $id]); $res['failed']++; $res['error'] = 'SMS is switched off in Settings'; continue; }
         $f = ['mobile' => $p, 'senderid' => $c['sender_id'] ?? '', 'msg' => $message, 'sendMethod' => 'quick',
               'msgType' => preg_match('/[^\x00-\x7F]/', $message) ? 'unicode' : 'text', 'duplicatecheck' => 'true'];
         if (!empty($c['test_mode'])) $f['test'] = 'true';
@@ -203,13 +203,26 @@ function smtp_cmd($fp, ?string $cmd, array $expect): void {
 }
 function mime_header(string $s): string { return preg_match('/[^\x20-\x7E]/', $s) ? '=?UTF-8?B?' . base64_encode($s) . '?=' : $s; }
 
-/* Sends a plain-text e-mail and logs it. Returns null on success, or the error. */
+/* HTML version of a plain-text alert, in the campaign colours. Inline styles only, as mail clients require. */
+function mail_html(string $text): string {
+    $t = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
+    $t = preg_replace('~https?://[^\s<]+~', '<a href="$0" style="color:#13264d;font-weight:600">$0</a>', $t) ?? $t;
+    return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>'
+        . '<body style="margin:0;padding:0;background:#f4f6f9;font-family:Segoe UI,Helvetica,Arial,sans-serif;color:#1b2333">'
+        . '<div style="max-width:600px;margin:0 auto;padding:24px 16px">'
+        . '<div style="background:#13264d;color:#ffffff;padding:14px 20px;font-size:17px;font-weight:700;border-bottom:3px solid #c0272d">Nyakundi <span style="color:#d4b04c">2027</span></div>'
+        . '<div style="background:#ffffff;border:1px solid #dde2ea;border-top:0;padding:20px;font-size:15px;line-height:1.55;white-space:pre-wrap">' . $t . '</div>'
+        . '<p style="color:#5d6779;font-size:12px;line-height:1.5;margin:14px 4px 0">Automatic message from the Nyakundi 2027 back office at kucaparty.com. You get it because you are on the sign-up alert list.</p>'
+        . '</div></body></html>';
+}
+
+/* Sends an e-mail (plain text plus an HTML version) and logs it. Returns null on success, or the error. */
 function send_mail(array $to, string $subject, string $body, array $ref = ['', 0]): ?string {
     $c = smtp_cfg();
     $to = array_values(array_filter(array_map('trim', $to), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)));
     $error = null;
     if (!$to) $error = 'No valid recipient addresses.';
-    elseif (empty($c['enabled'])) $error = 'E-mail is switched off in config.php';
+    elseif (empty($c['enabled'])) $error = 'E-mail is switched off in Settings';
     else {
         $fp = null;
         try {
@@ -217,7 +230,8 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
             $fp = @stream_socket_client(($secure === 'ssl' ? 'ssl://' : 'tcp://') . $c['host'] . ':' . (int)$c['port'], $errno, $errstr, 20);
             if (!$fp) throw new RuntimeException('Cannot connect to ' . $c['host'] . ':' . $c['port'] . ' (' . $errstr . ')');
             stream_set_timeout($fp, 20);
-            $helo = 'EHLO ' . ($_SERVER['SERVER_NAME'] ?? 'localhost');
+            $domain = substr((string)strrchr($c['from_email'], '@'), 1) ?: 'localhost';
+            $helo = 'EHLO ' . $domain;
             smtp_cmd($fp, null, [220]);
             smtp_cmd($fp, $helo, [250]);
             if ($secure === 'tls') {
@@ -229,12 +243,18 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
             smtp_cmd($fp, 'MAIL FROM:<' . $c['from_email'] . '>', [250]);
             foreach ($to as $a) smtp_cmd($fp, 'RCPT TO:<' . $a . '>', [250, 251]);
             smtp_cmd($fp, 'DATA', [354]);
-            $domain = substr((string)strrchr($c['from_email'], '@'), 1) ?: 'localhost';
+            $boundary = 'nyk-' . bin2hex(random_bytes(10));
             $head = ['Date: ' . date('r'), 'From: ' . mime_header($c['from_name'] ?? 'Nyakundi 2027') . ' <' . $c['from_email'] . '>', 'To: ' . implode(', ', $to),
                      'Subject: ' . mime_header($subject), 'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . $domain . '>', 'MIME-Version: 1.0',
-                     'Content-Type: text/plain; charset=UTF-8', 'Content-Transfer-Encoding: base64'];
-            // A base64 body never has a line starting with ".", so no dot-stuffing is needed.
-            fwrite($fp, implode("\r\n", $head) . "\r\n\r\n" . chunk_split(base64_encode($body)) . ".\r\n");
+                     'Auto-Submitted: auto-generated', 'X-Auto-Response-Suppress: All',
+                     'Content-Type: multipart/alternative; boundary="' . $boundary . '"'];
+            // Quoted-printable rather than base64: spam filters score base64-encoded text bodies as suspicious.
+            $qp = fn(string $s) => quoted_printable_encode(preg_replace('/\r?\n/', "\r\n", $s) ?? $s);
+            $mime = '--' . $boundary . "\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . $qp($body)
+                  . "\r\n--" . $boundary . "\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . $qp(mail_html($body))
+                  . "\r\n--" . $boundary . "--\r\n";
+            $mime = preg_replace('/(^|\r\n)\./', '$1..', $mime) ?? $mime;   // SMTP dot-stuffing
+            fwrite($fp, implode("\r\n", $head) . "\r\n\r\n" . $mime . ".\r\n");
             smtp_cmd($fp, null, [250]);
             smtp_cmd($fp, 'QUIT', [221]);
         } catch (Throwable $e) {
