@@ -203,27 +203,78 @@ function status_form(string $table, array $r, array $statuses): string {
     return '<form method="post" class="row-edit"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="update"><input type="hidden" name="table" value="' . $table . '"><input type="hidden" name="id" value="' . (int)$r['id'] . '">'
         . '<select name="status">' . $o . '</select><input name="notes" value="' . h($r['notes'] ?? '') . '" placeholder="Notes"><button class="btn sm">Save</button></form>';
 }
-/* Import volunteers from an uploaded CSV: needs name, constituency and a valid phone number. */
+/* Read an uploaded spreadsheet (CSV or Excel .xlsx) into rows of text. */
+function read_sheet(string $path, string $name): array {
+    $rows = [];
+    $isXlsx = strtolower(pathinfo($name, PATHINFO_EXTENSION)) === 'xlsx' || file_get_contents($path, false, null, 0, 2) === 'PK';
+    if ($isXlsx) {
+        if (!class_exists('ZipArchive')) throw new RuntimeException('This server cannot open Excel files. In Excel use File > Save As > CSV UTF-8 and upload that instead.');
+        $z = new ZipArchive();
+        if ($z->open($path) !== true) throw new RuntimeException('That Excel file could not be opened.');
+        $shared = [];
+        if (($x = $z->getFromName('xl/sharedStrings.xml')) !== false) {
+            $sx = simplexml_load_string($x, 'SimpleXMLElement', LIBXML_NONET);
+            foreach ($sx->si as $si) { $t = ''; if (isset($si->t)) $t = (string)$si->t; foreach ($si->r as $r) $t .= (string)$r->t; $shared[] = $t; }
+        }
+        $sheet = 'xl/worksheets/sheet1.xml';
+        if (($wb = $z->getFromName('xl/workbook.xml')) !== false && ($rels = $z->getFromName('xl/_rels/workbook.xml.rels')) !== false) {
+            $w = simplexml_load_string($wb, 'SimpleXMLElement', LIBXML_NONET); $rl = simplexml_load_string($rels, 'SimpleXMLElement', LIBXML_NONET);
+            $first = $w->sheets->sheet[0] ?? null;
+            if ($first) { $rid = (string)$first->attributes('http://schemas.openxmlformats.org/officeDocument/2006/relationships')['id'];
+                foreach ($rl->Relationship as $r) if ((string)$r['Id'] === $rid) { $t = ltrim((string)$r['Target'], '/'); $sheet = strpos($t, 'xl/') === 0 ? $t : 'xl/' . $t; } }
+        }
+        $x = $z->getFromName($sheet); $z->close();
+        if ($x === false) throw new RuntimeException('The first sheet of that Excel file is empty.');
+        $sx = simplexml_load_string($x, 'SimpleXMLElement', LIBXML_NONET);
+        foreach ($sx->sheetData->row as $row) {
+            $out = [];
+            foreach ($row->c as $c) {
+                $ref = (string)$c['r']; $col = 0;
+                foreach (str_split(preg_replace('/\d/', '', $ref)) as $ch) $col = $col * 26 + (ord($ch) - 64);
+                $t = (string)$c['t'];
+                if ($t === 's') $v = $shared[(int)$c->v] ?? '';
+                elseif ($t === 'inlineStr') $v = (string)$c->is->t;
+                else { $v = (string)$c->v; if (is_numeric($v) && stripos($v, 'e') !== false) $v = number_format((float)$v, 0, '', ''); }
+                $out[max(0, $col - 1)] = $v;
+            }
+            if ($out) { $m = max(array_keys($out)); $rows[] = array_map(fn($i) => $out[$i] ?? '', range(0, $m)); }
+        }
+        return $rows;
+    }
+    $fh = fopen($path, 'r');
+    $first = (string)fgets($fh); rewind($fh);
+    $delim = substr_count($first, ';') > substr_count($first, ',') ? ';' : ',';
+    while (($r = fgetcsv($fh, 0, $delim, '"', '\\')) !== false) $rows[] = $r;
+    fclose($fh);
+    return $rows;
+}
+
+/* Import volunteers from an uploaded CSV or Excel file: needs name, constituency and a valid phone number. */
 function import_volunteers($f, string $by): array {
-    if (!$f || ($f['error'] ?? 1) !== UPLOAD_ERR_OK || !is_uploaded_file($f['tmp_name'])) return ['Choose a CSV file to upload.', true];
+    if (!$f || ($f['error'] ?? 1) !== UPLOAD_ERR_OK || !is_uploaded_file($f['tmp_name'])) return ['Choose a CSV or Excel file to upload.', true];
     if ($f['size'] > 10 * 1024 * 1024) return ['That file is larger than 10 MB.', true];
-    $fh = fopen($f['tmp_name'], 'r');
-    $head = fgetcsv($fh, 0, ',', '"', '\\');
-    if (!$head) return ['The file is empty.', true];
-    $head = array_map(fn($x) => strtolower(trim(preg_replace('/^\xEF\xBB\xBF/', '', (string)$x))), $head);
-    $col = function (array $names) use ($head) { foreach ($names as $n) { $i = array_search($n, $head, true); if ($i !== false) return $i; } return null; };
-    $ci = $col(['constituency']); $ni = $col(['name', 'full name', 'full_name', 'names']); $pi = $col(['phone', 'phone number', 'phone_number', 'telephone', 'mobile']);
-    $wi = $col(['ward']); $vi = $col(['village', 'village or sub-location']); $oi = $col(['notes', 'note']);
-    if ($ci === null || $ni === null || $pi === null) return ['The header row must include constituency, name and phone columns.', true];
+    try { $rows = read_sheet($f['tmp_name'], (string)($f['name'] ?? '')); } catch (Throwable $e) { return [$e->getMessage(), true]; }
+    while ($rows && count(array_filter($rows[0], fn($x) => trim((string)$x) !== '')) === 0) array_shift($rows);
+    if (!$rows) return ['The file is empty.', true];
+    $head = array_map(fn($x) => strtolower(trim(preg_replace('/^\xEF\xBB\xBF/', '', (string)$x))), $rows[0]);
+    $find = function (string $re) use ($head) { foreach ($head as $i => $h) if (preg_match($re, $h)) return $i; return null; };
+    $ci = $find('/constituen/'); $ni = $find('/name/'); $pi = $find('/phone|tel|mobile|contact/');
+    $wi = $find('/^ward/'); $vi = $find('/village|sub-?location/'); $oi = $find('/^notes?$/');
+    if ($ci === null || $ni === null || $pi === null) {
+        /* No usable header: accept files whose columns are simply constituency, name, phone. */
+        if (count($rows[0]) >= 3 && preg_match('/\d{7,}/', preg_replace('/\D/', '', (string)$rows[0][2]))) { $ci = 0; $ni = 1; $pi = 2; $wi = $vi = $oi = null; }
+        else return ['The first row must be a header with constituency, name and phone columns (for example: constituency | full name | phone number).', true];
+    } else array_shift($rows);
     $consts = []; foreach (CONSTITUENCIES as $c => $_) $consts[strtolower($c)] = $c;
     $existing = [];
     foreach (db()->query('SELECT name, phone FROM volunteers') as $r) $existing[strtolower(trim($r['name'])) . '|' . $r['phone']] = true;
     $ins = db()->prepare('INSERT INTO volunteers (created_at, constituency, ward, village, name, phone, notes, updated_by) VALUES (?,?,?,?,?,?,?,?)');
     $added = 0; $bad = 0; $dup = 0; $t = now();
     db()->beginTransaction();
-    while (($r = fgetcsv($fh, 0, ',', '"', '\\')) !== false) {
+    foreach ($rows as $r) {
         if (count(array_filter($r, fn($x) => trim((string)$x) !== '')) === 0) continue;
         $name = trim(preg_replace('/\s+/', ' ', (string)($r[$ni] ?? '')));
+        if ($name !== '' && $name === mb_strtoupper($name)) $name = mb_convert_case(mb_strtolower($name), MB_CASE_TITLE);
         $c = $consts[preg_replace('/\s+constituency$/', '', strtolower(trim((string)($r[$ci] ?? ''))))] ?? '';
         $d = preg_replace('/\D/', '', (string)($r[$pi] ?? ''));
         if (strlen($d) === 12 && strpos($d, '254') === 0) $d = '0' . substr($d, 3);
@@ -237,7 +288,7 @@ function import_volunteers($f, string $by): array {
         $ins->execute([$t, $c, $ward, mb_substr($vi !== null ? trim((string)($r[$vi] ?? '')) : '', 0, 120), mb_substr($name, 0, 120), $d, mb_substr($oi !== null ? trim((string)($r[$oi] ?? '')) : 'Imported from volunteer list', 0, 2000), $by]);
         $added++;
     }
-    db()->commit(); fclose($fh);
+    db()->commit();
     return ['Imported ' . number_format($added) . ' volunteers.' . ($dup ? ' Skipped ' . number_format($dup) . ' already in the database.' : '') . ($bad ? ' Skipped ' . number_format($bad) . ' rows without a name, constituency or valid phone number.' : ''), $added === 0];
 }
 function filter_bar(string $p, string $scope, array $statuses, bool $wards = true, bool $sms = false): string {
@@ -353,7 +404,7 @@ if ($p === 'agents') {
 if ($p === 'volunteers') {
     [$w, $a] = filters('volunteers', $scope);
     $s = db()->prepare("SELECT * FROM volunteers$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
-    echo '<h1>Volunteers</h1>' . ($isAdmin ? '<p><a href="?p=import">Import a volunteer list (CSV)</a></p>' : '') . filter_bar('volunteers', $scope, VOL_STATUSES, true, $isAdmin);
+    echo '<h1>Volunteers</h1>' . ($isAdmin ? '<p><a href="?p=import">Import a volunteer list (Excel or CSV)</a></p>' : '') . filter_bar('volunteers', $scope, VOL_STATUSES, true, $isAdmin);
     echo '<table><thead><tr><th>Registered</th><th>Name and phone</th><th>Ward</th><th>Village</th><th>How they will help</th><th>Top priority</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
     foreach ($s->fetchAll() as $r) {
         echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . mail_link($r['email'] ?? '') . '<br><small>' . h($r['age']) . '</small></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small>' . ($r['station'] ? '<br><small>' . h($r['station']) . ($r['stream'] ? ' · stream ' . h($r['stream']) : '') . '</small>' : '') . '</td><td>' . h($r['village']) . '</td><td><small>' . h($r['roles']) . '</small></td><td><small>' . h($r['message']) . '</small></td><td>' . status_form('volunteers', $r, VOL_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('volunteers', (int)$r['id']) . '</td>' : '') . '</tr>';
@@ -434,8 +485,8 @@ if ($p === 'email' && $isAdmin) {
 }
 
 if ($p === 'import' && $isAdmin) {
-    echo '<h1>Import a volunteer list</h1><div class="card help"><p>Upload a <b>CSV</b> file with a header row. It must have columns for <b>constituency</b>, <b>name</b> (or "full name") and <b>phone</b> (or "phone number"). Columns for <b>ward</b>, <b>village</b> and <b>notes</b> are used if present; anything else is ignored.</p><ol><li>Every row needs a name, one of the four constituencies and a valid Kenyan mobile number. Rows without them are skipped.</li><li>Phone numbers are tidied to the 07XX XXX XXX form. A name already in the database with the same phone number is skipped, so uploading the same file twice does not create doubles.</li><li>From Excel: File &gt; Save As &gt; "CSV UTF-8 (Comma delimited)".</li></ol></div>';
-    echo '<form method="post" enctype="multipart/form-data" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="import_vol"><label>CSV file<input type="file" name="csv" accept=".csv,text/csv" required></label><button class="btn">Import volunteers</button></form>';
+    echo '<h1>Import a volunteer list</h1><div class="card help"><p>Upload an <b>Excel (.xlsx)</b> or <b>CSV</b> file with a header row. It must have columns for <b>constituency</b>, <b>name</b> (or "full name") and <b>phone</b> (or "phone number"). Columns for <b>ward</b>, <b>village</b> and <b>notes</b> are used if present; anything else is ignored.</p><ol><li>Every row needs a name, one of the four constituencies and a valid Kenyan mobile number. Rows without them are skipped.</li><li>Phone numbers are tidied to the 07XX XXX XXX form. A name already in the database with the same phone number is skipped, so uploading the same file twice does not create doubles.</li><li>Only the first sheet of an Excel file is read.</li></ol></div>';
+    echo '<form method="post" enctype="multipart/form-data" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="import_vol"><label>Excel or CSV file<input type="file" name="csv" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required></label><button class="btn">Import volunteers</button></form>';
 }
 
 if ($p === 'settings' && $isAdmin) settings_page((string)($_GET['tab'] ?? 'sms'));
