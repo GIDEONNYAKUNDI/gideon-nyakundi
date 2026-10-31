@@ -3,7 +3,7 @@
 import { chromium, request } from 'playwright';
 const SITE = process.env.SITE || 'https://kucaparty.com';
 const results = [];
-const check = (name, ok, info = '') => { results.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  (' + info + ')' : ''}`); };
+const check = (name, ok, info = '') => { results.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  (' + info + ')' : ''}`); if (!ok) console.log(`::error title=Security check failed::${name}${info ? ' (' + info + ')' : ''}`); };
 const api = await request.newContext({ ignoreHTTPSErrors: false, maxRedirects: 0 });
 const code = async (path, opts = {}) => (await api.fetch(SITE + path, opts)).status();
 
@@ -69,4 +69,5 @@ await browser.close();
 
 const failed = results.filter(x => !x).length;
 console.log(`\n${results.length - failed} of ${results.length} checks passed.`);
+console.log(`::notice title=Security check::${results.length - failed} of ${results.length} checks passed`);
 process.exit(failed ? 1 : 0);
