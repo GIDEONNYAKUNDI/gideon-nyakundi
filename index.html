@@ -619,6 +619,53 @@ section.photo.split.hasvid::before{display:none}
   </div>
 </section>
 
+<!-- POLLING STATION AGENTS -->
+<section class="page dark photo split" id="agents" style="--bg:url(img/wards.webp)">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Protect the Vote</p>
+      <h2>Polling station agents</h2>
+      <p class="lede">Nyamira has 354 polling centres with 641 streams and 323,047 registered voters. Every stream needs a trained agent from 6 a.m. until the results form is signed. Choose your constituency tab, then your ward, polling station and stream.</p>
+    </div>
+    <div class="trace" aria-label="Agent location">
+      <span><small>County</small><b>Nyamira</b></span>
+      <span><small>Constituency</small><b id="t-const">—</b></span>
+      <span><small>Ward</small><b id="t-ward">—</b></span>
+      <span><small>Polling station</small><b id="t-station">—</b></span>
+      <span><small>Stream</small><b id="t-stream">—</b></span>
+    </div>
+    <div class="tabs" role="tablist" aria-label="Constituencies" id="constTabs"></div>
+    <form class="form on-dark" id="agentForm" novalidate>
+      <div class="frow">
+        <label for="a-ward">Ward<select id="a-ward" name="ward" required></select></label>
+        <label for="a-station">Polling station<select id="a-station" name="station" required disabled><option value="">Choose ward first</option></select></label>
+      </div>
+      <div class="frow" id="a-other-row" hidden>
+        <label for="a-other">Polling station name (as on your voter card or the IEBC SMS)<input id="a-other" name="stationOther"></label>
+        <label for="a-code">Polling station code, if known<input id="a-code" name="stationCode" inputmode="numeric"></label>
+      </div>
+      <div class="frow">
+        <label for="a-stream">Stream<select id="a-stream" name="stream" required><option value="">Select stream</option></select></label>
+        <label for="a-reg">Are you registered to vote at this station?<select id="a-reg" name="registeredHere"><option value="">Select</option><option>Yes</option><option>No, elsewhere in Nyamira</option><option>Not yet registered</option></select></label>
+      </div>
+      <div class="frow">
+        <label for="a-name">Full name<input id="a-name" name="name" required autocomplete="name"></label>
+        <label for="a-phone">Phone<input id="a-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
+      </div>
+      <div class="frow">
+        <label for="a-exp">Have you served as an agent before?<select id="a-exp" name="experience"><option value="">Select</option><option>Yes, in 2022</option><option>Yes, earlier elections</option><option>No, first time</option></select></label>
+        <label for="a-train">Can you attend agent training in December or January?<select id="a-train" name="training"><option value="">Select</option><option>Yes</option><option>No</option><option>Maybe</option></select></label>
+      </div>
+      <p class="note">Accreditation documents are collected in person at training. Do not enter your ID number here.</p>
+      <div class="factions"><button class="btn red" type="submit">Register as agent</button><p class="fmsg" id="agentMsg" role="status"></p></div>
+    </form>
+    <div class="stationlist">
+      <h3 style="font-size:1.1rem">Polling stations in <span id="sl-ward">this ward</span></h3>
+      <ul id="sl-list"><li class="muted">Choose a ward to see its polling stations.</li></ul>
+    </div>
+  </div>
+</section>
+
 <!-- 2 ABOUT: EXECUTIVE BIO -->
 <section class="page dark photo bio" id="about" style="--bg:url(img/about.webp)">
   <div class="wrap">
@@ -1463,53 +1510,6 @@ section.photo.split.hasvid::before{display:none}
       <label for="v-msg">Your top priority for your ward<textarea id="v-msg" name="message" rows="3"></textarea></label>
       <div class="factions"><button class="btn red" type="submit">Sign me up</button><p class="fmsg" id="volMsg" role="status"></p></div>
     </form>
-  </div>
-</section>
-
-<!-- POLLING STATION AGENTS -->
-<section class="page dark photo split" id="agents" style="--bg:url(img/wards.webp)">
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">Protect the Vote</p>
-      <h2>Polling station agents</h2>
-      <p class="lede">Nyamira has 354 polling centres with 641 streams and 323,047 registered voters. Every stream needs a trained agent from 6 a.m. until the results form is signed. Choose your constituency tab, then your ward, polling station and stream.</p>
-    </div>
-    <div class="trace" aria-label="Agent location">
-      <span><small>County</small><b>Nyamira</b></span>
-      <span><small>Constituency</small><b id="t-const">—</b></span>
-      <span><small>Ward</small><b id="t-ward">—</b></span>
-      <span><small>Polling station</small><b id="t-station">—</b></span>
-      <span><small>Stream</small><b id="t-stream">—</b></span>
-    </div>
-    <div class="tabs" role="tablist" aria-label="Constituencies" id="constTabs"></div>
-    <form class="form on-dark" id="agentForm" novalidate>
-      <div class="frow">
-        <label for="a-ward">Ward<select id="a-ward" name="ward" required></select></label>
-        <label for="a-station">Polling station<select id="a-station" name="station" required disabled><option value="">Choose ward first</option></select></label>
-      </div>
-      <div class="frow" id="a-other-row" hidden>
-        <label for="a-other">Polling station name (as on your voter card or the IEBC SMS)<input id="a-other" name="stationOther"></label>
-        <label for="a-code">Polling station code, if known<input id="a-code" name="stationCode" inputmode="numeric"></label>
-      </div>
-      <div class="frow">
-        <label for="a-stream">Stream<select id="a-stream" name="stream" required><option value="">Select stream</option></select></label>
-        <label for="a-reg">Are you registered to vote at this station?<select id="a-reg" name="registeredHere"><option value="">Select</option><option>Yes</option><option>No, elsewhere in Nyamira</option><option>Not yet registered</option></select></label>
-      </div>
-      <div class="frow">
-        <label for="a-name">Full name<input id="a-name" name="name" required autocomplete="name"></label>
-        <label for="a-phone">Phone<input id="a-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
-      </div>
-      <div class="frow">
-        <label for="a-exp">Have you served as an agent before?<select id="a-exp" name="experience"><option value="">Select</option><option>Yes, in 2022</option><option>Yes, earlier elections</option><option>No, first time</option></select></label>
-        <label for="a-train">Can you attend agent training in December or January?<select id="a-train" name="training"><option value="">Select</option><option>Yes</option><option>No</option><option>Maybe</option></select></label>
-      </div>
-      <p class="note">Accreditation documents are collected in person at training. Do not enter your ID number here.</p>
-      <div class="factions"><button class="btn red" type="submit">Register as agent</button><p class="fmsg" id="agentMsg" role="status"></p></div>
-    </form>
-    <div class="stationlist">
-      <h3 style="font-size:1.1rem">Polling stations in <span id="sl-ward">this ward</span></h3>
-      <ul id="sl-list"><li class="muted">Choose a ward to see its polling stations.</li></ul>
-    </div>
   </div>
 </section>
 
