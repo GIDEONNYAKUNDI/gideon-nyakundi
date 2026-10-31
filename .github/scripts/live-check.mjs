@@ -29,6 +29,24 @@ async function get(path, opts = {}) {
 const blocked = r => r === null || r.status === 403 || r.status === 404;
 
 async function main() {
+  // 0. First, as a normal visitor in a real browser (before any attacker-style probes below)
+  // 6. The real page in a real browser
+  const browser = await chromium.launch();
+  const page = await browser.newPage();
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
+  await page.goto(SITE + '/', { waitUntil: 'load', timeout: 60000 });
+  const title = await page.title();
+  check('real visitors get the campaign page (not a firewall page)', /Nyakundi|Gideon/i.test(title), title);
+  check('no script errors on the page', errors.length === 0, errors.join(' | '));
+  check('voter registration form present', !!(await page.$('#regForm')));
+  check('Start-here panel with 12 pillars', (await page.$$('#start .stile')).length === 12);
+  check('Kiswahili switch present', !!(await page.$('#langBtn')));
+  check('share buttons on videos', (await page.$$('.vsharebtn')).length >= 5);
+  check('press room has no download links', (await page.$$('#press a[download]')).length === 0);
+  check('privacy notice linked', !!(await page.$('a[href="privacy.html"]')));
+  const scripts = await page.$$eval('script[src]', s => s.map(x => x.src).filter(u => !u.startsWith(location.origin)));
+  check('no third-party scripts (no trackers or marketers)', scripts.length === 0, scripts.join(', '));
+  await browser.close();
   // 1. Private files can never be downloaded
   for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/config.sample.php',
                    '/.git/config', '/.cpanel.yml', '/README.md', '/ops/install-htaccess.sh', '/.env', '/backoffice/.htaccess',
@@ -69,21 +87,6 @@ async function main() {
   r = await get('/api/save.php', { method: 'POST', headers: { Origin: SITE, 'Content-Type': 'application/json' }, data: { type: 'voter', name: 'Check', phone: '0700000000', ward: 'Esise' } });
   if (r) check('API refuses sign-ups without consent', r.status === 400, String(r.status));
 
-  // 6. The real page in a real browser
-  const browser = await chromium.launch();
-  const page = await browser.newPage();
-  const errors = []; page.on('pageerror', e => errors.push(e.message));
-  await page.goto(SITE + '/', { waitUntil: 'load', timeout: 60000 });
-  check('no script errors on the page', errors.length === 0, errors.join(' | '));
-  check('voter registration form present', !!(await page.$('#regForm')));
-  check('Start-here panel with 12 pillars', (await page.$$('#start .stile')).length === 12);
-  check('Kiswahili switch present', !!(await page.$('#langBtn')));
-  check('share buttons on videos', (await page.$$('.vsharebtn')).length >= 5);
-  check('press room has no download links', (await page.$$('#press a[download]')).length === 0);
-  check('privacy notice linked', !!(await page.$('a[href="privacy.html"]')));
-  const scripts = await page.$$eval('script[src]', s => s.map(x => x.src).filter(u => !u.startsWith(location.origin)));
-  check('no third-party scripts (no trackers or marketers)', scripts.length === 0, scripts.join(', '));
-  await browser.close();
   for (const [p, name] of [['/press/view/manifesto-01.webp', 'manifesto viewable in the press room'], ['/privacy.html', 'privacy notice page loads'], ['/img/share-card.jpg', 'link preview image'], ['/sitemap.xml', 'sitemap for search engines']]) {
     const x = await get(p); if (x) check(name, x.status === 200, String(x.status));
   }
