@@ -527,6 +527,18 @@ section.photo.split.hasvid::before{display:none}
 #agents .head h2{font-size:clamp(2.9rem,7.2vw,5.4rem)!important;color:#e4363d;text-transform:uppercase!important;letter-spacing:.01em!important;line-height:.98;text-shadow:0 2px 20px rgba(0,0,0,.5)}
 #agents .head .eyebrow{font-size:.9rem;color:#fff}
 #agents .eyebrow.protect{font-size:clamp(.82rem,1.3vw,1rem);line-height:1.6;letter-spacing:.12em;max-width:60ch}
+
+/* ---------- Closing video gallery ---------- */
+.celebrate{background:#0e1a33}
+.vgallery{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.vgallery>*{min-width:0}
+.vband.vtile{height:auto;aspect-ratio:16/9;margin:0;border-radius:3px;box-shadow:0 18px 44px rgba(0,0,0,.4)}
+.vband.vtile.wide{grid-column:1/-1;aspect-ratio:21/9}
+.vband.vtile::after{background:linear-gradient(180deg,rgba(5,8,15,0) 50%,rgba(5,8,15,.82) 100%)}
+.vband.vtile .vcap{left:18px!important;right:18px;bottom:70px;font-size:clamp(1rem,1.7vw,1.3rem);font-weight:600}
+.vband.vtile.wide .vcap{right:240px;bottom:24px}
+.vband.vtile .vsound{right:16px!important;bottom:16px}
+@media (max-width:760px){.vgallery{grid-template-columns:1fr}.vband.vtile.wide{aspect-ratio:16/9}.vband.vtile .vcap{right:16px;bottom:62px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -578,6 +590,7 @@ section.photo.split.hasvid::before{display:none}
             <a href="#volunteer"><b>·</b>Join the Movement as a Volunteer</a>
             <a href="#agents"><b>·</b>Polling Station Agents</a>
             <a href="#faq"><b>·</b>Questions</a>
+            <a href="#people"><b>·</b>The people of Nyamira</a>
             <a href="#vote"><b>·</b>Vote Dr. Gideon</a>
           </div>
         </li>
@@ -1584,6 +1597,34 @@ section.photo.split.hasvid::before{display:none}
   </div>
 </section>
 
+<!-- THE PEOPLE OF NYAMIRA (video gallery) -->
+<section class="page dark celebrate" id="people">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">The people of Nyamira</p>
+      <h2>Nyamira is ready for change.</h2>
+      <p class="lede">From the elders to the children, from the villages to the stadium: one county, one hope, one new Nyamira.</p>
+    </div>
+    <div class="vgallery">
+      <figure class="vband vtile wide">
+        <video autoplay muted loop playsinline preload="metadata" poster="media/crowd-poster.jpg" width="1280" height="720" aria-label="A stadium crowd celebrating with Kenyan flags"><source src="media/crowd.mp4" type="video/mp4"></video>
+        <button type="button" class="vsound" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+        <figcaption class="vcap">Nyamira celebrates the new Nyamira.</figcaption>
+      </figure>
+      <figure class="vband vtile ">
+        <video autoplay muted loop playsinline preload="metadata" poster="media/elders-praise-poster.jpg" width="1280" height="720" aria-label="Elders of Nyamira speaking in support of Dr. Gideon"><source src="media/elders-praise.mp4" type="video/mp4"></video>
+        <button type="button" class="vsound" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+        <figcaption class="vcap">Elders of Nyamira stand with Dr. Gideon.</figcaption>
+      </figure>
+      <figure class="vband vtile ">
+        <video autoplay muted loop playsinline preload="metadata" poster="media/flags-run-poster.jpg" width="1280" height="720" aria-label="Children running with Kenyan flags in a stadium"><source src="media/flags-run.mp4" type="video/mp4"></video>
+        <button type="button" class="vsound" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+        <figcaption class="vcap">The next generation, running with the flag.</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
 <!-- VOTE -->
 <section class="page dark photo" id="vote" style="--bg:url(img/trail.webp)">
   <div class="wrap vote-grid">
@@ -1671,7 +1712,7 @@ section.photo.split.hasvid::before{display:none}
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrops(); setNav(false); } });
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ closeDrops(); setNav(false); }));
   const topLinks=[...nav.querySelectorAll(':scope > ul > li > a')];
-  const groupOf=id=>{ if(['why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['change','volunteer','agents','faq','vote'].includes(id)) return 'involvedMenu'; return null; };
+  const groupOf=id=>{ if(['why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['change','volunteer','agents','faq','vote','people'].includes(id)) return 'involvedMenu'; return null; };
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) return;
       const id=en.target.id; topLinks.forEach(l=>l.classList.remove('active')); drops.forEach(d=>d.querySelector('.drop').classList.remove('active'));
