@@ -16,6 +16,12 @@ On the Claude-hosted version, sign-ups are saved through Claude's artifact datab
 ## Polling stations
 Station names per ward are loaded into the `stations` store from the IEBC register. To hard-code them for a static host, fill the `stations` object in the script with entries like `{"rigoma": [{"name": "Rigoma Primary School", "streams": 3}]}`.
 
+## Deployment
+
+Every push to `main` goes live on kucaparty.com automatically. The GitHub Actions workflow `.github/workflows/deploy.yml` asks cPanel (Git Version Control) to pull the new commit and deploy it (`.cpanel.yml` copies the files into `public_html`), waits for the result, then checks that the site and the back office respond. Progress and any errors are on the repository's **Actions** tab, where **Run workflow** also redeploys by hand.
+
+The workflow uses the repository secret `CPANEL_TOKEN`, a cPanel API token for the `kucapart` account (cPanel → Security → Manage API Tokens). To replace the token, create a new one in cPanel, update the secret under Settings → Secrets and variables → Actions, then revoke the old token.
+
 ## Back office (polling station agents, volunteers, pledges)
 
 The website forms save to a MySQL database on the cPanel hosting, and the team works from a

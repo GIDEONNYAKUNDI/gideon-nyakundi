@@ -1,0 +1,79 @@
+# Every push to main goes live on kucaparty.com.
+# GitHub asks cPanel (Git Version Control) to pull the new commit, then to deploy it,
+# which runs .cpanel.yml and copies the files into public_html.
+# Needs the repository secret CPANEL_TOKEN (cPanel > Security > Manage API Tokens).
+name: Deploy to kucaparty.com
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:        # "Run workflow" button on the Actions tab, to redeploy by hand
+
+# One deploy at a time; a newer push waits for the running one instead of cancelling it.
+concurrency:
+  group: cpanel-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CPANEL_HOST: kucaparty.com
+      CPANEL_USER: kucapart
+      REPO_ROOT: /home/kucapart/repositories/gideon-nyakundi
+      CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+    steps:
+      - name: Check the secret is set
+        run: |
+          if [ -z "$CPANEL_TOKEN" ]; then
+            echo "::error::Add the CPANEL_TOKEN secret under Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+
+      - name: Pull the new commit into cPanel
+        run: |
+          set -euo pipefail
+          out=$(curl -sS --fail --max-time 120 -H "Authorization: cpanel $CPANEL_USER:$CPANEL_TOKEN" --get \
+            --data-urlencode "repository_root=$REPO_ROOT" --data-urlencode "branch=main" \
+            "https://$CPANEL_HOST:2083/execute/VersionControl/update")
+          if [ "$(jq -r '.status' <<<"$out")" != "1" ]; then
+            echo "::error::cPanel could not pull: $(jq -c '.errors' <<<"$out")"; exit 1
+          fi
+          head=$(jq -r '.data.last_update.identifier' <<<"$out")
+          echo "cPanel repository is now at $head ($(jq -r '.data.last_update.message' <<<"$out" | head -1))"
+          # A later push may already have been pulled; that is fine, it gets deployed too.
+          [ "$head" = "$GITHUB_SHA" ] || echo "::notice::cPanel is at $head, newer than this run's $GITHUB_SHA."
+
+      - name: Deploy to public_html
+        run: |
+          set -euo pipefail
+          api() { curl -sS --fail --max-time 60 -H "Authorization: cpanel $CPANEL_USER:$CPANEL_TOKEN" --get "$@"; }
+          out=$(api --data-urlencode "repository_root=$REPO_ROOT" "https://$CPANEL_HOST:2083/execute/VersionControlDeployment/create")
+          if [ "$(jq -r '.status' <<<"$out")" != "1" ]; then
+            echo "::error::cPanel refused the deployment: $(jq -c '.errors' <<<"$out")"; exit 1
+          fi
+          id=$(jq -r '.data.deploy_id' <<<"$out")
+          echo "Deployment $id queued"
+          for i in $(seq 1 60); do
+            sleep 5
+            state=$(api "https://$CPANEL_HOST:2083/execute/VersionControlDeployment/retrieve" | jq -r --arg id "$id" '
+              .data[] | select((.deploy_id|tostring) == $id) | .timestamps
+              | if has("succeeded") then "succeeded" elif has("failed") then "failed" elif has("canceled") then "failed" else "running" end')
+            echo "  $state"
+            [ "$state" = "succeeded" ] && { echo "Deployment $id finished: the site is live."; exit 0; }
+            [ "$state" = "failed" ] && { echo "::error::Deployment $id failed. See cPanel > Git Version Control > Manage > Pull or Deploy for the log."; exit 1; }
+          done
+          echo "::error::Deployment $id did not finish within 5 minutes."; exit 1
+
+      - name: Check the site responds
+        run: |
+          set -euo pipefail
+          for url in "https://$CPANEL_HOST/" "https://$CPANEL_HOST/backoffice/"; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$url")
+            echo "$url -> $code"
+            [ "$code" = "200" ] || { echo "::error::$url returned $code after deploying."; exit 1; }
+          done
