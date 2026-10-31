@@ -799,6 +799,50 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
   </div>
 </section>
 
+<!-- VOLUNTEER -->
+<section class="page dark photo split" id="volunteer" style="--bg:url(img/residents.webp)">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">Join the Movement</p>
+      <h2>Volunteer sign-up</h2>
+      <p class="lede">Tell us where you are and how you would like to help. A ward coordinator will call you.</p>
+    </div>
+    <form class="form on-dark" id="volForm" novalidate>
+      <div class="frow">
+        <label for="v-name">Full name<input id="v-name" name="name" required autocomplete="name"></label>
+        <label for="v-phone">Phone (Safaricom/Airtel)<input id="v-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
+      </div>
+      <div class="frow">
+        <label for="v-const">Constituency<select id="v-const" name="constituency" required></select></label>
+        <label for="v-ward">Ward<select id="v-ward" name="ward" required disabled><option value="">Choose constituency first</option></select></label>
+      </div>
+      <div class="frow">
+        <label for="v-station">Polling station<select id="v-station" name="station" disabled><option value="">Choose ward first</option></select></label>
+        <label for="v-stream">Stream<select id="v-stream" name="stream" disabled><option value="">Choose polling station first</option></select></label>
+      </div>
+      <div class="frow">
+        <label for="v-village">Village or sub-location<input id="v-village" name="village"></label>
+        <label for="v-age">Age group<select id="v-age" name="age"><option value="">Select</option><option>18–24</option><option>25–35</option><option>36–50</option><option>51+</option></select></label>
+      </div>
+      <fieldset>
+        <legend>How would you like to help?</legend>
+        <div class="checks">
+          <label><input type="checkbox" name="roles" value="Door-to-door"> Door-to-door</label>
+          <label><input type="checkbox" name="roles" value="Events and rallies"> Events and rallies</label>
+          <label><input type="checkbox" name="roles" value="Social media"> Social media</label>
+          <label><input type="checkbox" name="roles" value="Transport"> Transport</label>
+          <label><input type="checkbox" name="roles" value="Women mobilisation"> Women mobilisation</label>
+          <label><input type="checkbox" name="roles" value="Youth mobilisation"> Youth mobilisation</label>
+          <label><input type="checkbox" name="roles" value="Professional skills"> Professional skills</label>
+          <label><input type="checkbox" name="roles" value="Diaspora support"> Diaspora support</label>
+        </div>
+      </fieldset>
+      <label for="v-msg">Your top priority for your ward<textarea id="v-msg" name="message" rows="3"></textarea></label>
+      <div class="factions"><button class="btn red" type="submit">Sign me up</button><p class="fmsg" id="volMsg" role="status"></p></div>
+    </form>
+  </div>
+</section>
+
 <!-- CAREER -->
 <section class="page dark photo split" id="career" style="--bg:url(img/career.webp)">
   <div class="wrap">
@@ -1538,50 +1582,6 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
         <a class="btn" href="#donate" style="text-align:center;border:2px solid var(--ink)">Support the campaign</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- VOLUNTEER -->
-<section class="page dark photo split" id="volunteer" style="--bg:url(img/residents.webp)">
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">Join the Movement</p>
-      <h2>Volunteer sign-up</h2>
-      <p class="lede">Tell us where you are and how you would like to help. A ward coordinator will call you.</p>
-    </div>
-    <form class="form on-dark" id="volForm" novalidate>
-      <div class="frow">
-        <label for="v-name">Full name<input id="v-name" name="name" required autocomplete="name"></label>
-        <label for="v-phone">Phone (Safaricom/Airtel)<input id="v-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
-      </div>
-      <div class="frow">
-        <label for="v-const">Constituency<select id="v-const" name="constituency" required></select></label>
-        <label for="v-ward">Ward<select id="v-ward" name="ward" required disabled><option value="">Choose constituency first</option></select></label>
-      </div>
-      <div class="frow">
-        <label for="v-station">Polling station<select id="v-station" name="station" disabled><option value="">Choose ward first</option></select></label>
-        <label for="v-stream">Stream<select id="v-stream" name="stream" disabled><option value="">Choose polling station first</option></select></label>
-      </div>
-      <div class="frow">
-        <label for="v-village">Village or sub-location<input id="v-village" name="village"></label>
-        <label for="v-age">Age group<select id="v-age" name="age"><option value="">Select</option><option>18–24</option><option>25–35</option><option>36–50</option><option>51+</option></select></label>
-      </div>
-      <fieldset>
-        <legend>How would you like to help?</legend>
-        <div class="checks">
-          <label><input type="checkbox" name="roles" value="Door-to-door"> Door-to-door</label>
-          <label><input type="checkbox" name="roles" value="Events and rallies"> Events and rallies</label>
-          <label><input type="checkbox" name="roles" value="Social media"> Social media</label>
-          <label><input type="checkbox" name="roles" value="Transport"> Transport</label>
-          <label><input type="checkbox" name="roles" value="Women mobilisation"> Women mobilisation</label>
-          <label><input type="checkbox" name="roles" value="Youth mobilisation"> Youth mobilisation</label>
-          <label><input type="checkbox" name="roles" value="Professional skills"> Professional skills</label>
-          <label><input type="checkbox" name="roles" value="Diaspora support"> Diaspora support</label>
-        </div>
-      </fieldset>
-      <label for="v-msg">Your top priority for your ward<textarea id="v-msg" name="message" rows="3"></textarea></label>
-      <div class="factions"><button class="btn red" type="submit">Sign me up</button><p class="fmsg" id="volMsg" role="status"></p></div>
-    </form>
   </div>
 </section>
 
