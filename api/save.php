@@ -40,6 +40,8 @@ try {
     $type = s($in, 'type', 20);
     $name = s($in, 'name'); $phone = s($in, 'phone', 30);
     if ($name === '' || !phone_ok($phone)) out(400, ['ok' => false, 'error' => 'Please enter your name and a valid phone number.']);
+    $email = mb_strtolower(s($in, 'email', 160));
+    if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) out(400, ['ok' => false, 'error' => 'Please check your e-mail address, or leave it empty.']);
 
     if ($type === 'agent' || $type === 'volunteer') {
         $ward = s($in, 'ward', 40);
@@ -50,20 +52,20 @@ try {
     if ($type === 'agent') {
         $station = s($in, 'station', 160); $stream = s($in, 'stream', 10);
         if ($station === '' || $stream === '') out(400, ['ok' => false, 'error' => 'Please choose your polling station and stream.']);
-        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => $station, 'station_code' => s($in, 'stationCode', 40), 'stream' => $stream, 'registered_here' => s($in, 'registeredHere', 40), 'experience' => s($in, 'experience', 40), 'training' => s($in, 'training', 20)];
-        db()->prepare('INSERT INTO agents (created_at, constituency, ward, station, station_code, stream, registered_here, name, phone, experience, training) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([now(), $const, $ward, $station, $rec['station_code'], $stream, $rec['registered_here'], $name, $phone, $rec['experience'], $rec['training']]);
+        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => $station, 'station_code' => s($in, 'stationCode', 40), 'stream' => $stream, 'registered_here' => s($in, 'registeredHere', 40), 'experience' => s($in, 'experience', 40), 'training' => s($in, 'training', 20), 'email' => $email];
+        db()->prepare('INSERT INTO agents (created_at, constituency, ward, station, station_code, stream, registered_here, name, phone, experience, training, email) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([now(), $const, $ward, $station, $rec['station_code'], $stream, $rec['registered_here'], $name, $phone, $rec['experience'], $rec['training'], $email]);
     } elseif ($type === 'volunteer') {
         $roles = is_array($in['roles'] ?? null) ? implode(', ', array_map(fn($r) => mb_substr(trim((string)$r), 0, 40), array_slice($in['roles'], 0, 12))) : '';
-        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => s($in, 'station', 160), 'stream' => s($in, 'stream', 10), 'village' => s($in, 'village'), 'age' => s($in, 'age', 20), 'roles' => $roles, 'message' => s($in, 'message', 1000)];
-        db()->prepare('INSERT INTO volunteers (created_at, constituency, ward, station, stream, village, age, roles, message, name, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([now(), $const, $ward, $rec['station'], $rec['stream'], $rec['village'], $rec['age'], $roles, $rec['message'], $name, $phone]);
+        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => s($in, 'station', 160), 'stream' => s($in, 'stream', 10), 'village' => s($in, 'village'), 'age' => s($in, 'age', 20), 'roles' => $roles, 'message' => s($in, 'message', 1000), 'email' => $email];
+        db()->prepare('INSERT INTO volunteers (created_at, constituency, ward, station, stream, village, age, roles, message, name, phone, email) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([now(), $const, $ward, $rec['station'], $rec['stream'], $rec['village'], $rec['age'], $roles, $rec['message'], $name, $phone, $email]);
     } elseif ($type === 'pledge') {
         $amt = (int)preg_replace('/\D/', '', (string)($in['amountKsh'] ?? ''));
         if ($amt < 1 || $amt > 100000000) out(400, ['ok' => false, 'error' => 'Please choose an amount.']);
-        $rec = ['name' => $name, 'phone' => $phone, 'amount_ksh' => $amt, 'method' => s($in, 'method', 60)];
-        db()->prepare('INSERT INTO pledges (created_at, name, phone, amount_ksh, method) VALUES (?,?,?,?,?)')
-            ->execute([now(), $name, $phone, $amt, $rec['method']]);
+        $rec = ['name' => $name, 'phone' => $phone, 'amount_ksh' => $amt, 'method' => s($in, 'method', 60), 'email' => $email];
+        db()->prepare('INSERT INTO pledges (created_at, name, phone, amount_ksh, method, email) VALUES (?,?,?,?,?,?)')
+            ->execute([now(), $name, $phone, $amt, $rec['method'], $email]);
     } else {
         out(400, ['ok' => false, 'error' => 'unknown form']);
     }

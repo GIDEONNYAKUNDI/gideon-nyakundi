@@ -139,7 +139,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     if ($a === 'test_email' && $isAdmin) {
         $to = array_filter(array_map('trim', explode(',', (string)($_POST['email'] ?? ''))));
-        $err = send_mail($to, 'Test e-mail from the Nyakundi 2027 back office', 'Sent by ' . $me['username'] . ' at ' . gmdate('j M Y, H:i') . " UTC.\n\nIf you can read this, e-mail from the website works.");
+        $err = send_mail($to, 'Test e-mail from the Nyakundi 2027 back office', 'Sent by ' . $me['username'] . ' at ' . gmdate('j M Y, H:i') . " UTC.\n\nIf you can read this, e-mail from the website works.", ['', 0], 'test');
         $flash = $err ? 'The test e-mail failed: ' . $err : 'Test e-mail sent to ' . implode(', ', $to) . '. Check the inbox (and the spam folder).';
         $flashBad = (bool)$err;
     }
@@ -162,7 +162,7 @@ function filters(string $table, string $scope): array {
     if (!empty($_GET['s'])) { $w[] = 'status = ?'; $args[] = (string)$_GET['s']; }
     if (!empty($_GET['q'])) {
         $q = '%' . str_replace(['%', '_'], ['\%', '\_'], (string)$_GET['q']) . '%';
-        $cols = $table === 'pledges' ? ['name', 'phone'] : ($table === 'agents' ? ['name', 'phone', 'station'] : ['name', 'phone', 'village']);
+        $cols = $table === 'pledges' ? ['name', 'phone', 'email'] : ($table === 'agents' ? ['name', 'phone', 'email', 'station'] : ['name', 'phone', 'email', 'village']);
         $w[] = '(' . implode(' OR ', array_map(fn($x) => "$x LIKE ?", $cols)) . ')';
         foreach ($cols as $_) $args[] = $q;
     }
@@ -180,6 +180,7 @@ function tag(string $status): string {
     $k = in_array($s, ['delivered', 'delivrd', 'sent', 'success'], true) ? 'ok' : (in_array($s, ['failed', 'undeliv', 'undelivered', 'rejected', 'expired', 'disabled', 'dnd'], true) ? 'bad' : 'wait');
     return '<span class="tag ' . $k . '">' . h($status) . '</span>';
 }
+function mail_link(string $email): string { return $email !== '' ? '<br><a href="mailto:' . h($email) . '"><small>' . h($email) . '</small></a>' : ''; }
 function sms_link(string $phone): string { return ' · <a href="?p=sms&amp;to=' . h(rawurlencode($phone)) . '">SMS</a>'; }
 function csv_cell($v): string {
     $v = (string)$v;
@@ -213,7 +214,7 @@ function filter_bar(string $p, string $scope, array $statuses, bool $wards = tru
     }
     $o .= '<select name="s"><option value="">All statuses</option>';
     foreach ($statuses as $s) $o .= '<option' . (($_GET['s'] ?? '') === $s ? ' selected' : '') . '>' . h($s) . '</option>';
-    $o .= '</select><input name="q" value="' . h($_GET['q'] ?? '') . '" placeholder="Search name or phone"><button class="btn sm">Filter</button>';
+    $o .= '</select><input name="q" value="' . h($_GET['q'] ?? '') . '" placeholder="Search name, phone or e-mail"><button class="btn sm">Filter</button>';
     $qs = $_GET; $qs['export'] = 1;
     $o .= '<a class="btn sm ghost" href="?' . h(http_build_query($qs)) . '">Download CSV</a>';
     if ($sms) { $qs = $_GET; unset($qs['export']); $qs['p'] = 'sms'; $qs['t'] = $p; $o .= '<a class="btn sm ghost" href="?' . h(http_build_query($qs)) . '">Text this list</a>'; }
@@ -223,9 +224,9 @@ function filter_bar(string $p, string $scope, array $statuses, bool $wards = tru
 
 /* ---------- CSV exports (before any HTML) ---------- */
 if (!empty($_GET['export'])) {
-    if ($p === 'agents') { [$w, $a] = filters('agents', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, station_code, stream, name, phone, registered_here, experience, training, status, notes, updated_by FROM agents$w ORDER BY constituency, ward, station, stream"); $s->execute($a); export_csv('agents', $s->fetchAll()); }
-    if ($p === 'volunteers') { [$w, $a] = filters('volunteers', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, stream, village, age, roles, message, name, phone, status, notes FROM volunteers$w ORDER BY constituency, ward"); $s->execute($a); export_csv('volunteers', $s->fetchAll()); }
-    if ($p === 'pledges' && $isAdmin) { [$w, $a] = filters('pledges', ''); $s = db()->prepare("SELECT id, created_at, name, phone, amount_ksh, method, status, notes FROM pledges$w ORDER BY created_at DESC"); $s->execute($a); export_csv('pledges', $s->fetchAll()); }
+    if ($p === 'agents') { [$w, $a] = filters('agents', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, station_code, stream, name, phone, email, registered_here, experience, training, status, notes, updated_by FROM agents$w ORDER BY constituency, ward, station, stream"); $s->execute($a); export_csv('agents', $s->fetchAll()); }
+    if ($p === 'volunteers') { [$w, $a] = filters('volunteers', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, stream, village, age, roles, message, name, phone, email, status, notes FROM volunteers$w ORDER BY constituency, ward"); $s->execute($a); export_csv('volunteers', $s->fetchAll()); }
+    if ($p === 'pledges' && $isAdmin) { [$w, $a] = filters('pledges', ''); $s = db()->prepare("SELECT id, created_at, name, phone, email, amount_ksh, method, status, notes FROM pledges$w ORDER BY created_at DESC"); $s->execute($a); export_csv('pledges', $s->fetchAll()); }
     if ($p === 'gaps') {
         $rows = [];
         foreach (coverage_rows($scope) as $r) if (!$r['agents']) $rows[] = ['constituency' => $r['constituency'], 'ward' => $r['ward'], 'station' => $r['station'], 'centre_code' => $r['code'], 'stream' => $r['stream'], 'registered_voters' => $r['voters']];
@@ -303,7 +304,7 @@ if ($p === 'agents') {
     echo '<h1>Polling station agents</h1>' . filter_bar('agents', $scope, AGENT_STATUSES, true, $isAdmin);
     echo '<table><thead><tr><th>Registered</th><th>Name and phone</th><th>Ward</th><th>Polling station</th><th>Stream</th><th>Details</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
     foreach ($s->fetchAll() as $r) {
-        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . '</td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small></td><td>' . h($r['station']) . ($r['station_code'] ? '<br><small>' . h($r['station_code']) . '</small>' : '') . '</td><td>' . h($r['stream']) . '</td>'
+        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . mail_link($r['email'] ?? '') . '</td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small></td><td>' . h($r['station']) . ($r['station_code'] ? '<br><small>' . h($r['station_code']) . '</small>' : '') . '</td><td>' . h($r['stream']) . '</td>'
             . '<td><small>Registered here: ' . h($r['registered_here'] ?: '-') . '<br>Before: ' . h($r['experience'] ?: '-') . '<br>Training: ' . h($r['training'] ?: '-') . '</small></td><td>' . status_form('agents', $r, AGENT_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('agents', (int)$r['id']) . '</td>' : '') . '</tr>';
     }
     echo '</tbody></table><p class="muted">Showing the latest 500. Use the filters or download the CSV for everything.</p>';
@@ -315,7 +316,7 @@ if ($p === 'volunteers') {
     echo '<h1>Volunteers</h1>' . filter_bar('volunteers', $scope, VOL_STATUSES, true, $isAdmin);
     echo '<table><thead><tr><th>Registered</th><th>Name and phone</th><th>Ward</th><th>Village</th><th>How they will help</th><th>Top priority</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
     foreach ($s->fetchAll() as $r) {
-        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . '<br><small>' . h($r['age']) . '</small></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small>' . ($r['station'] ? '<br><small>' . h($r['station']) . ($r['stream'] ? ' · stream ' . h($r['stream']) : '') . '</small>' : '') . '</td><td>' . h($r['village']) . '</td><td><small>' . h($r['roles']) . '</small></td><td><small>' . h($r['message']) . '</small></td><td>' . status_form('volunteers', $r, VOL_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('volunteers', (int)$r['id']) . '</td>' : '') . '</tr>';
+        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . mail_link($r['email'] ?? '') . '<br><small>' . h($r['age']) . '</small></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small>' . ($r['station'] ? '<br><small>' . h($r['station']) . ($r['stream'] ? ' · stream ' . h($r['stream']) : '') . '</small>' : '') . '</td><td>' . h($r['village']) . '</td><td><small>' . h($r['roles']) . '</small></td><td><small>' . h($r['message']) . '</small></td><td>' . status_form('volunteers', $r, VOL_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('volunteers', (int)$r['id']) . '</td>' : '') . '</tr>';
     }
     echo '</tbody></table>';
 }
@@ -325,7 +326,7 @@ if ($p === 'pledges' && $isAdmin) {
     $s = db()->prepare("SELECT * FROM pledges$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
     echo '<h1>Pledges</h1>' . filter_bar('pledges', '', PLEDGE_STATUSES, false, true);
     echo '<table><thead><tr><th>Date</th><th>Name and phone</th><th>Amount (Ksh)</th><th>Method</th><th>Status and notes</th><th></th></tr></thead><tbody>';
-    foreach ($s->fetchAll() as $r) echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br>' . h($r['phone']) . sms_link($r['phone']) . '</td><td>' . number_format((int)$r['amount_ksh']) . '</td><td>' . h($r['method']) . '</td><td>' . status_form('pledges', $r, PLEDGE_STATUSES) . '</td><td>' . delete_btn('pledges', (int)$r['id']) . '</td></tr>';
+    foreach ($s->fetchAll() as $r) echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br>' . h($r['phone']) . sms_link($r['phone']) . mail_link($r['email'] ?? '') . '</td><td>' . number_format((int)$r['amount_ksh']) . '</td><td>' . h($r['method']) . '</td><td>' . status_form('pledges', $r, PLEDGE_STATUSES) . '</td><td>' . delete_btn('pledges', (int)$r['id']) . '</td></tr>';
     echo '</tbody></table>';
 }
 
@@ -381,13 +382,14 @@ if ($p === 'sms' && $isAdmin) {
 
 if ($p === 'email' && $isAdmin) {
     $c = smtp_cfg();
-    echo '<h1>E-mail</h1><p class="muted">Every e-mail the website sent. New sign-ups are e-mailed to <b>' . h(implode(', ', $c['notify']) ?: 'nobody yet') . '</b>' . (!empty($c['host']) ? ' through ' . h($c['host'] . ':' . ($c['port'] ?? '')) : '') . '.</p>';
+    echo '<h1>E-mail</h1><p class="muted">Every e-mail the website sent: team alerts, confirmations to people who signed up, and tests. Team alerts go to <b>' . h(implode(', ', $c['notify']) ?: 'nobody yet') . '</b>' . (!empty($c['host']) ? ' through ' . h($c['host'] . ':' . ($c['port'] ?? '')) : '') . '.</p>';
     if (empty($c['enabled'])) echo '<p class="err">E-mail is switched off. <a href="?p=settings&amp;tab=email">Set up the mail server in Settings</a>.</p>';
     echo '<form method="post" class="filters"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="test_email"><input name="email" value="' . h(implode(', ', $c['notify'])) . '" placeholder="you@example.com" style="min-width:280px" required><button class="btn sm">Send a test e-mail</button></form>';
-    echo '<table><thead><tr><th>Sent (Kenya time)</th><th>To</th><th>Subject</th><th>Status</th></tr></thead><tbody>';
+    echo '<table><thead><tr><th>Sent (Kenya time)</th><th>Type</th><th>To</th><th>Subject</th><th>Status</th></tr></thead><tbody>';
     $rows = db()->query('SELECT * FROM email_log ORDER BY id DESC LIMIT 300')->fetchAll();
-    if (!$rows) echo '<tr><td colspan="4" class="muted">No e-mails sent yet.</td></tr>';
-    foreach ($rows as $r) echo '<tr><td>' . h(ke_time($r['created_at'])) . '</td><td>' . h($r['to_addr']) . '</td><td><details><summary>' . h($r['subject']) . '</summary><pre style="white-space:pre-wrap;font-size:.85rem">' . h($r['body']) . '</pre></details></td><td>' . tag($r['status']) . ($r['error'] ? '<br><small>' . h($r['error']) . '</small>' : '') . '</td></tr>';
+    if (!$rows) echo '<tr><td colspan="5" class="muted">No e-mails sent yet.</td></tr>';
+    $kinds = ['alert' => 'Team alert', 'confirmation' => 'Confirmation', 'test' => 'Test'];
+    foreach ($rows as $r) echo '<tr><td>' . h(ke_time($r['created_at'])) . '</td><td>' . h($kinds[$r['kind'] ?? ''] ?? '') . '</td><td>' . h($r['to_addr']) . '</td><td><details><summary>' . h($r['subject']) . '</summary><pre style="white-space:pre-wrap;font-size:.85rem">' . h($r['body']) . '</pre></details></td><td>' . tag($r['status']) . ($r['error'] ? '<br><small>' . h($r['error']) . '</small>' : '') . '</td></tr>';
     echo '</tbody></table>';
 }
 
@@ -440,12 +442,18 @@ details summary{cursor:pointer}
 .pill{display:inline-block;justify-self:start;padding:1px 9px;border-radius:10px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#eef1f6;color:var(--muted)}.pill.on{background:#e3f3e9;color:#1f6b40}.pill.test{background:#fbf1d6;color:#7a5a0c}.pill.off{background:#fbe4e4;color:#a3222a}
 .subnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;border-bottom:1px solid var(--line)}.subnav a{padding:10px 14px;text-decoration:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;font-weight:600}.subnav a.on{color:var(--blue);border-color:var(--red)}
 .cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:18px;align-items:start}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.stack label small{font-weight:400}.switch{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-weight:600}.switch input{width:18px;height:18px;margin-top:2px;accent-color:var(--green)}
+.stack label small,.stack label input,.stack label textarea,.stack label select{font-weight:400}.switch{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-weight:600}.switch input{width:18px;height:18px;margin-top:2px;accent-color:var(--green)}
 .inline{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.inline input{flex:1;min-width:180px}
 .tpl-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font:inherit;font-size:.85rem;padding:3px 10px;border-radius:12px;border:1px solid #b9c6e0;background:#eef3fc;color:var(--blue);cursor:pointer}.chip.plain{background:#fff;border-color:var(--line);color:var(--muted)}
 .bubble{margin-top:6px;background:#e9f6ec;border:1px solid #cfe8d6;border-radius:14px 14px 14px 4px;padding:12px 14px;white-space:pre-wrap;line-height:1.45;max-width:420px}
-@media (max-width:860px){.cols,.two{grid-template-columns:1fr}}
+.cols.even{grid-template-columns:1fr 1fr}.part-head{display:flex;justify-content:space-between;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding-bottom:6px}
+.phone{background:#f1f3f7;border-radius:14px;padding:12px}.phone .bubble{margin:0;background:#fff;border-color:var(--line)}
+.mail{border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#f4f6f9;font-size:.92rem}.mail-top{background:#fff;padding:9px 12px;border-bottom:1px solid var(--line);line-height:1.6}.mail-top small{color:var(--muted);display:inline-block;width:56px}
+.mail-brand{background:var(--blue);color:#fff;font-weight:800;padding:9px 14px;border-bottom:3px solid var(--red);margin:10px 10px 0}.mail-brand span{color:var(--gold)}
+.mail-body{background:#fff;margin:0 10px;padding:14px;white-space:pre-wrap;line-height:1.5;border:1px solid var(--line);border-top:0}.mail-foot{font-size:.75rem;color:var(--muted);padding:8px 12px 12px}
+.savebar{position:sticky;bottom:0;background:var(--bg);padding:12px 0;border-top:1px solid var(--line);display:flex;gap:16px;align-items:center;flex-wrap:wrap}.savebar p{margin:0}
+@media (max-width:860px){.cols,.two,.cols.even{grid-template-columns:1fr}}
 .stack{display:grid;gap:12px}.stack label{display:grid;gap:4px;font-weight:600}
 .row-edit{display:flex;flex-wrap:wrap;gap:6px}.row-edit input{min-width:140px;flex:1}
 .btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;padding:9px 16px;border-radius:3px;cursor:pointer;text-decoration:none;display:inline-block}.btn.sm{padding:6px 11px;font-size:.88rem}.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}

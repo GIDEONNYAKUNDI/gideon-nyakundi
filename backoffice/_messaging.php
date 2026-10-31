@@ -18,6 +18,24 @@ const TEMPLATE_DEFAULTS = [
     'pledge'    => 'Thank you {name} for your pledge of Ksh {amount}. The finance team will call you with the official payment details. Do not send money to individuals.',
 ];
 
+const SIGNATURE = "Dr. Gideon Moseti Nyakundi\nCandidate for Governor, Nyamira County\nkucaparty.com";
+const MAIL_DEFAULTS = [
+    'volunteer' => ['subject' => 'Welcome to Team Nyakundi 2027, {name}',
+        'body' => "Dear {name},\n\nThank you for volunteering with Team Nyakundi 2027 in {ward} Ward. Your ward coordinator will call you soon to agree how you can help.\n\nOmonto, Nabanto. Together we will build the new Nyamira.\n\n" . SIGNATURE],
+    'agent' => ['subject' => 'You are registered as a polling station agent, {name}',
+        'body' => "Dear {name},\n\nThank you for stepping forward to protect the vote. You are registered as an agent for {station}, Stream {stream}, in {ward} Ward.\n\nOur team will call you with the dates and venue of the agent training. Please keep your phone on.\n\n" . SIGNATURE],
+    'pledge' => ['subject' => 'Thank you for your pledge of Ksh {amount}',
+        'body' => "Dear {name},\n\nThank you for pledging Ksh {amount} to the campaign. Our finance team will call you with the official payment details and a receipt.\n\nPlease do not send money to individuals. Use only the official channels the finance team gives you.\n\n" . SIGNATURE],
+];
+const ALERT_TAGS = ['{form}', '{name}', '{phone}', '{email}', '{constituency}', '{ward}', '{station}', '{stream}', '{amount}', '{summary}'];
+const ALERT_DEFAULTS = ['subject' => 'New {form}: {summary}', 'intro' => 'A new {form} signed up on the website.', 'sms' => 'New {form}: {summary}'];
+const FORM_NOUNS = ['agent' => 'polling agent', 'volunteer' => 'volunteer', 'pledge' => 'pledge'];
+const SAMPLE_RECORDS = [
+    'volunteer' => ['name' => 'Jane Moraa', 'phone' => '0712 345 678', 'email' => 'jane@example.com', 'constituency' => 'Kitutu Masaba', 'ward' => 'Rigoma', 'station' => 'Rigoma Primary School', 'stream' => '2'],
+    'agent'     => ['name' => 'Peter Ondieki', 'phone' => '0722 000 111', 'email' => 'peter@example.com', 'constituency' => 'Borabu', 'ward' => 'Esise', 'station' => 'Esise Primary School', 'stream' => '1'],
+    'pledge'    => ['name' => 'Ann Kerubo', 'phone' => '0733 111 222', 'email' => 'ann@example.com', 'amount_ksh' => 5000],
+];
+
 /* ---------- settings saved from the back office (they override config.php) ---------- */
 
 function settings(bool $reload = false): array {
@@ -78,6 +96,32 @@ function template_on(string $t): bool {
     return $f === null || trim((string)$f) !== '';
 }
 
+/* Confirmation e-mail for one form: ['on' => bool, 'subject' => ..., 'body' => ...]. */
+function mail_template(string $t): array {
+    return ['on' => setting('mail.' . $t . '.on', '1') === '1', 'subject' => setting('mail.' . $t . '.subject', MAIL_DEFAULTS[$t]['subject']),
+            'body' => setting('mail.' . $t . '.body', MAIL_DEFAULTS[$t]['body'])];
+}
+/* Team alert wording: e-mail subject, e-mail first line, and the SMS to alert phones. */
+function alert_template(): array {
+    return ['subject' => setting('alert.subject', ALERT_DEFAULTS['subject']), 'intro' => setting('alert.intro', ALERT_DEFAULTS['intro']), 'sms' => setting('alert.sms', ALERT_DEFAULTS['sms'])];
+}
+/* Placeholder values for a sign-up. {name} is the first name in messages to the person, the full name in team alerts. */
+function signup_values(string $type, array $r, bool $toPerson): array {
+    $place = array_filter([$r['constituency'] ?? '', $r['ward'] ?? '', $r['station'] ?? '', !empty($r['stream']) ? 'Stream ' . $r['stream'] : '']);
+    $amount = isset($r['amount_ksh']) ? number_format((int)$r['amount_ksh']) : '';
+    $name = trim((string)$r['name']);
+    return ['{form}' => FORM_NOUNS[$type], '{name}' => $toPerson ? explode(' ', $name)[0] : $name, '{phone}' => (string)$r['phone'], '{email}' => (string)($r['email'] ?? ''),
+            '{constituency}' => (string)($r['constituency'] ?? ''), '{ward}' => (string)($r['ward'] ?? ''), '{station}' => (string)($r['station'] ?? ''),
+            '{stream}' => (string)($r['stream'] ?? ''), '{amount}' => $amount,
+            '{summary}' => $name . ', ' . $r['phone'] . ($amount !== '' ? ', Ksh ' . $amount : '') . ($place ? ', ' . implode(' > ', $place) : '')];
+}
+/* Fills placeholders and tidies the gaps an empty one leaves. */
+function fill(string $tpl, array $values): string {
+    $out = strtr($tpl, $values);
+    $out = preg_replace(['/[ \t]{2,}/', '/ +([,.!?])/'], [' ', '$1'], $out) ?? $out;
+    return trim($out);
+}
+
 function sms_cfg(): array {
     $f = cfg()['sms'] ?? [];
     $b = fn(string $k, bool $d) => has_setting('sms.' . $k) ? setting('sms.' . $k) === '1' : (bool)($f[$k] ?? $d);
@@ -94,7 +138,7 @@ function smtp_cfg(): array {
     $user = $s('user');
     return ['enabled' => has_setting('smtp.enabled') ? setting('smtp.enabled') === '1' : (bool)($f['enabled'] ?? false),
         'host' => $s('host'), 'port' => (int)$s('port', '465'), 'secure' => $s('secure', 'ssl'), 'user' => $user, 'pass' => $s('pass'),
-        'from_email' => $s('from_email', $user), 'from_name' => $s('from_name', 'Nyakundi 2027 Website'),
+        'from_email' => $s('from_email', $user), 'from_name' => $s('from_name', 'Nyakundi 2027 Website'), 'reply_to' => $s('reply_to'),
         'notify' => array_values(array_filter(list_setting('smtp.notify', (array)($f['notify'] ?? [])), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)))];
 }
 
@@ -203,8 +247,14 @@ function smtp_cmd($fp, ?string $cmd, array $expect): void {
 }
 function mime_header(string $s): string { return preg_match('/[^\x20-\x7E]/', $s) ? '=?UTF-8?B?' . base64_encode($s) . '?=' : $s; }
 
-/* HTML version of a plain-text alert, in the campaign colours. Inline styles only, as mail clients require. */
-function mail_html(string $text): string {
+const MAIL_FOOTERS = [
+    'alert'        => 'Automatic message from the Nyakundi 2027 back office at kucaparty.com. You get it because you are on the sign-up alert list.',
+    'confirmation' => 'You received this because this address was entered when signing up at kucaparty.com. If that was not you, please ignore this e-mail.',
+    'test'         => 'Test message from the Nyakundi 2027 back office at kucaparty.com.',
+];
+
+/* HTML version of a plain-text e-mail, in the campaign colours. Inline styles only, as mail clients require. */
+function mail_html(string $text, string $kind = 'alert'): string {
     $t = htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
     $t = preg_replace('~https?://[^\s<]+~', '<a href="$0" style="color:#13264d;font-weight:600">$0</a>', $t) ?? $t;
     return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>'
@@ -212,12 +262,15 @@ function mail_html(string $text): string {
         . '<div style="max-width:600px;margin:0 auto;padding:24px 16px">'
         . '<div style="background:#13264d;color:#ffffff;padding:14px 20px;font-size:17px;font-weight:700;border-bottom:3px solid #c0272d">Nyakundi <span style="color:#d4b04c">2027</span></div>'
         . '<div style="background:#ffffff;border:1px solid #dde2ea;border-top:0;padding:20px;font-size:15px;line-height:1.55;white-space:pre-wrap">' . $t . '</div>'
-        . '<p style="color:#5d6779;font-size:12px;line-height:1.5;margin:14px 4px 0">Automatic message from the Nyakundi 2027 back office at kucaparty.com. You get it because you are on the sign-up alert list.</p>'
+        . '<p style="color:#5d6779;font-size:12px;line-height:1.5;margin:14px 4px 0">' . htmlspecialchars(MAIL_FOOTERS[$kind] ?? MAIL_FOOTERS['alert'], ENT_QUOTES, 'UTF-8') . '</p>'
         . '</div></body></html>';
 }
 
-/* Sends an e-mail (plain text plus an HTML version) and logs it. Returns null on success, or the error. */
-function send_mail(array $to, string $subject, string $body, array $ref = ['', 0]): ?string {
+/*
+ * Sends an e-mail (plain text plus an HTML version) and logs it. Returns null on success, or the error.
+ * $kind is 'alert' (to the team), 'confirmation' (to the person who signed up) or 'test'.
+ */
+function send_mail(array $to, string $subject, string $body, array $ref = ['', 0], string $kind = 'alert'): ?string {
     $c = smtp_cfg();
     $to = array_values(array_filter(array_map('trim', $to), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)));
     $error = null;
@@ -248,10 +301,11 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
                      'Subject: ' . mime_header($subject), 'Message-ID: <' . bin2hex(random_bytes(12)) . '@' . $domain . '>', 'MIME-Version: 1.0',
                      'Auto-Submitted: auto-generated', 'X-Auto-Response-Suppress: All',
                      'Content-Type: multipart/alternative; boundary="' . $boundary . '"'];
+            if (filter_var($c['reply_to'] ?? '', FILTER_VALIDATE_EMAIL)) $head[] = 'Reply-To: ' . $c['reply_to'];
             // Quoted-printable rather than base64: spam filters score base64-encoded text bodies as suspicious.
             $qp = fn(string $s) => quoted_printable_encode(preg_replace('/\r?\n/', "\r\n", $s) ?? $s);
             $mime = '--' . $boundary . "\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . $qp($body)
-                  . "\r\n--" . $boundary . "\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . $qp(mail_html($body))
+                  . "\r\n--" . $boundary . "\r\nContent-Type: text/html; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . $qp(mail_html($body, $kind))
                   . "\r\n--" . $boundary . "--\r\n";
             $mime = preg_replace('/(^|\r\n)\./', '$1..', $mime) ?? $mime;   // SMTP dot-stuffing
             fwrite($fp, implode("\r\n", $head) . "\r\n\r\n" . $mime . ".\r\n");
@@ -262,35 +316,41 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
         }
         if (is_resource($fp)) fclose($fp);
     }
-    db()->prepare('INSERT INTO email_log (created_at, to_addr, subject, body, status, error, record_type, record_id) VALUES (?,?,?,?,?,?,?,?)')
-        ->execute([now(), implode(', ', $to) ?: '(none)', mb_substr($subject, 0, 255), $body, $error ? 'failed' : 'sent', $error ? mb_substr($error, 0, 500) : null, $ref[0], (int)$ref[1]]);
+    db()->prepare('INSERT INTO email_log (created_at, to_addr, subject, body, status, error, record_type, record_id, kind) VALUES (?,?,?,?,?,?,?,?,?)')
+        ->execute([now(), implode(', ', $to) ?: '(none)', mb_substr($subject, 0, 255), $body, $error ? 'failed' : 'sent', $error ? mb_substr($error, 0, 500) : null, $ref[0], (int)$ref[1], $kind]);
     return $error;
 }
 
 /* ---------- after a website sign-up ---------- */
 
-/* Confirmation SMS to the person, optional SMS alert to staff, and an e-mail to the team. */
+/*
+ * After a website sign-up: confirmation SMS and (if they gave an address) confirmation e-mail to the person,
+ * an SMS to the alert phones, and an e-mail to the team. All wording comes from Settings > Messages.
+ */
 function notify_signup(string $type, int $id, array $r): void {
-    $table = $type . 's';
+    $ref = [$type . 's', $id];
+    $person = signup_values($type, $r, true);
+    $team = signup_values($type, $r, false);
+
     $sms = sms_cfg();
-    $first = explode(' ', trim($r['name']))[0];
     $tpl = (string)($sms['templates'][$type] ?? '');
-    if ($tpl !== '') {
-        sms_send([$r['phone']], strtr($tpl, ['{name}' => $first, '{ward}' => $r['ward'] ?? '', '{station}' => $r['station'] ?? '', '{stream}' => $r['stream'] ?? '',
-            '{amount}' => isset($r['amount_ksh']) ? number_format((int)$r['amount_ksh']) : '']), 'confirmation', 'website', [$table, $id]);
+    if ($tpl !== '') sms_send([$r['phone']], fill($tpl, $person), 'confirmation', 'website', $ref);
+
+    $mail = mail_template($type);
+    if ($mail['on'] && filter_var($r['email'] ?? '', FILTER_VALIDATE_EMAIL)) {
+        send_mail([$r['email']], fill($mail['subject'], $person), fill($mail['body'], $person), $ref, 'confirmation');
     }
-    $label = ['agent' => 'Polling agent', 'volunteer' => 'Volunteer', 'pledge' => 'Pledge'][$type];
-    $place = array_filter([$r['constituency'] ?? '', $r['ward'] ?? '', $r['station'] ?? '', !empty($r['stream']) ? 'Stream ' . $r['stream'] : '']);
-    $summary = $label . ': ' . $r['name'] . ', ' . $r['phone'] . (isset($r['amount_ksh']) ? ', Ksh ' . number_format((int)$r['amount_ksh']) : '') . ($place ? ', ' . implode(' > ', $place) : '');
-    if ($sms['alert_numbers']) sms_send($sms['alert_numbers'], 'New ' . $summary, 'alert', 'website', [$table, $id]);
+
+    $alert = alert_template();
+    if ($sms['alert_numbers'] && trim($alert['sms']) !== '') sms_send($sms['alert_numbers'], fill($alert['sms'], $team), 'alert', 'website', $ref);
 
     $notify = smtp_cfg()['notify'];
     if ($notify) {
-        $lines = ['A new ' . strtolower($label) . ' signed up on the website.', ''];
-        foreach ($r as $k => $v) if ($v !== '' && $v !== null) $lines[] = str_pad(ucfirst(str_replace('_', ' ', $k)) . ':', 18) . $v;
-        $lines[] = str_pad('Received:', 18) . gmdate('j M Y, H:i') . ' UTC';
+        $lines = [fill($alert['intro'], $team), ''];
+        foreach ($r as $k => $v) if ($v !== '' && $v !== null) $lines[] = str_pad(ucfirst(str_replace('_', ' ', $k)) . ':', 18) . ($k === 'amount_ksh' ? number_format((int)$v) : $v);
+        $lines[] = str_pad('Received:', 18) . gmdate('j M Y, H:i', time() + 3 * 3600) . ' (Kenya time)';
         $lines[] = '';
-        $lines[] = 'Follow up in the back office: https://' . ($_SERVER['HTTP_HOST'] ?? 'kucaparty.com') . '/backoffice/?p=' . $table . '&q=' . rawurlencode($r['phone']);
-        send_mail($notify, 'New ' . $summary, implode("\n", $lines), [$table, $id]);
+        $lines[] = 'Follow up in the back office: https://' . ($_SERVER['HTTP_HOST'] ?? 'kucaparty.com') . '/backoffice/?p=' . $ref[0] . '&q=' . rawurlencode((string)$r['phone']);
+        send_mail($notify, fill($alert['subject'], $team), implode("\n", $lines), $ref, 'alert');
     }
 }

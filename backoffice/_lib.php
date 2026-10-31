@@ -55,6 +55,14 @@ function install_schema(): void {
         "CREATE TABLE IF NOT EXISTS webhook_log (id $pk, created_at VARCHAR(19) NOT NULL, payload TEXT NOT NULL, ip_hash VARCHAR(64) NOT NULL DEFAULT '')$tail",
     ];
     foreach ($t as $q) db()->exec($q);
+    foreach (['agents', 'volunteers', 'pledges'] as $tb) add_column($tb, 'email', "VARCHAR(160) NOT NULL DEFAULT ''");
+    add_column('email_log', 'kind', "VARCHAR(20) NOT NULL DEFAULT ''");
+}
+
+/* Adds a column to a table created by an older version, once. */
+function add_column(string $table, string $col, string $def): void {
+    try { db()->query("SELECT $col FROM $table LIMIT 1"); }
+    catch (Throwable $e) { db()->exec("ALTER TABLE $table ADD COLUMN $col $def"); }
 }
 
 function now(): string { return gmdate('Y-m-d H:i:s'); }

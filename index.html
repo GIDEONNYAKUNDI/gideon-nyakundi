@@ -751,6 +751,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
         <label for="a-name">Full name<input id="a-name" name="name" required autocomplete="name"></label>
         <label for="a-phone">Phone<input id="a-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
       </div>
+      <label for="a-email">E-mail <small>(optional, for a confirmation e-mail)</small><input id="a-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
       <div class="frow">
         <label for="a-exp">Have you served as an agent before?<select id="a-exp" name="experience"><option value="">Select</option><option>Yes, in 2022</option><option>Yes, earlier elections</option><option>No, first time</option></select></label>
         <label for="a-train">Can you attend agent training in 2027 before elections?<select id="a-train" name="training"><option value="">Select</option><option>Yes</option><option>No</option><option>Maybe</option></select></label>
@@ -841,6 +842,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
         <label for="v-name">Full name<input id="v-name" name="name" required autocomplete="name"></label>
         <label for="v-phone">Phone (Safaricom/Airtel)<input id="v-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
       </div>
+      <label for="v-email">E-mail <small>(optional, for a confirmation e-mail)</small><input id="v-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
       <div class="frow">
         <label for="v-const">Constituency<select id="v-const" name="constituency" required></select></label>
         <label for="v-ward">Ward<select id="v-ward" name="ward" required disabled><option value="">Choose constituency first</option></select></label>
@@ -1670,6 +1672,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
           <label for="d-name">Full name<input id="d-name" name="name" required autocomplete="name"></label>
           <label for="d-phone">Phone<input id="d-phone" name="phone" required inputmode="tel" autocomplete="tel"></label>
         </div>
+        <label for="d-email">E-mail <small>(optional, for a confirmation e-mail)</small><input id="d-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"></label>
         <label for="d-how">How would you like to give?<select id="d-how" name="method"><option>M-Pesa</option><option>Bank transfer</option><option>Diaspora transfer</option><option>In-kind (transport, venue, materials)</option></select></label>
         <label class="consent"><input type="checkbox" name="consent" value="1"> <span>I agree that the Nyakundi 2027 campaign may keep these details and contact me about the campaign. They are used only for the campaign.</span></label>
         <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -1855,6 +1858,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
 
   function formData(form){ const fd=new FormData(form), o={}; for(const [k,v] of fd.entries()){ if(k==='roles'){ (o.roles=o.roles||[]).push(v); } else o[k]=String(v).trim(); } return o; }
   function phoneOk(p){ return (p||'').replace(/\D/g,'').length>=9; }
+  function emailOk(v){ return !v||/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v); }
   function say(el,txt,kind){ el.textContent=txt; el.className='fmsg '+(kind||''); }
   const TYPES={volunteers:'volunteer',agents:'agent',pledges:'pledge'};
   function fallback(msgEl,lead,summary){ msgEl.innerHTML=''; msgEl.className='fmsg err'; msgEl.append(lead+' Please send these details by SMS or WhatsApp to 0723 636 511: '+summary+' '); const a=document.createElement('a'); a.href='https://wa.me/254723636511?text='+encodeURIComponent(summary); a.target='_blank'; a.rel='noopener'; a.textContent='Open WhatsApp'; msgEl.append(a); }
@@ -1879,6 +1883,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
 
   $('volForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('volMsg'), d=formData(e.target);
     if(!d.name||!phoneOk(d.phone)||!d.constituency||!d.ward){ say(m,'Please enter your name, a valid phone number, your constituency and ward.','err'); return; }
+    if(!emailOk(d.email)){ say(m,'Please check your e-mail address, or leave it empty.','err'); return; }
     d.county='Nyamira'; if(d.station&&d.stream){ d.stationCode=streamCode((stations[slug(d.ward)]||[]).find(x=>x.name===d.station),Number(d.stream)); }
     const ok=await save('volunteers',d,m,'Thank you, '+d.name.split(' ')[0]+'. Your '+d.ward+' Ward coordinator will call you.', d.name+', '+d.phone+', '+d.ward+' Ward, '+d.constituency+(d.station?', '+d.station+(d.stream?' stream '+d.stream:''):''),e.target);
     if(ok){ thanks('volunteer',{...d}); e.target.reset(); vC.dispatchEvent(new Event('change')); }
@@ -1887,7 +1892,8 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
   $('agentForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('agentMsg'), d=formData(e.target);
     const st=stationName();
     if(!d.name||!phoneOk(d.phone)||!aW.value||!st||!d.stream){ say(m,'Please choose your ward, polling station and stream, and enter your name and a valid phone number.','err'); return; }
-    const rec={county:'Nyamira',constituency:curConst,ward:aW.value,station:st,stationCode:(aS.value!=='__other'?streamCode((stations[slug(aW.value)]||[]).find(x=>x.name===st),Number(d.stream))||'':'')||d.stationCode||'',stream:d.stream,registeredHere:d.registeredHere||'',name:d.name,phone:d.phone,experience:d.experience||'',training:d.training||''};
+    if(!emailOk(d.email)){ say(m,'Please check your e-mail address, or leave it empty.','err'); return; }
+    const rec={county:'Nyamira',constituency:curConst,ward:aW.value,station:st,stationCode:(aS.value!=='__other'?streamCode((stations[slug(aW.value)]||[]).find(x=>x.name===st),Number(d.stream))||'':'')||d.stationCode||'',stream:d.stream,registeredHere:d.registeredHere||'',name:d.name,phone:d.phone,email:d.email||'',experience:d.experience||'',training:d.training||''};
     const ok=await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream+(rec.stationCode?' ('+rec.stationCode+')':''),e.target);
     if(ok) thanks('agent',rec);
   });
@@ -1895,7 +1901,8 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
   $('pledgeForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('pledgeMsg'), d=formData(e.target);
     let amt=d.amount==='other'?Number((d.otherAmount||'').replace(/[^\d]/g,'')):Number(d.amount||0);
     if(!amt||!d.name||!phoneOk(d.phone)){ say(m,'Please choose an amount and enter your name and a valid phone number.','err'); return; }
-    const rec={name:d.name,phone:d.phone,amountKsh:amt,method:d.method};
+    if(!emailOk(d.email)){ say(m,'Please check your e-mail address, or leave it empty.','err'); return; }
+    const rec={name:d.name,phone:d.phone,email:d.email||'',amountKsh:amt,method:d.method};
     const ok=await save('pledges',rec,m,'Thank you. Your pledge of Ksh '+amt.toLocaleString()+' is recorded. The finance team will call you with the official payment details.', d.name+', '+d.phone+', pledge Ksh '+amt,e.target);
     if(ok){ thanks('pledge',rec); e.target.reset(); }
   });
