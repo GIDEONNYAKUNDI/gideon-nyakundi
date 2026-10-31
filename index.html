@@ -1982,7 +1982,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
     const box=document.createElement('div'); box.className='thx'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-labelledby','thx-h');
     box.innerHTML='<div class="thx-card"><button type="button" class="thx-x" aria-label="Close">×</button>'
       +'<div class="thx-top"><img src="img/portrait-about.webp" alt="" width="96" height="96"><div><p class="thx-eye">'+(isA?'Welcome, agent':'Karibu to the movement')+'</p><h3 id="thx-h">Asante sana, '+esc2(first)+'.</h3></div></div>'
-      +'<p class="thx-lead">'+(isA?'You are now a Nyakundi 2027 polling station agent. Thank you for standing up to protect the vote.':'You are now a Nyakundi 2027 volunteer. Change in Nyamira starts with people like you, in every village and every ward.')+'</p>'
+      +'<p class="thx-lead">'+(isA?'You are now a Nyakundi/Matiang\u2019i 2027 change supporter and polling station agent. Thank you for standing up to protect the vote.':'You are now a Nyakundi/Matiang\u2019i 2027 change supporter. Change in Nyamira starts with people like you, in every village and every ward.')+'</p>'
       +'<div class="thx-path">'+path.map(x=>'<span>'+esc2(x)+'</span>').join('<i aria-hidden="true">›</i>')+'</div>'
       +'<ol class="thx-steps">'+steps.map((x,n)=>'<li><b>'+(n+1)+'</b><div><strong>'+x[0]+'</strong><span>'+x[1]+'</span></div></li>').join('')+'</ol>'
       +'<p class="thx-slogan">Omonto, Nabanto. Omonto bw’Abanto.</p>'
