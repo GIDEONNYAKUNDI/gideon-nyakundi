@@ -138,12 +138,13 @@ function settings_handle(string $a, array $me): ?array {
         $from = $post('from_email');
         $reply = $post('reply_to');
         $notify = array_values(array_filter(preg_split('/[\s,;]+/', $post('notify')) ?: [], fn($x) => $x !== ''));
-        $badMail = array_filter(array_merge($notify, array_filter([$from, $reply])), fn($x) => !filter_var($x, FILTER_VALIDATE_EMAIL));
+        $copy = array_values(array_filter(preg_split('/[\s,;]+/', $post('copy_to')) ?: [], fn($x) => $x !== ''));
+        $badMail = array_filter(array_merge($notify, $copy, array_filter([$from, $reply])), fn($x) => !filter_var($x, FILTER_VALIDATE_EMAIL));
         if ($port < 1 || $port > 65535) return ['The port must be a number such as 465 or 587.', true];
         if ($badMail) return ['These are not valid e-mail addresses: ' . implode(', ', $badMail), true];
         $kv = ['smtp.enabled' => !empty($_POST['enabled']) ? '1' : '0', 'smtp.host' => $post('host'), 'smtp.port' => (string)$port, 'smtp.secure' => $secure,
                'smtp.user' => $post('user'), 'smtp.from_email' => $from, 'smtp.from_name' => $post('from_name') ?: 'Nyakundi 2027', 'smtp.reply_to' => $reply,
-               'smtp.notify' => implode(', ', $notify)];
+               'smtp.notify' => implode(', ', $notify), 'smtp.copy_to' => implode(', ', $copy)];
         if ((string)($_POST['pass'] ?? '') !== '') $kv['smtp.pass'] = (string)$_POST['pass'];
         settings_save($kv, $by);
         $c = smtp_cfg();
@@ -307,6 +308,7 @@ JS;
             . '<label>From name<input name="from_name" value="' . h($c['from_name']) . '"></label></div>'
             . '<label>Reply-to address <small>(optional)</small><input name="reply_to" value="' . h($c['reply_to']) . '" placeholder="info@nyamira2027.com"><small>Where replies go when someone answers a confirmation e-mail. Leave empty to use the from address.</small></label>'
             . '<label>Send sign-up alerts to<textarea name="notify" rows="2" placeholder="you@example.com, team@example.com">' . h(implode(', ', $c['notify'])) . '</textarea><small>One or more addresses, separated by commas. Their wording is under <a href="?p=settings&amp;tab=messages#alerts">Messages &gt; Team alerts</a>.</small></label>'
+            . '<label>Send a copy of every e-mail to <small>(optional)</small><textarea name="copy_to" rows="2" placeholder="you@example.com">' . h(implode(', ', $c['copy_to'])) . '</textarea><small>A blind copy of everything the website sends: team alerts, confirmations to people who sign up, and tests. People who sign up never see this address.</small></label>'
             . '<div><button class="btn">Save e-mail settings</button></div>' . changed_line('smtp.') . '</form>';
         echo '</div><div>';
         echo '<form method="post" class="card stack">' . $csrf . '<input type="hidden" name="action" value="test_email"><h2>Send a test</h2><input name="email" value="' . h(implode(', ', $c['notify'])) . '" placeholder="you@example.com" required><div><button class="btn ghost">Send test e-mail</button></div><p class="muted small">Every e-mail and its result is listed on the <a href="?p=email">E-mail</a> page.</p></form>';

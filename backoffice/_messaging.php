@@ -139,7 +139,9 @@ function smtp_cfg(): array {
     return ['enabled' => has_setting('smtp.enabled') ? setting('smtp.enabled') === '1' : (bool)($f['enabled'] ?? false),
         'host' => $s('host'), 'port' => (int)$s('port', '465'), 'secure' => $s('secure', 'ssl'), 'user' => $user, 'pass' => $s('pass'),
         'from_email' => $s('from_email', $user), 'from_name' => $s('from_name', 'Nyakundi 2027 Website'), 'reply_to' => $s('reply_to'),
-        'notify' => array_values(array_filter(list_setting('smtp.notify', (array)($f['notify'] ?? [])), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)))];
+        'notify' => array_values(array_filter(list_setting('smtp.notify', (array)($f['notify'] ?? [])), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL))),
+        // Blind copy of every e-mail the site sends (alerts, confirmations, tests).
+        'copy_to' => array_values(array_filter(list_setting('smtp.copy_to', (array)($f['copy_to'] ?? [])), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)))];
 }
 
 /* The secret in the delivery-report link; created on first use. */
@@ -274,6 +276,7 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
     $c = smtp_cfg();
     $to = array_values(array_filter(array_map('trim', $to), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)));
     $error = null;
+    $copies = array_values(array_diff(array_map('strtolower', $c['copy_to'] ?? []), array_map('strtolower', $to)));
     if (!$to) $error = 'No valid recipient addresses.';
     elseif (empty($c['enabled'])) $error = 'E-mail is switched off in Settings';
     else {
@@ -294,7 +297,8 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
             }
             if (!empty($c['user'])) { smtp_cmd($fp, 'AUTH LOGIN', [334]); smtp_cmd($fp, base64_encode($c['user']), [334]); smtp_cmd($fp, base64_encode((string)$c['pass']), [235]); }
             smtp_cmd($fp, 'MAIL FROM:<' . $c['from_email'] . '>', [250]);
-            foreach ($to as $a) smtp_cmd($fp, 'RCPT TO:<' . $a . '>', [250, 251]);
+            // Copies are envelope-only recipients (blind copy): they never appear in the headers the person sees.
+            foreach (array_merge($to, $copies) as $a) smtp_cmd($fp, 'RCPT TO:<' . $a . '>', [250, 251]);
             smtp_cmd($fp, 'DATA', [354]);
             $boundary = 'nyk-' . bin2hex(random_bytes(10));
             $head = ['Date: ' . date('r'), 'From: ' . mime_header($c['from_name'] ?? 'Nyakundi 2027') . ' <' . $c['from_email'] . '>', 'To: ' . implode(', ', $to),
@@ -302,6 +306,8 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
                      'Auto-Submitted: auto-generated', 'X-Auto-Response-Suppress: All',
                      'Content-Type: multipart/alternative; boundary="' . $boundary . '"'];
             if (filter_var($c['reply_to'] ?? '', FILTER_VALIDATE_EMAIL)) $head[] = 'Reply-To: ' . $c['reply_to'];
+            // Mail to the public gets an unsubscribe address, which mailbox providers look for.
+            if ($kind === 'confirmation') $head[] = 'List-Unsubscribe: <mailto:' . (filter_var($c['reply_to'] ?? '', FILTER_VALIDATE_EMAIL) ? $c['reply_to'] : $c['from_email']) . '?subject=Unsubscribe>';
             // Quoted-printable rather than base64: spam filters score base64-encoded text bodies as suspicious.
             $qp = fn(string $s) => quoted_printable_encode(preg_replace('/\r?\n/', "\r\n", $s) ?? $s);
             $mime = '--' . $boundary . "\r\nContent-Type: text/plain; charset=UTF-8\r\nContent-Transfer-Encoding: quoted-printable\r\n\r\n" . $qp($body)
@@ -317,7 +323,7 @@ function send_mail(array $to, string $subject, string $body, array $ref = ['', 0
         if (is_resource($fp)) fclose($fp);
     }
     db()->prepare('INSERT INTO email_log (created_at, to_addr, subject, body, status, error, record_type, record_id, kind) VALUES (?,?,?,?,?,?,?,?,?)')
-        ->execute([now(), implode(', ', $to) ?: '(none)', mb_substr($subject, 0, 255), $body, $error ? 'failed' : 'sent', $error ? mb_substr($error, 0, 500) : null, $ref[0], (int)$ref[1], $kind]);
+        ->execute([now(), (implode(', ', $to) ?: '(none)') . ($copies && $to ? ' (copy: ' . implode(', ', $copies) . ')' : ''), mb_substr($subject, 0, 255), $body, $error ? 'failed' : 'sent', $error ? mb_substr($error, 0, 500) : null, $ref[0], (int)$ref[1], $kind]);
     return $error;
 }
 
