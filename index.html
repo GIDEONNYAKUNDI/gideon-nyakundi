@@ -560,6 +560,13 @@ section.page.dark.photo.split.nopic{padding-top:88px}
 section.page.dark.photo.split.nopic::before{display:none}
 section.page.dark.photo.split.nopic .ph{padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.12)}
 @media (max-width:640px){section.page.dark.photo.split.nopic{padding-top:60px}}
+
+/* ---------- Protect-the-vote banner ---------- */
+#agents{padding-top:0}
+#agents.split::before{margin-bottom:0}
+.protect-banner{background:linear-gradient(90deg,#b81f26,#e4363d 50%,#b81f26);border-top:3px solid var(--banana);border-bottom:3px solid var(--banana);margin-bottom:56px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.protect-banner p{max-width:var(--wrap);margin:0 auto;padding:22px max(16px,env(safe-area-inset-right,0px)) 22px max(16px,env(safe-area-inset-left,0px));font-family:var(--display);font-weight:800;font-size:clamp(1.25rem,2.9vw,2.3rem);line-height:1.2;letter-spacing:.01em;text-transform:uppercase;color:#fff;text-align:center;text-shadow:0 2px 10px rgba(0,0,0,.3);text-wrap:balance}
+@media (max-width:640px){.protect-banner{margin-bottom:36px}.protect-banner p{padding-block:16px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -658,9 +665,9 @@ section.page.dark.photo.split.nopic .ph{padding-bottom:24px;border-bottom:1px so
 
 <!-- POLLING STATION AGENTS -->
 <section class="page dark photo split" id="agents" style="--bg:url(img/why.webp)">
+  <div class="protect-banner"><p>Protect the vote for Dr. Gideon – Nyamira Governor, and for Dr. Matiang'i for Kenya – the 6th</p></div>
   <div class="wrap">
     <div class="head">
-      <p class="eyebrow protect">Protect the vote for Dr. Gideon – Nyamira Governor, and for Dr. Matiang'i for Kenya – the 6th</p>
       <h2>Polling station agents</h2>
       <p class="lede">Nyamira has 354 polling centres with 641 streams and 323,047 registered voters. Every stream needs a trained agent from 6 a.m. until the results form is signed. Choose your constituency tab, then your ward, polling station and stream.</p>
     </div>
