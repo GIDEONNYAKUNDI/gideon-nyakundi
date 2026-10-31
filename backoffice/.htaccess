@@ -1,0 +1,7 @@
+# The site root only serves index.html; the back office starts at index.php.
+DirectoryIndex index.php
+
+# Never serve the settings file.
+<Files "config.php">
+    Require all denied
+</Files>
