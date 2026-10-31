@@ -2,6 +2,7 @@
 /* Nyakundi 2027 back office: polling station agents, volunteers and pledges. */
 declare(strict_types=1);
 require __DIR__ . '/_lib.php';
+require __DIR__ . '/_messaging.php';
 
 security_headers();
 
@@ -114,6 +115,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->prepare('DELETE FROM users WHERE id = ?')->execute([(int)$_POST['id']]);
         $flash = 'Account removed.';
     }
+    if ($a === 'sms_send' && $isAdmin) {
+        $msg = trim((string)($_POST['message'] ?? ''));
+        $phones = ($_POST['to'] ?? '') === 'list' ? list_phones((string)($_GET['t'] ?? ''), $scope) : (preg_split('/[\s,;]+/', (string)($_POST['numbers'] ?? '')) ?: []);
+        if ($msg === '') $flash = 'Write the message first.';
+        else {
+            $valid = array_values(array_unique(array_filter(array_map('kenya_phone', $phones))));
+            $skipped = count(array_unique(array_filter(array_map('trim', $phones)))) - count($valid);
+            $r = sms_send($valid, mb_substr($msg, 0, 918), count($valid) > 1 ? 'bulk' : 'manual', $me['username']);
+            $flash = 'SMS sent to ' . $r['sent'] . ' of ' . ($r['sent'] + $r['failed']) . ' number' . ($r['sent'] + $r['failed'] === 1 ? '' : 's') . '.' . ($skipped > 0 ? ' Skipped ' . $skipped . ' that ' . ($skipped === 1 ? 'is not a valid phone number' : 'are not valid phone numbers') . '.' : '') . ($r['error'] ? ' Problem: ' . $r['error'] : '');
+        }
+    }
+    if ($a === 'webhook' && $isAdmin) {
+        $tok = (string)(sms_cfg()['callback_token'] ?? '');
+        if ($tok === '' || strpos($tok, 'CHANGE-ME') === 0) $flash = 'First set a callback_token in backoffice/config.php.';
+        else {
+            $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
+            $r = sms_register_webhook(($https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api/sms-delivery.php?token=' . rawurlencode($tok));
+            $flash = $r['ok'] ? 'Delivery reports will now come back from HostPinnacle.' : 'HostPinnacle did not accept the webhook: ' . $r['error'];
+        }
+    }
+    if ($a === 'test_email' && $isAdmin) {
+        $to = array_filter(array_map('trim', explode(',', (string)($_POST['email'] ?? ''))));
+        $err = send_mail($to, 'Test e-mail from the Nyakundi 2027 back office', 'Sent by ' . $me['username'] . ' at ' . gmdate('j M Y, H:i') . " UTC.\n\nIf you can read this, e-mail from the website works.");
+        $flash = $err ? 'The test e-mail failed: ' . $err : 'Test e-mail sent to ' . implode(', ', $to) . '.';
+    }
     if ($a === 'password') {
         $s = db()->prepare('SELECT pass_hash FROM users WHERE id = ?'); $s->execute([$me['id']]);
         $pw = (string)($_POST['new'] ?? '');
@@ -138,6 +164,19 @@ function filters(string $table, string $scope): array {
     }
     return [$w ? ' WHERE ' . implode(' AND ', $w) : '', $args];
 }
+function list_phones(string $table, string $scope): array {
+    if (!in_array($table, ['agents', 'volunteers', 'pledges'], true)) return [];
+    [$w, $a] = filters($table, $table === 'pledges' ? '' : $scope);
+    $s = db()->prepare("SELECT DISTINCT phone FROM $table$w"); $s->execute($a);
+    return $s->fetchAll(PDO::FETCH_COLUMN);
+}
+function ke_time(?string $utc): string { return $utc ? gmdate('j M Y, H:i', (int)strtotime($utc . ' UTC') + 3 * 3600) : ''; }
+function tag(string $status): string {
+    $s = strtolower($status);
+    $k = in_array($s, ['delivered', 'delivrd', 'sent', 'success'], true) ? 'ok' : (in_array($s, ['failed', 'undeliv', 'undelivered', 'rejected', 'expired', 'disabled', 'dnd'], true) ? 'bad' : 'wait');
+    return '<span class="tag ' . $k . '">' . h($status) . '</span>';
+}
+function sms_link(string $phone): string { return ' · <a href="?p=sms&amp;to=' . h(rawurlencode($phone)) . '">SMS</a>'; }
 function csv_cell($v): string {
     $v = (string)$v;
     if ($v !== '' && strpbrk($v[0], '=+-@') !== false) $v = "'" . $v;   // stop spreadsheet formulas
@@ -156,7 +195,7 @@ function status_form(string $table, array $r, array $statuses): string {
     return '<form method="post" class="row-edit"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="update"><input type="hidden" name="table" value="' . $table . '"><input type="hidden" name="id" value="' . (int)$r['id'] . '">'
         . '<select name="status">' . $o . '</select><input name="notes" value="' . h($r['notes'] ?? '') . '" placeholder="Notes"><button class="btn sm">Save</button></form>';
 }
-function filter_bar(string $p, string $scope, array $statuses, bool $wards = true): string {
+function filter_bar(string $p, string $scope, array $statuses, bool $wards = true, bool $sms = false): string {
     $o = '<form method="get" class="filters"><input type="hidden" name="p" value="' . h($p) . '">';
     if ($wards) {
         if (!$scope) {
@@ -172,7 +211,9 @@ function filter_bar(string $p, string $scope, array $statuses, bool $wards = tru
     foreach ($statuses as $s) $o .= '<option' . (($_GET['s'] ?? '') === $s ? ' selected' : '') . '>' . h($s) . '</option>';
     $o .= '</select><input name="q" value="' . h($_GET['q'] ?? '') . '" placeholder="Search name or phone"><button class="btn sm">Filter</button>';
     $qs = $_GET; $qs['export'] = 1;
-    $o .= '<a class="btn sm ghost" href="?' . h(http_build_query($qs)) . '">Download CSV</a></form>';
+    $o .= '<a class="btn sm ghost" href="?' . h(http_build_query($qs)) . '">Download CSV</a>';
+    if ($sms) { $qs = $_GET; unset($qs['export']); $qs['p'] = 'sms'; $qs['t'] = $p; $o .= '<a class="btn sm ghost" href="?' . h(http_build_query($qs)) . '">Text this list</a>'; }
+    $o .= '</form>';
     return $o;
 }
 
@@ -253,10 +294,10 @@ if ($p === 'gaps') {
 if ($p === 'agents') {
     [$w, $a] = filters('agents', $scope);
     $s = db()->prepare("SELECT * FROM agents$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
-    echo '<h1>Polling station agents</h1>' . filter_bar('agents', $scope, AGENT_STATUSES);
+    echo '<h1>Polling station agents</h1>' . filter_bar('agents', $scope, AGENT_STATUSES, true, $isAdmin);
     echo '<table><thead><tr><th>Registered</th><th>Name and phone</th><th>Ward</th><th>Polling station</th><th>Stream</th><th>Details</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
     foreach ($s->fetchAll() as $r) {
-        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small></td><td>' . h($r['station']) . ($r['station_code'] ? '<br><small>' . h($r['station_code']) . '</small>' : '') . '</td><td>' . h($r['stream']) . '</td>'
+        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . '</td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small></td><td>' . h($r['station']) . ($r['station_code'] ? '<br><small>' . h($r['station_code']) . '</small>' : '') . '</td><td>' . h($r['stream']) . '</td>'
             . '<td><small>Registered here: ' . h($r['registered_here'] ?: '-') . '<br>Before: ' . h($r['experience'] ?: '-') . '<br>Training: ' . h($r['training'] ?: '-') . '</small></td><td>' . status_form('agents', $r, AGENT_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('agents', (int)$r['id']) . '</td>' : '') . '</tr>';
     }
     echo '</tbody></table><p class="muted">Showing the latest 500. Use the filters or download the CSV for everything.</p>';
@@ -265,10 +306,10 @@ if ($p === 'agents') {
 if ($p === 'volunteers') {
     [$w, $a] = filters('volunteers', $scope);
     $s = db()->prepare("SELECT * FROM volunteers$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
-    echo '<h1>Volunteers</h1>' . filter_bar('volunteers', $scope, VOL_STATUSES);
+    echo '<h1>Volunteers</h1>' . filter_bar('volunteers', $scope, VOL_STATUSES, true, $isAdmin);
     echo '<table><thead><tr><th>Registered</th><th>Name and phone</th><th>Ward</th><th>Village</th><th>How they will help</th><th>Top priority</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
     foreach ($s->fetchAll() as $r) {
-        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a><br><small>' . h($r['age']) . '</small></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small>' . ($r['station'] ? '<br><small>' . h($r['station']) . ($r['stream'] ? ' · stream ' . h($r['stream']) : '') . '</small>' : '') . '</td><td>' . h($r['village']) . '</td><td><small>' . h($r['roles']) . '</small></td><td><small>' . h($r['message']) . '</small></td><td>' . status_form('volunteers', $r, VOL_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('volunteers', (int)$r['id']) . '</td>' : '') . '</tr>';
+        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . '<br><small>' . h($r['age']) . '</small></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small>' . ($r['station'] ? '<br><small>' . h($r['station']) . ($r['stream'] ? ' · stream ' . h($r['stream']) : '') . '</small>' : '') . '</td><td>' . h($r['village']) . '</td><td><small>' . h($r['roles']) . '</small></td><td><small>' . h($r['message']) . '</small></td><td>' . status_form('volunteers', $r, VOL_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('volunteers', (int)$r['id']) . '</td>' : '') . '</tr>';
     }
     echo '</tbody></table>';
 }
@@ -276,9 +317,70 @@ if ($p === 'volunteers') {
 if ($p === 'pledges' && $isAdmin) {
     [$w, $a] = filters('pledges', '');
     $s = db()->prepare("SELECT * FROM pledges$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
-    echo '<h1>Pledges</h1>' . filter_bar('pledges', '', PLEDGE_STATUSES, false);
+    echo '<h1>Pledges</h1>' . filter_bar('pledges', '', PLEDGE_STATUSES, false, true);
     echo '<table><thead><tr><th>Date</th><th>Name and phone</th><th>Amount (Ksh)</th><th>Method</th><th>Status and notes</th><th></th></tr></thead><tbody>';
-    foreach ($s->fetchAll() as $r) echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br>' . h($r['phone']) . '</td><td>' . number_format((int)$r['amount_ksh']) . '</td><td>' . h($r['method']) . '</td><td>' . status_form('pledges', $r, PLEDGE_STATUSES) . '</td><td>' . delete_btn('pledges', (int)$r['id']) . '</td></tr>';
+    foreach ($s->fetchAll() as $r) echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br>' . h($r['phone']) . sms_link($r['phone']) . '</td><td>' . number_format((int)$r['amount_ksh']) . '</td><td>' . h($r['method']) . '</td><td>' . status_form('pledges', $r, PLEDGE_STATUSES) . '</td><td>' . delete_btn('pledges', (int)$r['id']) . '</td></tr>';
+    echo '</tbody></table>';
+}
+
+if ($p === 'sms' && $isAdmin) {
+    $c = sms_cfg();
+    $n = []; foreach (db()->query('SELECT status, COUNT(*) n FROM sms_log GROUP BY status') as $r) $n[strtolower($r['status'])] = (int)$r['n'];
+    $good = ($n['delivered'] ?? 0) + ($n['delivrd'] ?? 0) + ($n['success'] ?? 0);
+    $bad = ($n['failed'] ?? 0) + ($n['undeliv'] ?? 0) + ($n['undelivered'] ?? 0) + ($n['rejected'] ?? 0) + ($n['expired'] ?? 0);
+    $bal = sms_balance();
+    echo '<h1>SMS</h1><p class="muted">Sent through HostPinnacle' . (!empty($c['sender_id']) ? ' as <b>' . h($c['sender_id']) . '</b>' : '') . '. Everyone who signs up on the website gets a confirmation SMS automatically.</p>';
+    if (empty($c['enabled'])) echo '<p class="err">SMS is switched off. Fill in the HostPinnacle details in backoffice/config.php and set enabled to true.</p>';
+    elseif (!empty($c['test_mode'])) echo '<p class="err">Test mode: HostPinnacle accepts messages but does not deliver them. Set test_mode to false in backoffice/config.php to go live.</p>';
+    echo '<div class="tiles"><div><b>' . number_format(array_sum($n)) . '</b><span>SMS sent</span></div><div><b>' . number_format($good) . '</b><span>delivered</span></div><div><b>' . number_format($bad) . '</b><span>failed</span></div>'
+        . '<div><b>' . ($bal !== null ? h($bal) : '-') . '</b><span>HostPinnacle balance</span></div></div>';
+
+    // Compose: to a filtered list (from "Text this list") or to typed numbers.
+    $t = (string)($_GET['t'] ?? '');
+    $listMode = in_array($t, ['agents', 'volunteers', 'pledges'], true);
+    $qs = $_GET; unset($qs['to']);
+    echo '<h2>Send an SMS</h2><form method="post" action="?' . h(http_build_query($qs)) . '" class="stack narrow" style="max-width:640px"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="sms_send">';
+    if ($listMode) {
+        $count = count(list_phones($t, $scope));
+        $desc = array_filter([['agents' => 'Polling agents', 'volunteers' => 'Volunteers', 'pledges' => 'Pledges'][$t], $_GET['c'] ?? '', $_GET['w'] ?? '', $_GET['s'] ?? '', !empty($_GET['q']) ? '"' . $_GET['q'] . '"' : '']);
+        echo '<input type="hidden" name="to" value="list"><p>To <b>' . number_format($count) . ' people</b>: ' . h(implode(' · ', $desc)) . '. <a href="?p=sms">Type numbers instead</a></p>';
+    } else {
+        echo '<label>Phone numbers (one per line, or separated by commas)<textarea name="numbers" rows="3" required placeholder="0712 345 678">' . h($_GET['to'] ?? '') . '</textarea></label><p class="muted" style="margin:0">To text a group, filter the Agents, Volunteers or Pledges list and press <b>Text this list</b>.</p>';
+    }
+    echo '<label>Message<textarea name="message" rows="4" maxlength="918" required data-sms></textarea></label><p class="muted" id="smsCount" style="margin:0"></p>'
+        . '<button class="btn"' . ($listMode && ($count ?? 0) > 1 ? ' onclick="return confirm(\'Send this SMS to ' . (int)$count . ' people?\')"' : '') . '>Send SMS</button></form>';
+    echo '<script>(function(){var t=document.querySelector("[data-sms]"),o=document.getElementById("smsCount");if(!t)return;function u(){var n=t.value.length,uni=/[^\x00-\x7F]/.test(t.value),per=uni?(n>70?67:70):(n>160?153:160),k=Math.max(1,Math.ceil(n/per));o.textContent=n+" characters, "+k+" SMS per person"+(uni?" (special characters use more SMS)":"");}t.addEventListener("input",u);u();})();</script>';
+
+    // Sent messages.
+    $q = trim((string)($_GET['find'] ?? ''));
+    $sql = "SELECT l.*, COALESCE(a.name, v.name, pl.name) who, COALESCE(a.phone, v.phone, pl.phone) typed FROM sms_log l
+        LEFT JOIN agents a ON l.record_type = 'agents' AND a.id = l.record_id LEFT JOIN volunteers v ON l.record_type = 'volunteers' AND v.id = l.record_id
+        LEFT JOIN pledges pl ON l.record_type = 'pledges' AND pl.id = l.record_id" . ($q !== '' ? ' WHERE l.phone LIKE ? OR l.message LIKE ?' : '') . ' ORDER BY l.id DESC LIMIT 300';
+    $st = db()->prepare($sql); $st->execute($q !== '' ? ['%' . $q . '%', '%' . $q . '%'] : []);
+    echo '<h2>Sent messages</h2><form method="get" class="filters"><input type="hidden" name="p" value="sms"><input name="find" value="' . h($q) . '" placeholder="Search phone or text"><button class="btn sm">Search</button></form>';
+    echo '<table><thead><tr><th>Sent (Kenya time)</th><th>To</th><th>Message</th><th>Type</th><th>Status</th><th>By</th></tr></thead><tbody>';
+    $rows = $st->fetchAll();
+    if (!$rows) echo '<tr><td colspan="6" class="muted">No SMS sent yet.</td></tr>';
+    foreach ($rows as $r) echo '<tr><td>' . h(ke_time($r['created_at'])) . '</td><td>' . h($r['phone']) . ($r['who'] ? '<br><small><a href="?p=' . h($r['record_type']) . '&amp;q=' . h(rawurlencode($r['typed'])) . '">' . h($r['who']) . '</a> (' . h(rtrim($r['record_type'], 's')) . ')</small>' : '') . '</td><td><small>' . h($r['message']) . '</small></td><td>' . h($r['kind']) . '</td><td>' . tag($r['status']) . ($r['error'] ? '<br><small>' . h($r['error']) . '</small>' : '') . '</td><td>' . h($r['sent_by']) . '</td></tr>';
+    echo '</tbody></table><p class="muted">Latest 300. "sent" means HostPinnacle accepted it; it changes to delivered or failed when the delivery report arrives.</p>';
+
+    // Delivery reports.
+    echo '<h2>Delivery reports</h2><form method="post" class="filters"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="webhook"><button class="btn sm">Register delivery webhook with HostPinnacle</button><span class="muted">Press once after going live, and again if the website address changes.</span></form>';
+    $hooks = db()->query('SELECT created_at, payload FROM webhook_log ORDER BY id DESC LIMIT 20')->fetchAll();
+    echo '<details><summary>Last ' . count($hooks) . ' reports exactly as HostPinnacle sent them</summary><table><tbody>';
+    foreach ($hooks as $hk) echo '<tr><td>' . h(ke_time($hk['created_at'])) . '</td><td><small style="word-break:break-all">' . h($hk['payload']) . '</small></td></tr>';
+    echo '</tbody></table></details>';
+}
+
+if ($p === 'email' && $isAdmin) {
+    $c = smtp_cfg();
+    echo '<h1>E-mail</h1><p class="muted">Every e-mail the website sent. New sign-ups are e-mailed to <b>' . h(implode(', ', $c['notify']) ?: 'nobody yet (set notify in backoffice/config.php)') . '</b>' . (!empty($c['host']) ? ' through ' . h($c['host'] . ':' . ($c['port'] ?? '')) : '') . '.</p>';
+    if (empty($c['enabled'])) echo '<p class="err">E-mail is switched off. Fill in the SMTP details in backoffice/config.php and set enabled to true.</p>';
+    echo '<form method="post" class="filters"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="test_email"><input name="email" value="' . h(implode(', ', $c['notify'])) . '" placeholder="you@example.com" style="min-width:280px" required><button class="btn sm">Send a test e-mail</button></form>';
+    echo '<table><thead><tr><th>Sent (Kenya time)</th><th>To</th><th>Subject</th><th>Status</th></tr></thead><tbody>';
+    $rows = db()->query('SELECT * FROM email_log ORDER BY id DESC LIMIT 300')->fetchAll();
+    if (!$rows) echo '<tr><td colspan="4" class="muted">No e-mails sent yet.</td></tr>';
+    foreach ($rows as $r) echo '<tr><td>' . h(ke_time($r['created_at'])) . '</td><td>' . h($r['to_addr']) . '</td><td><details><summary>' . h($r['subject']) . '</summary><pre style="white-space:pre-wrap;font-size:.85rem">' . h($r['body']) . '</pre></details></td><td>' . tag($r['status']) . ($r['error'] ? '<br><small>' . h($r['error']) . '</small>' : '') . '</td></tr>';
     echo '</tbody></table>';
 }
 
@@ -318,7 +420,9 @@ table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(-
 small{color:var(--muted)}a{color:var(--blue)}.gap{color:var(--red);font-weight:600}
 .bar{display:inline-block;width:110px;height:9px;background:#e5e9f0;vertical-align:middle}.bar i{display:block;height:100%;background:var(--green)}
 .filters{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:6px}
-input,select{font:inherit;padding:7px 9px;border:1px solid #c5ccd8;border-radius:3px;background:#fff;max-width:100%}
+input,select,textarea{font:inherit;padding:7px 9px;border:1px solid #c5ccd8;border-radius:3px;background:#fff;max-width:100%}textarea{width:100%;resize:vertical}
+.tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.8rem;font-weight:600;background:#eef1f6;color:var(--muted)}.tag.ok{background:#e3f3e9;color:#1f6b40}.tag.bad{background:#fbe4e4;color:#a3222a}.tag.wait{background:#fbf1d6;color:#7a5a0c}
+details summary{cursor:pointer}
 .stack{display:grid;gap:12px}.stack label{display:grid;gap:4px;font-weight:600}
 .row-edit{display:flex;flex-wrap:wrap;gap:6px}.row-edit input{min-width:140px;flex:1}
 .btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;padding:9px 16px;border-radius:3px;cursor:pointer;text-decoration:none;display:inline-block}.btn.sm{padding:6px 11px;font-size:.88rem}.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
@@ -327,7 +431,7 @@ input,select{font:inherit;padding:7px 9px;border:1px solid #c5ccd8;border-radius
 </style></head><body><header><a class="brand" href="./">Nyakundi <span>2027</span> · Back office</a>';
     if ($me) {
         $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers'];
-        if ($me['role'] === 'admin') $tabs['pledges'] = 'Pledges';
+        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; }
         $tabs['account'] = $me['role'] === 'admin' ? 'Team' : 'My account';
         echo '<nav>'; foreach ($tabs as $k => $v) echo '<a href="?p=' . $k . '"' . ($p === $k ? ' class="on"' : '') . '>' . $v . '</a>'; echo '</nav>';
         echo '<span class="who">' . h($me['username']) . ' · <a href="?p=logout">Sign out</a></span>';

@@ -2,6 +2,7 @@
 /* Receives sign-ups from the website forms and stores them in the back office database. */
 declare(strict_types=1);
 require __DIR__ . '/../backoffice/_lib.php';
+require __DIR__ . '/../backoffice/_messaging.php';
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
@@ -49,23 +50,32 @@ try {
     if ($type === 'agent') {
         $station = s($in, 'station', 160); $stream = s($in, 'stream', 10);
         if ($station === '' || $stream === '') out(400, ['ok' => false, 'error' => 'Please choose your polling station and stream.']);
+        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => $station, 'station_code' => s($in, 'stationCode', 40), 'stream' => $stream, 'registered_here' => s($in, 'registeredHere', 40), 'experience' => s($in, 'experience', 40), 'training' => s($in, 'training', 20)];
         db()->prepare('INSERT INTO agents (created_at, constituency, ward, station, station_code, stream, registered_here, name, phone, experience, training) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([now(), $const, $ward, $station, s($in, 'stationCode', 40), $stream, s($in, 'registeredHere', 40), $name, $phone, s($in, 'experience', 40), s($in, 'training', 20)]);
+            ->execute([now(), $const, $ward, $station, $rec['station_code'], $stream, $rec['registered_here'], $name, $phone, $rec['experience'], $rec['training']]);
     } elseif ($type === 'volunteer') {
         $roles = is_array($in['roles'] ?? null) ? implode(', ', array_map(fn($r) => mb_substr(trim((string)$r), 0, 40), array_slice($in['roles'], 0, 12))) : '';
+        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => s($in, 'station', 160), 'stream' => s($in, 'stream', 10), 'village' => s($in, 'village'), 'age' => s($in, 'age', 20), 'roles' => $roles, 'message' => s($in, 'message', 1000)];
         db()->prepare('INSERT INTO volunteers (created_at, constituency, ward, station, stream, village, age, roles, message, name, phone) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
-            ->execute([now(), $const, $ward, s($in, 'station', 160), s($in, 'stream', 10), s($in, 'village'), s($in, 'age', 20), $roles, s($in, 'message', 1000), $name, $phone]);
+            ->execute([now(), $const, $ward, $rec['station'], $rec['stream'], $rec['village'], $rec['age'], $roles, $rec['message'], $name, $phone]);
     } elseif ($type === 'pledge') {
         $amt = (int)preg_replace('/\D/', '', (string)($in['amountKsh'] ?? ''));
         if ($amt < 1 || $amt > 100000000) out(400, ['ok' => false, 'error' => 'Please choose an amount.']);
+        $rec = ['name' => $name, 'phone' => $phone, 'amount_ksh' => $amt, 'method' => s($in, 'method', 60)];
         db()->prepare('INSERT INTO pledges (created_at, name, phone, amount_ksh, method) VALUES (?,?,?,?,?)')
-            ->execute([now(), $name, $phone, $amt, s($in, 'method', 60)]);
+            ->execute([now(), $name, $phone, $amt, $rec['method']]);
     } else {
         out(400, ['ok' => false, 'error' => 'unknown form']);
     }
+    $id = (int)db()->lastInsertId();
     record_hit('save');
-    out(200, ['ok' => true]);
 } catch (Throwable $e) {
     error_log('save.php: ' . $e->getMessage());
     out(500, ['ok' => false, 'error' => 'server']);
 }
+
+/* Answer the visitor first, then send the confirmation SMS and the team e-mail. */
+echo json_encode(['ok' => true]);
+if (function_exists('fastcgi_finish_request')) fastcgi_finish_request(); else { @ob_end_flush(); flush(); }
+ignore_user_abort(true);
+try { notify_signup($type, $id, $rec); } catch (Throwable $e) { error_log('save.php notify: ' . $e->getMessage()); }
