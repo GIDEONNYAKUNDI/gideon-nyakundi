@@ -1,0 +1,67 @@
+# Deploys every push to main straight to kucaparty.com through the cPanel API.
+# It does what you would click in cPanel > Git Version Control: "Update from Remote", then "Deploy HEAD Commit".
+# Needs one repository secret: CPANEL_TOKEN (cPanel > Security > Manage API Tokens).
+name: Deploy to cPanel
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cpanel-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CPANEL_HOST: kucaparty.com
+      CPANEL_USER: kucapart
+      CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
+    steps:
+      - name: Check the token is set
+        run: |
+          if [ -z "$CPANEL_TOKEN" ]; then
+            echo "::error::Add the CPANEL_TOKEN secret: GitHub > Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
+
+      - name: Find the repository in cPanel
+        id: repo
+        run: |
+          api() { curl -sS --fail-with-body -m 120 -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" "https://${CPANEL_HOST}:2083/execute/$1"; }
+          out=$(api "VersionControl/retrieve")
+          root=$(echo "$out" | jq -r '[.data[] | select((.source_repository.url // "") | test("gideon-nyakundi"))][0].repository_root // empty')
+          if [ -z "$root" ]; then
+            echo "::error::No cPanel Git repository cloned from gideon-nyakundi was found."
+            echo "$out" | jq '{status, errors, repos: [.data[]? | {repository_root, url: .source_repository.url}]}'
+            exit 1
+          fi
+          echo "root=$root" >> "$GITHUB_OUTPUT"
+          echo "cPanel repository: $root"
+
+      - name: Update from Remote
+        run: |
+          out=$(curl -sS --fail-with-body -m 300 -G -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+            "https://${CPANEL_HOST}:2083/execute/VersionControl/update" \
+            --data-urlencode "repository_root=${{ steps.repo.outputs.root }}" --data-urlencode "branch=main")
+          echo "$out" | jq '{status, errors, head: .data.last_update.identifier}'
+          [ "$(echo "$out" | jq -r .status)" = "1" ]
+
+      - name: Deploy HEAD Commit
+        run: |
+          out=$(curl -sS --fail-with-body -m 300 -G -H "Authorization: cpanel ${CPANEL_USER}:${CPANEL_TOKEN}" \
+            "https://${CPANEL_HOST}:2083/execute/VersionControlDeployment/create" \
+            --data-urlencode "repository_root=${{ steps.repo.outputs.root }}")
+          echo "$out" | jq '{status, errors, deploy_id: .data.deploy_id}'
+          [ "$(echo "$out" | jq -r .status)" = "1" ]
+
+      - name: Check the site
+        run: |
+          sleep 20
+          code=$(curl -s -o /dev/null -w '%{http_code}' "https://${CPANEL_HOST}/")
+          echo "kucaparty.com answered $code"
+          code=$(curl -s -o /dev/null -w '%{http_code}' "https://${CPANEL_HOST}/backoffice/")
+          echo "kucaparty.com/backoffice answered $code"
