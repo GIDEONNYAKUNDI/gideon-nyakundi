@@ -554,6 +554,12 @@ section.photo.split.hasvid::before{display:none}
 .roadstatement{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,2.6vw,2.2rem);line-height:1.15;color:#fff}
 .roadpledge .pledge{margin:0}
 @media (max-width:820px){#p2 .cols,.roadflag{grid-template-columns:1fr}.roadimg img{max-height:340px}}
+
+/* ---------- No repeated pictures: text-only pillar pages ---------- */
+section.page.dark.photo.split.nopic{padding-top:88px}
+section.page.dark.photo.split.nopic::before{display:none}
+section.page.dark.photo.split.nopic .ph{padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.12)}
+@media (max-width:640px){section.page.dark.photo.split.nopic{padding-top:60px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -651,7 +657,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- POLLING STATION AGENTS -->
-<section class="page dark photo split" id="agents" style="--bg:url(img/wards.webp)">
+<section class="page dark photo split" id="agents" style="--bg:url(img/why.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow protect">Protect the vote for Dr. Gideon – Nyamira Governor, and for Dr. Matiang'i for Kenya – the 6th</p>
@@ -1104,7 +1110,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- 11 PILLAR 5 -->
-<section class="page pillar dark photo split" id="p5" style="--bg:url(img/youth-education.webp)">
+<section class="page pillar dark photo split nopic" id="p5" style="--bg:url(img/youth-education.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">05</span><div class="head" style="margin:0"><span class="pagenum">Pillar Five</span><h2>Youth Jobs and Enterprise</h2><p class="lede">Our young people are educated and ready. They need work, tools and a fair chance.</p></div></div>
     <div class="cols">
@@ -1179,7 +1185,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- 13 PILLAR 7 -->
-<section class="page pillar dark photo split" id="p7" style="--bg:url(img/money-families.webp)">
+<section class="page pillar dark photo split nopic" id="p7" style="--bg:url(img/money-families.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">07</span><div class="head" style="margin:0"><span class="pagenum">Pillar Seven</span><h2>Clean Money, Open Books</h2><p class="lede">Every shilling belongs to the people of Nyamira. They have a right to see where it goes.</p></div></div>
     <div class="cols">
@@ -1240,7 +1246,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- 15 PILLAR 9 -->
-<section class="page pillar dark photo split" id="p9" style="--bg:url(img/safe-green.webp)">
+<section class="page pillar dark photo split nopic" id="p9" style="--bg:url(img/safe-green.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">09</span><div class="head" style="margin:0"><span class="pagenum">Pillar Nine</span><h2>Safe and Ready County</h2><p class="lede">When disaster strikes, Nyamira will have a plan, trained people and vehicles that start.</p></div></div>
     <div class="cols">
@@ -1329,7 +1335,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- 18 PILLAR 12 -->
-<section class="page pillar dark photo split" id="p12" style="--bg:url(img/markets.webp)">
+<section class="page pillar dark photo split nopic" id="p12" style="--bg:url(img/markets.webp)">
   <div class="wrap">
     <div class="ph"><span class="big">12</span><div class="head" style="margin:0"><span class="pagenum">Pillar Twelve</span><h2>Gusii Culture, Sport and Diaspora</h2><p class="lede">Proud of where we come from, connected to where our people have gone.</p></div></div>
     <div class="cols">
@@ -1464,7 +1470,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- 23 FAQ -->
-<section class="page dark photo split" id="faq" style="--bg:url(img/trail.webp)">
+<section class="page dark photo split" id="faq" style="--bg:url(img/today.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Questions</p>
@@ -1579,7 +1585,7 @@ section.photo.split.hasvid::before{display:none}
 </section>
 
 <!-- DONATE -->
-<section class="page dark photo split" id="donate" style="--bg:url(img/markets.webp)">
+<section class="page dark photo split" id="donate" style="--bg:url(img/challenges.webp)">
   <div class="wrap">
     <div class="head">
       <p class="eyebrow">Donate</p>
