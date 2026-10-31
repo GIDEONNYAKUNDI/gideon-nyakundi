@@ -5,7 +5,10 @@ const SITE = process.env.SITE || 'https://kucaparty.com';
 const results = [];
 const check = (name, ok, info = '') => { results.push(ok); console.log(`${ok ? 'PASS' : 'FAIL'}  ${name}${info ? '  (' + info + ')' : ''}`); if (!ok) console.log(`::error title=Security check failed::${name}${info ? ' (' + info + ')' : ''}`); };
 const api = await request.newContext({ ignoreHTTPSErrors: false, maxRedirects: 0 });
-const code = async (path, opts = {}) => (await api.fetch(SITE + path, opts)).status();
+const code = async (path, opts = {}) => {
+  for (let i = 0; i < 3; i++) { try { return (await api.fetch(SITE + path, { timeout: 30000, ...opts })).status(); } catch (e) { if (i === 2) { console.log(`::warning::${path}: ${e.message.split('\n')[0]}`); return 0; } await new Promise(r => setTimeout(r, 3000)); } }
+};
+process.on('unhandledRejection', e => { console.log(`::error title=Security check crashed::${String(e && e.message || e).split('\n')[0]}`); process.exit(1); });
 
 // 1. Private files can never be downloaded
 for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_messaging.php', '/backoffice/_settings.php', '/backoffice/config.sample.php',
