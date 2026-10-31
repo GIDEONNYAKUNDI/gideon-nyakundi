@@ -1897,7 +1897,7 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
     if(!amt||!d.name||!phoneOk(d.phone)){ say(m,'Please choose an amount and enter your name and a valid phone number.','err'); return; }
     const rec={name:d.name,phone:d.phone,amountKsh:amt,method:d.method};
     const ok=await save('pledges',rec,m,'Thank you. Your pledge of Ksh '+amt.toLocaleString()+' is recorded. The finance team will call you with the official payment details.', d.name+', '+d.phone+', pledge Ksh '+amt,e.target);
-    if(ok) e.target.reset();
+    if(ok){ thanks('pledge',rec); e.target.reset(); }
   });
 
   /* ---------- Owner's campaign desk ---------- */
@@ -1966,29 +1966,43 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
   function thanks(kind,r){
     const first=String(r.name||'').trim().split(/\s+/)[0]||'friend';
     const esc2=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    const isA=kind==='agent';
-    const path=['Nyamira',r.constituency,r.ward?r.ward+' Ward':'',r.station,r.stream?(r.stream==='unknown'?'Stream to be assigned':'Stream '+r.stream):''].filter(Boolean);
-    const steps=isA?[
-      ['Your call','Your '+esc2(r.ward)+' Ward coordinator will call you on '+esc2(r.phone)+' to confirm your polling station and stream.'],
-      ['Your training','You will be trained before the 2027 election and receive your accreditation in person.'],
-      ['Election day','Be at your station from 6 a.m. until the results form is signed. You protect every vote cast there.']
-    ]:[
-      ['Your call','Your '+esc2(r.ward)+' Ward coordinator will call you on '+esc2(r.phone)+' to welcome you to the team.'],
-      ['Ten neighbours','Share the 12 Pillars with ten people at home, at church, at the market and in your chama.'],
-      ['Your ward','Help us register voters and find a trained agent for every stream in '+esc2(r.ward)+'.']
-    ];
-    const invite=isA?'I have just registered as a polling station agent for Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. Protect the vote with me: ':'I have just joined Dr. Gideon Moseti Nyakundi’s movement for the new Nyamira. Volunteer in your ward: ';
-    const link=location.origin+location.pathname+(isA?'#agents':'#volunteer');
+    const isA=kind==='agent', isP=kind==='pledge';
+    const amt=isP?'Ksh '+Number(r.amountKsh||0).toLocaleString():'';
+    const MSG={
+      agent:{eye:'Welcome, agent',
+        lead:'Thank you for volunteering to bring change from your polling station. You are now a Nyakundi/Matiang’i 2027 change supporter and polling station agent, and every vote cast at your station will be protected.',
+        path:['Nyamira',r.constituency,r.ward?r.ward+' Ward':'',r.station,r.stream?(r.stream==='unknown'?'Stream to be assigned':'Stream '+r.stream):''],
+        steps:[['Your call','Your '+esc2(r.ward)+' Ward coordinator will call you on '+esc2(r.phone)+' to confirm your polling station and stream.'],
+               ['Your training','You will be trained before the 2027 election and receive your accreditation in person.'],
+               ['Election day','Be at your station from 6 a.m. until the results form is signed. You protect every vote cast there.']],
+        invite:'I have just registered as a polling station agent for Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. Protect the vote with me: ', hash:'#agents'},
+      volunteer:{eye:'Karibu to the movement',
+        lead:'Thank you for volunteering to bring change to your village and your ward. You are now a Nyakundi/Matiang’i 2027 change supporter. Change in Nyamira starts with people like you, in every home and every ward.',
+        path:['Nyamira',r.constituency,r.ward?r.ward+' Ward':''],
+        steps:[['Your call','Your '+esc2(r.ward)+' Ward coordinator will call you on '+esc2(r.phone)+' to welcome you to the team.'],
+               ['Ten neighbours','Share the 12 Pillars with ten people at home, at church, at the market and in your chama.'],
+               ['Your ward','Help us register voters and find a trained agent for every stream in '+esc2(r.ward)+'.']],
+        invite:'I have just joined Dr. Gideon Moseti Nyakundi’s movement for the new Nyamira. Volunteer in your ward: ', hash:'#volunteer'},
+      pledge:{eye:'Thank you for your support',
+        lead:'Thank you for your donation to the call for change. You are now a Nyakundi/Matiang’i 2027 change supporter, and your gift helps carry a people’s campaign to every ward in Nyamira.',
+        path:['Pledge',amt,r.method||''],
+        steps:[['Your call','Our finance team will call you on '+esc2(r.phone)+' with the official campaign payment details and a receipt.'],
+               ['Official channels only','Pay only through the official channels the finance team gives you. Never send money to individuals.'],
+               ['Every shilling counts','Your gift prints the 12 Pillars, runs ward meetings and trains polling agents. Every contribution is recorded and declared as the law requires.']],
+        invite:'I have just pledged my support to Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. Join the call for change: ', hash:'#donate'}
+    }[kind];
+    const path=MSG.path.filter(Boolean), steps=MSG.steps, invite=MSG.invite;
+    const link=location.origin+location.pathname+MSG.hash;
     const box=document.createElement('div'); box.className='thx'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-labelledby','thx-h');
     box.innerHTML='<div class="thx-card"><button type="button" class="thx-x" aria-label="Close">×</button>'
-      +'<div class="thx-top"><img src="img/portrait-about.webp" alt="" width="96" height="96"><div><p class="thx-eye">'+(isA?'Welcome, agent':'Karibu to the movement')+'</p><h3 id="thx-h">Asante sana, '+esc2(first)+'.</h3></div></div>'
-      +'<p class="thx-lead">'+(isA?'You are now a Nyakundi/Matiang\u2019i 2027 change supporter and polling station agent. Thank you for standing up to protect the vote.':'You are now a Nyakundi/Matiang\u2019i 2027 change supporter. Change in Nyamira starts with people like you, in every village and every ward.')+'</p>'
+      +'<div class="thx-top"><img src="img/portrait-about.webp" alt="" width="96" height="96"><div><p class="thx-eye">'+MSG.eye+'</p><h3 id="thx-h">Asante sana, '+esc2(first)+'.</h3></div></div>'
+      +'<p class="thx-lead">'+MSG.lead+'</p>'
       +'<div class="thx-path">'+path.map(x=>'<span>'+esc2(x)+'</span>').join('<i aria-hidden="true">›</i>')+'</div>'
       +'<ol class="thx-steps">'+steps.map((x,n)=>'<li><b>'+(n+1)+'</b><div><strong>'+x[0]+'</strong><span>'+x[1]+'</span></div></li>').join('')+'</ol>'
       +'<p class="thx-slogan">Omonto, Nabanto. Omonto bw’Abanto.</p>'
       +'<p class="thx-sign">Dr. Gideon Moseti Nyakundi<small>Governor, Nyamira 2027</small></p>'
       +'<div class="thx-btns"><a class="btn red" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(invite+link)+'">Invite friends on WhatsApp</a><button type="button" class="btn ghost thx-done">Done</button></div>'
-      +'<p class="thx-safe">Questions? Call or WhatsApp 0723 636 511. The campaign will never ask you to send money or your ID number by phone.</p><div class="thx-flag" aria-hidden="true"></div></div>';
+      +'<p class="thx-safe">Questions? Call or WhatsApp 0723 636 511. '+(isP?'Pay only through the official channels the finance team gives you, never to an individual\u2019s number.':'The campaign will never ask you to send money or your ID number by phone.')+'</p><div class="thx-flag" aria-hidden="true"></div></div>';
     const prev=document.activeElement;
     const close=()=>{ box.classList.remove('on'); document.removeEventListener('keydown',key); setTimeout(()=>box.remove(),250); document.body.style.overflow=''; if(prev&&prev.focus) prev.focus(); };
     const key=ev=>{ if(ev.key==='Escape') close(); };
