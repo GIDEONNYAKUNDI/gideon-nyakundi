@@ -595,6 +595,7 @@ section.photo .note,section.photo .caption{color:#dfe5ee}
 section.flag .statement{background:rgba(8,16,34,.62);padding:14px 20px;border-left:3px solid var(--banana);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);width:fit-content;max-width:100%;box-sizing:border-box}
 section.flag .eyebrow,section.flag .caption{background:rgba(8,16,34,.6);padding:5px 10px;width:fit-content}
 section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.6)}
+.consent{display:flex!important;gap:10px;align-items:flex-start;font-weight:400!important;line-height:1.5;margin-top:4px}.consent input{width:20px;height:20px;flex:none;margin-top:2px}.hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -729,6 +730,8 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
         <label for="a-train">Can you attend agent training in 2027 before elections?<select id="a-train" name="training"><option value="">Select</option><option>Yes</option><option>No</option><option>Maybe</option></select></label>
       </div>
       <p class="note">Accreditation documents are collected in person at training. Do not enter your ID number here.</p>
+      <label class="consent"><input type="checkbox" name="consent" value="1"> <span>I agree that the Nyakundi 2027 campaign may keep these details and contact me about the campaign. They are used only for the campaign.</span></label>
+      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="factions"><button class="btn red" type="submit">Register as agent</button><p class="fmsg" id="agentMsg" role="status"></p></div>
     </form>
     <div class="stationlist">
@@ -838,6 +841,8 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
         </div>
       </fieldset>
       <label for="v-msg">Your top priority for your ward<textarea id="v-msg" name="message" rows="3"></textarea></label>
+      <label class="consent"><input type="checkbox" name="consent" value="1"> <span>I agree that the Nyakundi 2027 campaign may keep these details and contact me about the campaign. They are used only for the campaign.</span></label>
+      <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
       <div class="factions"><button class="btn red" type="submit">Sign me up</button><p class="fmsg" id="volMsg" role="status"></p></div>
     </form>
   </div>
@@ -1640,6 +1645,8 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
           <label for="d-phone">Phone<input id="d-phone" name="phone" required inputmode="tel" autocomplete="tel"></label>
         </div>
         <label for="d-how">How would you like to give?<select id="d-how" name="method"><option>M-Pesa</option><option>Bank transfer</option><option>Diaspora transfer</option><option>In-kind (transport, venue, materials)</option></select></label>
+        <label class="consent"><input type="checkbox" name="consent" value="1"> <span>I agree that the Nyakundi 2027 campaign may keep these details and contact me about the campaign. They are used only for the campaign.</span></label>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
         <div class="factions"><button class="btn red" type="submit">Make my pledge</button><p class="fmsg" id="pledgeMsg" role="status"></p></div>
       </form>
       <div class="ways">
@@ -1823,17 +1830,31 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
   function formData(form){ const fd=new FormData(form), o={}; for(const [k,v] of fd.entries()){ if(k==='roles'){ (o.roles=o.roles||[]).push(v); } else o[k]=String(v).trim(); } return o; }
   function phoneOk(p){ return (p||'').replace(/\D/g,'').length>=9; }
   function say(el,txt,kind){ el.textContent=txt; el.className='fmsg '+(kind||''); }
-  async function save(col,data,msgEl,okTxt,summary){
+  const TYPES={volunteers:'volunteer',agents:'agent',pledges:'pledge'};
+  function fallback(msgEl,lead,summary){ msgEl.innerHTML=''; msgEl.className='fmsg err'; msgEl.append(lead+' Please send these details by SMS or WhatsApp to 0723 636 511: '+summary+' '); const a=document.createElement('a'); a.href='https://wa.me/254723636511?text='+encodeURIComponent(summary); a.target='_blank'; a.rel='noopener'; a.textContent='Open WhatsApp'; msgEl.append(a); }
+  async function save(col,data,msgEl,okTxt,summary,form){
+    const consent=form&&form.elements.consent; const hp=form&&form.elements.website;
+    if(consent&&!consent.checked){ say(msgEl,'Please tick the box to agree that the campaign may store your details and contact you.','err'); consent.focus(); return false; }
+    const clean={...data}; delete clean.consent; delete clean.website;
     await ready;
-    if(!db||!uid){ say(msgEl,'This page cannot save sign-ups in your browser. Please send these details by SMS or WhatsApp to 0723 636 511: '+summary,'err'); return false; }
-    try{ await db.collection(col).doc(uid).set({...data,submittedAt:new Date().toISOString()}); say(msgEl,okTxt,'ok'); return true; }
-    catch(e){ say(msgEl,'We could not save this. Please send these details by SMS or WhatsApp to 0723 636 511: '+summary,'err'); return false; }
+    if(db&&uid){
+      try{ await db.collection(col).doc(uid).set({...clean,submittedAt:new Date().toISOString()}); say(msgEl,okTxt,'ok'); return true; }
+      catch(e){ fallback(msgEl,'We could not save this.',summary); return false; }
+    }
+    say(msgEl,'Sending...','');
+    try{
+      const r=await fetch('api/save.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({...clean,type:TYPES[col],consent:true,website:hp?hp.value:''})});
+      const j=await r.json().catch(()=>({}));
+      if(r.ok&&j.ok){ say(msgEl,okTxt,'ok'); return true; }
+      if(j.error&&(r.status===400||r.status===429)){ say(msgEl,j.error,'err'); return false; }
+    }catch(e){}
+    fallback(msgEl,'We could not save this online right now.',summary); return false;
   }
 
   $('volForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('volMsg'), d=formData(e.target);
     if(!d.name||!phoneOk(d.phone)||!d.constituency||!d.ward){ say(m,'Please enter your name, a valid phone number, your constituency and ward.','err'); return; }
     d.county='Nyamira'; if(d.station&&d.stream){ d.stationCode=streamCode((stations[slug(d.ward)]||[]).find(x=>x.name===d.station),Number(d.stream)); }
-    const ok=await save('volunteers',d,m,'Thank you, '+d.name.split(' ')[0]+'. Your '+d.ward+' Ward coordinator will call you.', d.name+', '+d.phone+', '+d.ward+' Ward, '+d.constituency+(d.station?', '+d.station+(d.stream?' stream '+d.stream:''):''));
+    const ok=await save('volunteers',d,m,'Thank you, '+d.name.split(' ')[0]+'. Your '+d.ward+' Ward coordinator will call you.', d.name+', '+d.phone+', '+d.ward+' Ward, '+d.constituency+(d.station?', '+d.station+(d.stream?' stream '+d.stream:''):''),e.target);
     if(ok) e.target.reset(), vC.dispatchEvent(new Event('change'));
   });
 
@@ -1841,14 +1862,14 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
     const st=stationName();
     if(!d.name||!phoneOk(d.phone)||!aW.value||!st||!d.stream){ say(m,'Please choose your ward, polling station and stream, and enter your name and a valid phone number.','err'); return; }
     const rec={county:'Nyamira',constituency:curConst,ward:aW.value,station:st,stationCode:(aS.value!=='__other'?streamCode((stations[slug(aW.value)]||[]).find(x=>x.name===st),Number(d.stream))||'':'')||d.stationCode||'',stream:d.stream,registeredHere:d.registeredHere||'',name:d.name,phone:d.phone,experience:d.experience||'',training:d.training||''};
-    await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream+(rec.stationCode?' ('+rec.stationCode+')':''));
+    await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream+(rec.stationCode?' ('+rec.stationCode+')':''),e.target);
   });
 
   $('pledgeForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('pledgeMsg'), d=formData(e.target);
     let amt=d.amount==='other'?Number((d.otherAmount||'').replace(/[^\d]/g,'')):Number(d.amount||0);
     if(!amt||!d.name||!phoneOk(d.phone)){ say(m,'Please choose an amount and enter your name and a valid phone number.','err'); return; }
     const rec={name:d.name,phone:d.phone,amountKsh:amt,method:d.method};
-    const ok=await save('pledges',rec,m,'Thank you. Your pledge of Ksh '+amt.toLocaleString()+' is recorded. The finance team will call you with the official payment details.', d.name+', '+d.phone+', pledge Ksh '+amt);
+    const ok=await save('pledges',rec,m,'Thank you. Your pledge of Ksh '+amt.toLocaleString()+' is recorded. The finance team will call you with the official payment details.', d.name+', '+d.phone+', pledge Ksh '+amt,e.target);
     if(ok) e.target.reset();
   });
 
