@@ -19,8 +19,11 @@
 <meta name="twitter:title" content="Dr. Gideon Moseti Nyakundi · Governor, Nyamira 2027">
 <meta name="twitter:description" content="Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. Omonto, Nabanto. Omonto bw'Abanto. The new Nyamira.">
 <meta name="twitter:image" content="https://kucaparty.com/img/share-card.jpg">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png">
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","name":"Dr. Gideon Moseti Nyakundi","alternateName":"Gideon Nyakundi","jobTitle":"Candidate for Governor, Nyamira County","birthPlace":"Manga, Nyamira County, Kenya","image":"https://kucaparty.com/press/Dr-Gideon-Nyakundi-portrait.jpg","url":"https://kucaparty.com/"},{"@type":"WebSite","name":"Nyakundi 2027","url":"https://kucaparty.com/","inLanguage":["en","sw"]}]}</script>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
-<title>Nyakundi for Nyamira 2027</title>
+<title>Dr. Gideon Moseti Nyakundi · Governor, Nyamira 2027</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -688,6 +691,45 @@ section.flag{position:relative}
 .shs-grid i{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:#fff;font-style:normal;font:800 1.05rem var(--display)}
 .shs-close{margin-top:12px;width:100%;background:#eef1f6;border:0;padding:11px;border-radius:8px;font:700 .95rem var(--display);cursor:pointer;color:var(--leaf)}
 .shs-note{font-size:.82rem!important;margin:12px 0 0!important}
+/* round 2: start panel, 30-second summaries, report card, new sections, language */
+.langbtn{font:700 .8rem var(--display);letter-spacing:.04em;background:transparent;color:#fff;border:1.5px solid var(--banana);border-radius:999px;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.langbtn:hover{background:var(--banana);color:var(--leaf)}
+#start{background:linear-gradient(180deg,#0d1a36,#13264d)}
+.sacts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:6px 0 22px}
+.sact{display:grid;gap:4px;padding:18px 20px;text-decoration:none;color:#fff;background:var(--earth);border-radius:4px;transition:transform .15s}
+.sact:nth-child(2){background:#1f6b44}.sact:nth-child(3){background:#2b4a8a}
+.sact:hover{transform:translateY(-2px)}
+.sact b{font:800 1.25rem var(--display)}.sact span{opacity:.9;font-size:.95rem}
+.stiles{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stile{display:grid;gap:6px;align-content:start;padding:14px 16px;text-decoration:none;color:#fff;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-left:3px solid var(--banana)}
+.stile:hover{background:rgba(255,255,255,.11)}
+.stile b{font:800 1.3rem var(--display);color:var(--banana)}.stile span{font:700 1.02rem var(--display);line-height:1.25}.stile small{color:#cfd6e2;font-size:.86rem;line-height:1.45}
+.slinks{display:flex;flex-wrap:wrap;gap:8px 22px;margin:20px 0 0}.slinks a{color:var(--banana);font-weight:700;text-decoration:none}
+@media (max-width:900px){.stiles{grid-template-columns:1fr 1fr}.sacts{grid-template-columns:1fr}}
+@media (max-width:480px){.stiles{grid-template-columns:1fr}}
+.in30{background:rgba(8,16,34,.62);border:1px solid rgba(255,255,255,.14);border-left:4px solid var(--banana);padding:18px 22px;margin:0 0 26px;max-width:900px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.in30 p{margin:0 0 8px;color:#eef2f8;font-size:1.08rem;line-height:1.6}
+.in30 .in30-h{font:600 .82rem var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--banana);margin-bottom:6px}
+.in30-p b{color:var(--banana)}
+.in30-a{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.btn.sm{padding:10px 16px;font-size:.82rem;cursor:pointer;border:0}.btn.ghost.sm{border:2px solid rgba(255,255,255,.75);background:transparent;color:#fff}
+.rcard{display:grid;grid-template-columns:1.1fr 1fr;gap:24px;margin-top:26px;border:1.5px solid var(--banana);padding:22px 24px;background:rgba(8,16,34,.6)}
+.rcard>*{min-width:0}.rcard h3{color:#fff;font-size:1.35rem;margin:4px 0 8px}.rcard p{color:#e6ebf3;line-height:1.6;margin:0}
+.rdates{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.rdates li{background:rgba(255,255,255,.06);padding:10px 12px;border-top:3px solid var(--earth);display:grid}
+.rdates b{font:800 1.2rem var(--display);color:var(--banana)}.rdates span{color:#dfe5ee;font-size:.92rem}
+@media (max-width:820px){.rcard{grid-template-columns:1fr}}
+#kenya{background:radial-gradient(900px 400px at 100% 0%,rgba(46,125,79,.35),transparent 60%),#0f1f40}
+#diaspora{background:radial-gradient(900px 400px at 0% 0%,rgba(192,39,45,.3),transparent 60%),#0d1a36}
+.kgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:6px 0 24px}
+.kgrid article{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-top:4px solid var(--green);padding:18px}
+.kgrid article:nth-child(2){border-top-color:var(--banana)}.kgrid article:nth-child(3){border-top-color:var(--earth)}.kgrid article:nth-child(4){border-top-color:#5b8def}
+.kgrid h3{color:#fff;font-size:1.18rem;margin:0 0 8px}.kgrid p{color:#dfe5ee;line-height:1.55;margin:0;font-size:.98rem}
+@media (max-width:1000px){.kgrid{grid-template-columns:1fr 1fr}}@media (max-width:560px){.kgrid{grid-template-columns:1fr}}
+.pgrid{display:grid;grid-template-columns:1.3fr 1fr;gap:18px}.pgrid>*{min-width:0}
+.dl{list-style:none;padding:0;margin:0;display:grid;gap:8px}.dl a{display:block;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--earth);text-decoration:none;font-weight:700;color:var(--leaf)}
+@media (max-width:820px){.pgrid{grid-template-columns:1fr}}
+.stat .src a{color:inherit;text-decoration:underline}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -700,7 +742,7 @@ section.flag{position:relative}
     <button class="burger" id="burger" aria-expanded="false" aria-controls="mainnav">Menu</button>
     <nav class="main" id="mainnav" aria-label="Main">
       <ul>
-        <li><a href="#about">About Dr. Gideon</a></li>
+        <li><a href="#about" data-sw="Kuhusu Dkt. Gideon">About Dr. Gideon</a></li>
         <li class="has-drop">
           <button class="drop" aria-expanded="false" aria-controls="manifestoMenu">Manifesto ▾</button>
           <div class="menu" id="manifestoMenu" hidden>
@@ -709,8 +751,10 @@ section.flag{position:relative}
             <a href="#today"><b>·</b>Nyamira Today</a>
             <a href="#challenges"><b>·</b>The Challenges</a>
             <a href="#pillars"><b>·</b>The 12 Pillars of Change</a>
+            <a href="#start"><b>·</b>Nyamira in One Minute</a>
             <a href="#first100"><b>·</b>First 100 Days</a>
             <a href="#scorecard"><b>·</b>Governor's Scorecard</a>
+            <a href="#kenya"><b>·</b>Why Nyamira Matters to Kenya</a>
             <a href="#hospital"><b>★</b>New Nyamira hospital</a>
             <a href="#university"><b>★</b>Nyamira University</a>
             <a href="#sironga"><b>★</b>Sironga value-addition hub</a>
@@ -732,7 +776,7 @@ section.flag{position:relative}
             <a href="#p12"><b>12</b>Gusii Culture, Sport and Diaspora</a>
           </div>
         </li>
-        <li><a href="#new">The New Nyamira</a></li>
+        <li><a href="#new" data-sw="Nyamira Mpya">The New Nyamira</a></li>
         <li class="has-drop">
           <button class="drop" aria-expanded="false" aria-controls="involvedMenu">Get Involved ▾</button>
           <div class="menu one" id="involvedMenu" hidden>
@@ -740,13 +784,16 @@ section.flag{position:relative}
             <a href="#change"><b>·</b>Be a Change Agent</a>
             <a href="#volunteer"><b>·</b>Join the Movement as a Volunteer</a>
             <a href="#agents"><b>·</b>Polling Station Agents</a>
+            <a href="#diaspora"><b>·</b>Diaspora</a>
             <a href="#faq"><b>·</b>Questions</a>
+            <a href="#press"><b>·</b>Press Room</a>
             <a href="#people"><b>·</b>The people of Nyamira</a>
             <a href="#vote"><b>·</b>Vote Dr. Gideon</a>
           </div>
         </li>
-        <li><a href="#contact">Contact</a></li>
-        <li><a class="cta" href="#donate">Donate</a></li>
+        <li><a href="#contact" data-sw="Wasiliana">Contact</a></li>
+        <li><a class="cta" href="#donate" data-sw="Changia">Donate</a></li>
+        <li><button type="button" class="langbtn" id="langBtn" aria-label="Kiswahili / English">Kiswahili</button></li>
       </ul>
     </nav>
   </div>
@@ -757,14 +804,14 @@ section.flag{position:relative}
 <section class="hero photo office" id="home" style="--bg:url(img/hero-office.webp)">
   <div class="wrap hero-grid">
     <div class="hero-text">
-      <p class="eyebrow">Nyamira County · 2027</p>
-      <h1><span class="gold">Dr. Gideon Moseti Nyakundi</span><span class="office">Governor Nyamira 2027</span></h1>
+      <p class="eyebrow" data-sw="Kaunti ya Nyamira · 2027">Nyamira County · 2027</p>
+      <h1><span class="gold">Dr. Gideon Moseti Nyakundi</span><span class="office" data-sw="Gavana Nyamira 2027">Governor Nyamira 2027</span></h1>
       <p class="slogan">Omonto, Nabanto.<br>Omonto bw'Abanto.</p>
-      <p class="newn">The new Nyamira.</p>
-      <p class="sub">Born in Manga and raised in Nyamira's villages, Dr. Gideon has spent more than twenty years running hospitals and health systems. He is coming home with a plan.</p>
+      <p class="newn" data-sw="Nyamira mpya.">The new Nyamira.</p>
+      <p class="sub" data-sw="Alizaliwa Manga na kukulia katika vijiji vya Nyamira, Dkt. Gideon ametumia zaidi ya miaka ishirini kuendesha hospitali na mifumo ya afya. Anarudi nyumbani na mpango.">Born in Manga and raised in Nyamira's villages, Dr. Gideon has spent more than twenty years running hospitals and health systems. He is coming home with a plan.</p>
       <div class="btns">
-        <a class="btn red" href="#pillars">See the 12 Pillars</a>
-        <a class="btn ghost" href="#volunteer">Volunteer with Gideon</a>
+        <a class="btn red" href="#start" data-sw="Nyamira kwa dakika moja">Nyamira in one minute</a>
+        <a class="btn ghost" href="#register" data-sw="Jiandikishe kupiga kura">Register to vote</a>
       </div>
       <div class="facts"><span><b>20+</b>years in healthcare</span><span><b>12</b>pillars of change</span><span><b>20</b>wards</span><span><b>5</b>books</span></div>
     </div>
@@ -783,6 +830,24 @@ section.flag{position:relative}
     <p class="anthem-line">A new song for a new Nyamira.</p>
     <p class="anthem-sub">Omonto, Nabanto. Omonto bw'Abanto.</p>
     <button type="button" class="anthem-btn" id="anthemBtn" aria-pressed="false"><span class="ico" aria-hidden="true"></span><span class="lbl">Play with sound</span></button>
+  </div>
+</section>
+
+<!-- START HERE: the whole plan in one minute -->
+<section class="page dark" id="start">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow" data-sw="Anza hapa">Start here</p>
+      <h2 data-sw="Nyamira kwa dakika moja">Nyamira in one minute</h2>
+      <p class="lede" data-sw="Dkt. Gideon Moseti Nyakundi anawania kiti cha Gavana wa Kaunti ya Nyamira, na anasimama na Dkt. Fred Matiang&#x27;i kuwa Rais wa Kenya. Mpango wake una nguzo kumi na mbili. Kila moja ina ahadi unayoweza kufuatilia.">Dr. Gideon Moseti Nyakundi is running for Governor of Nyamira County, and stands with Dr. Fred Matiang'i for President of Kenya. His plan has twelve pillars. Each one comes with a promise you can check.</p>
+    </div>
+    <div class="sacts">
+      <a class="sact" href="#register"><b data-sw="Jiandikishe kupiga kura">Register to vote</b><span data-sw="Hatua 4 rahisi za IEBC">4 simple IEBC steps</span></a>
+      <a class="sact" href="#volunteer"><b data-sw="Jitolee">Volunteer</b><span data-sw="Saidia katika wadi yako">Help in your ward</span></a>
+      <a class="sact" href="#agents"><b data-sw="Kuwa wakala">Be a polling agent</b><span data-sw="Linda kura katika kituo chako">Protect the vote at your station</span></a>
+    </div>
+    <div class="stiles"><a class="stile" href="#p1"><b>01</b><span data-sw="Healthcare360 Nyamira">Healthcare360 Nyamira</span><small data-sw="Hakuna mgonjwa katika kituo cha kaunti atakayeambiwa anunue dawa za msingi mahali pengine.">No patient in a county facility will be told to buy basic medicines elsewhere.</small></a><a class="stile" href="#p2"><b>02</b><span data-sw="Barabara Zinazodumu">Roads That Last</span><small data-sw="Kila mkataba wa barabara, gharama yake na maendeleo yake vitawekwa mtandaoni na kwenye ubao wa matangazo wa wadi.">Every road contract, its cost and its progress posted online and on the ward notice board.</small></a><a class="stile" href="#p3"><b>03</b><span data-sw="Maji Safi kwa Kila Nyumba">Clean Water for Every Home</span><small data-sw="Upatikanaji wa maji safi kuongezeka kila mwaka, na takwimu kuchapishwa.">Safe water access raised every year, and the figure published.</small></a><a class="stile" href="#p4"><b>04</b><span data-sw="Kilimo Chenye Faida">Farming That Pays</span><small data-sw="Kituo cha kusindika au kukusanya mazao katika kila eneo bunge ndani ya muhula wa kwanza.">An agro-processing or aggregation centre in each constituency within the first term.</small></a><a class="stile" href="#p5"><b>05</b><span data-sw="Ajira na Biashara kwa Vijana">Youth Jobs and Enterprise</span><small data-sw="Ripoti ya umma kila mwaka ya kila kijana aliyefunzwa, kuajiriwa au kufadhiliwa, wadi kwa wadi.">A public yearly report of every young person trained, placed or funded, ward by ward.</small></a><a class="stile" href="#p6"><b>06</b><span data-sw="Elimu na Ujuzi">Education and Skills</span><small data-sw="Orodha ya kila basari kuchapishwa kwa kila wadi, kila mwaka.">Every bursary list published by ward, every year.</small></a><a class="stile" href="#p7"><b>07</b><span data-sw="Pesa Safi, Vitabu Wazi">Clean Money, Open Books</span><small data-sw="Kadi ya matokeo ya Gavana kwa umma kila robo mwaka: pesa zilizoingia, zilizotumika, na miradi iliyokamilika.">A public Governor&#x27;s scorecard every quarter: money in, money out, projects done.</small></a><a class="stile" href="#p8"><b>08</b><span data-sw="Wanawake, Familia na Malezi">Women, Families and Care</span><small data-sw="Vikundi vya wanawake na vijana kupata sehemu yao ya kisheria ya zabuni za kaunti, na matokeo kuchapishwa.">Women and youth groups get their legal share of county tenders, and the results are published.</small></a><a class="stile" href="#p9"><b>09</b><span data-sw="Kaunti Salama na Iliyo Tayari">Safe and Ready County</span><small data-sw="Mpango wa dharura wa kaunti uliojaribiwa ndani ya mwaka wa kwanza ofisini.">A tested county emergency plan within the first year in office.</small></a><a class="stile" href="#p10"><b>10</b><span data-sw="Ardhi, Tabianchi na Nishati">Land, Climate and Energy</span><small data-sw="Fedha za tabianchi kutumika waziwazi, wadi kwa wadi, chini ya usimamizi wa jamii.">Climate funds spent in the open, ward by ward, with community oversight.</small></a><a class="stile" href="#p11"><b>11</b><span data-sw="Masoko, Miji na Uwekezaji">Markets, Towns and Investment</span><small data-sw="Wafanyabiashara kushauriwa kabla soko lolote halijabadilishwa au kuhamishwa.">Traders consulted before any market is redesigned or moved.</small></a><a class="stile" href="#p12"><b>12</b><span data-sw="Utamaduni wa Kigusii, Michezo na Diaspora">Gusii Culture, Sport and Diaspora</span><small data-sw="Kongamano la Diaspora na Uwekezaji la Nyamira kila Desemba.">A Nyamira Diaspora and Investment Homecoming every December.</small></a></div>
+    <p class="slinks"><a href="#youth" data-sw="Mpango wa Vijana &rarr;">The Youth Deal &rarr;</a><a href="#scorecard" data-sw="Kadi ya matokeo ya Gavana &rarr;">The Governor's scorecard &rarr;</a><a href="#kenya" data-sw="Kwa nini Nyamira ni muhimu kwa Kenya &rarr;">Why Nyamira matters to Kenya &rarr;</a><a href="#diaspora" data-sw="Diaspora &rarr;">Diaspora &rarr;</a></p>
   </div>
 </section>
 
@@ -948,26 +1013,26 @@ section.flag{position:relative}
 <section class="page dark" id="register">
   <div class="wrap">
     <div class="head">
-      <p class="eyebrow">Register to vote</p>
-      <h2>No voter card, no vote. <span class="gold">Register for 2027.</span></h2>
-      <p class="lede">Change in Nyamira is decided by who turns up on the register. If you are 18 or older and not yet registered, or you registered before 2012, this is your first step.</p>
+      <p class="eyebrow" data-sw="Jiandikishe kupiga kura">Register to vote</p>
+      <h2 data-sw="Bila kadi ya mpiga kura, hakuna kura. &lt;span class=&quot;gold&quot;&gt;Jiandikishe kwa 2027.&lt;/span&gt;">No voter card, no vote. <span class="gold">Register for 2027.</span></h2>
+      <p class="lede" data-sw="Mabadiliko Nyamira yanaamuliwa na walio kwenye daftari la wapiga kura. Ukiwa na miaka 18 au zaidi na bado hujajiandikisha, au ulijiandikisha kabla ya 2012, hii ndiyo hatua yako ya kwanza.">Change in Nyamira is decided by who turns up on the register. If you are 18 or older and not yet registered, or you registered before 2012, this is your first step.</p>
     </div>
     <div class="reg-grid">
       <ol class="reg-steps">
-        <li><b>1</b><div><strong>Who can register</strong><span>Any Kenyan citizen aged 18 or over. Bring your <em>original</em> national ID card or a valid Kenyan passport.</span></div></li>
-        <li><b>2</b><div><strong>Where</strong><span>The IEBC office in your constituency: Kitutu Masaba, West Mugirango, North Mugirango or Borabu. During IEBC registration drives, kits also visit wards, colleges and Huduma Centres.</span></div></li>
-        <li><b>3</b><div><strong>What happens</strong><span>IEBC staff take your fingerprints and photo and fill in the registration form. You get an acknowledgement slip. It takes a few minutes.</span></div></li>
-        <li><b>4</b><div><strong>Check you are on the register</strong><span>Confirm your details on IEBC's official site, <a href="https://verify.iebc.or.ke" target="_blank" rel="noopener">verify.iebc.or.ke</a>, and check again before election day.</span></div></li>
+        <li><b>1</b><div><strong data-sw="Nani anaweza kujiandikisha">Who can register</strong><span data-sw="Mkenya yeyote mwenye miaka 18 au zaidi. Beba kitambulisho chako &lt;em&gt;halisi&lt;/em&gt; cha taifa au pasipoti halali ya Kenya.">Any Kenyan citizen aged 18 or over. Bring your <em>original</em> national ID card or a valid Kenyan passport.</span></div></li>
+        <li><b>2</b><div><strong data-sw="Wapi">Where</strong><span data-sw="Ofisi ya IEBC katika eneo bunge lako: Kitutu Masaba, West Mugirango, North Mugirango au Borabu. Wakati wa kampeni za IEBC za usajili, vifaa pia hufika kwenye wadi, vyuo na Vituo vya Huduma.">The IEBC office in your constituency: Kitutu Masaba, West Mugirango, North Mugirango or Borabu. During IEBC registration drives, kits also visit wards, colleges and Huduma Centres.</span></div></li>
+        <li><b>3</b><div><strong data-sw="Kinachofanyika">What happens</strong><span data-sw="Maafisa wa IEBC huchukua alama za vidole na picha yako na kujaza fomu ya usajili. Unapewa risiti ya uthibitisho. Huchukua dakika chache.">IEBC staff take your fingerprints and photo and fill in the registration form. You get an acknowledgement slip. It takes a few minutes.</span></div></li>
+        <li><b>4</b><div><strong data-sw="Hakikisha uko kwenye daftari">Check you are on the register</strong><span data-sw="Thibitisha maelezo yako kwenye tovuti rasmi ya IEBC, &lt;a href=&quot;https://verify.iebc.or.ke&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;verify.iebc.or.ke&lt;/a&gt;, na uangalie tena kabla ya siku ya uchaguzi.">Confirm your details on IEBC's official site, <a href="https://verify.iebc.or.ke" target="_blank" rel="noopener">verify.iebc.or.ke</a>, and check again before election day.</span></div></li>
       </ol>
       <div class="reg-notes">
-        <p><b>Registered before 2012?</b> IEBC says you must register again to be on the current biometric register.</p>
-        <p><b>Moved?</b> Go to the IEBC office in the constituency where you now live and ask to transfer your registration.</p>
-        <p><b>Register only once.</b> Registering twice is an election offence.</p>
+        <p data-sw="&lt;b&gt;Ulijiandikisha kabla ya 2012?&lt;/b&gt; IEBC inasema lazima ujiandikishe upya ili uwe kwenye daftari la sasa la kibayometriki."><b>Registered before 2012?</b> IEBC says you must register again to be on the current biometric register.</p>
+        <p data-sw="&lt;b&gt;Umehama?&lt;/b&gt; Nenda ofisi ya IEBC katika eneo bunge unaloishi sasa na uombe kuhamisha usajili wako."><b>Moved?</b> Go to the IEBC office in the constituency where you now live and ask to transfer your registration.</p>
+        <p data-sw="&lt;b&gt;Jiandikishe mara moja tu.&lt;/b&gt; Kujiandikisha mara mbili ni kosa la uchaguzi."><b>Register only once.</b> Registering twice is an election offence.</p>
         <p class="note">From IEBC guidance, 2026. Always confirm dates and places with your IEBC constituency office.</p>
       </div>
     </div>
     <form class="form on-dark" id="regForm" novalidate>
-      <h3 class="reg-h">Tell us you are ready to vote</h3>
+      <h3 class="reg-h" data-sw="Tuambie uko tayari kupiga kura">Tell us you are ready to vote</h3>
       <div class="frow">
         <label for="r-name">Full name<input id="r-name" name="name" required autocomplete="name"></label>
         <label for="r-phone">Phone (Safaricom/Airtel)<input id="r-phone" name="phone" required inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX"></label>
@@ -979,7 +1044,7 @@ section.flag{position:relative}
       <label for="r-status">Where are you with registration?<select id="r-status" name="regStatus" required><option value="">Select</option><option>I am registered and have checked</option><option>I will register this month</option><option>I need help to register</option></select></label>
       <label class="consent"><input type="checkbox" name="consent" value="1"> <span>I agree that the Nyakundi 2027 campaign may keep these details and contact me about the campaign. They are used only for the campaign. <a href="privacy.html">Privacy notice</a></span></label>
       <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-      <div class="factions"><button class="btn red" type="submit">I am ready to vote</button><p class="fmsg" id="regMsg" role="status"></p></div>
+      <div class="factions"><button class="btn red" type="submit" data-sw="Niko tayari kupiga kura">I am ready to vote</button><p class="fmsg" id="regMsg" role="status"></p></div>
     </form>
   </div>
 </section>
@@ -1049,8 +1114,8 @@ section.flag{position:relative}
       <div class="stat"><span class="n">39%</span><span class="l">of households connected to electricity</span><span class="src">Campaign estimate, 2026</span></div>
       <div class="stat"><span class="n">68.7%</span><span class="l">of residents living below the poverty line</span><span class="src">Campaign estimate, 2026</span></div>
       <div class="stat"><span class="n">12</span><span class="l">health workers per 10,000 people</span><span class="src">Campaign estimate, 2026</span></div>
-      <div class="stat"><span class="n">349</span><span class="l">maternal deaths per 100,000 live births</span><span class="src">CRA fact sheet, 2019</span></div>
-      <div class="stat"><span class="n">47.9%</span><span class="l">secondary-school attendance; more than half of teenagers are out of class</span><span class="src">CRA fact sheet, 2015/16</span></div>
+      <div class="stat"><span class="n">349</span><span class="l">maternal deaths per 100,000 live births</span><span class="src"><a href="https://ipfglobal.or.ke/wp-content/uploads/2023/10/Nyamira-County-Kenya-County-Fact-Sheets-3rd-Edition-by-CRA.pdf" target="_blank" rel="noopener">CRA County Fact Sheets</a>, 2019</span></div>
+      <div class="stat"><span class="n">47.9%</span><span class="l">secondary-school attendance; more than half of teenagers are out of class</span><span class="src"><a href="https://ipfglobal.or.ke/wp-content/uploads/2023/10/Nyamira-County-Kenya-County-Fact-Sheets-3rd-Edition-by-CRA.pdf" target="_blank" rel="noopener">CRA County Fact Sheets</a>, 2015/16</span></div>
       <div class="stat"><span class="n">Ksh 975M</span><span class="l">in unpaid pending bills owed to suppliers, contractors and staff, up from Ksh 583M in June 2025</span><span class="src">Campaign estimate, 2026</span></div>
     </div>
   </div>
@@ -1076,7 +1141,7 @@ section.flag{position:relative}
         <p class="note" style="margin-top:-6px">Tap a sector to see the gap and the plan to close it.</p>
         <div class="gaplist" role="tablist" aria-label="Sectors"></div>
         <div class="gapcard" id="gapCard" role="tabpanel" aria-live="polite"></div>
-        <p class="note">Source: Nyamira County Fiscal Strategy Paper 2026/27, popular version</p>
+        <p class="note">Source: <a href="https://www.nyamira.go.ke/static/documents/23_02_2026_02_41_12_pm_Popular_version-1.pdf" target="_blank" rel="noopener">Nyamira County Fiscal Strategy Paper 2026/27, popular version</a></p>
       </div>
       <div class="prose">
         <h3 style="font-size:1.2rem">What residents tell us</h3>
@@ -1094,23 +1159,23 @@ section.flag{position:relative}
 <section class="page dark" id="youth">
   <div class="wrap">
     <div class="head">
-      <p class="eyebrow">For Nyamira's young people</p>
-      <h2>The Youth Deal</h2>
-      <p class="lede">Most people in Nyamira are under 35. This is what Dr. Gideon's plan means for you, in plain words. Every promise here is in the 12 Pillars, and every one will be reported in public, ward by ward.</p>
+      <p class="eyebrow" data-sw="Kwa vijana wa Nyamira">For Nyamira's young people</p>
+      <h2 data-sw="Mpango wa Vijana">The Youth Deal</h2>
+      <p class="lede" data-sw="Watu wengi Nyamira wako chini ya miaka 35. Hivi ndivyo mpango wa Dkt. Gideon unavyokuhusu, kwa maneno rahisi. Kila ahadi hapa iko katika Nguzo 12, na kila moja itaripotiwa hadharani, wadi kwa wadi.">Most people in Nyamira are under 35. This is what Dr. Gideon's plan means for you, in plain words. Every promise here is in the 12 Pillars, and every one will be reported in public, ward by ward.</p>
     </div>
     <div class="ydeal">
-      <article><span class="yk">Work</span><h3>Work, not waiting</h3><p>Digital Work Hubs in every constituency, with internet, power and training for online and remote jobs, linked to employers in the diaspora.</p></article>
-      <article><span class="yk">Fair chance</span><h3>Your share of county work</h3><p>Every county works contract carries a quota of trained local youth. County jobs are filled on merit, with performance contracts, not connections.</p></article>
-      <article><span class="yk">Business</span><h3>A youth fund you can see</h3><p>A Youth Enterprise Fund with business training and mentoring, and the list of everyone who receives money published for all to check.</p></article>
-      <article><span class="yk">Boda boda</span><h3>Riders who are respected</h3><p>Help with licensing, proper rider training, group insurance and savings SACCOs, so boda boda work becomes a business that grows.</p></article>
-      <article><span class="yk">Skills</span><h3>A trade or a degree</h3><p>Stronger vocational colleges, a completed Nyamira University, and training for health and care careers at home and abroad.</p></article>
-      <article><span class="yk">Factories</span><h3>Viwanda = Ajira</h3><p>Value addition for our tea, bananas and milk at the Sironga hub, so the jobs stay in Nyamira instead of the raw produce leaving.</p></article>
-      <article><span class="yk">Sport and culture</span><h3>Somewhere to play and perform</h3><p>The stalled Manga and Nyamaiya stadiums completed, sport for every ward, and support for Gusii musicians, artists and creatives.</p></article>
-      <article><span class="yk">Help</span><h3>A hand up, not judgement</h3><p>Prevention and rehabilitation for drug and alcohol abuse, run with churches and community groups.</p></article>
+      <article><span class="yk" data-sw="Kazi">Work</span><h3 data-sw="Kazi, si kusubiri">Work, not waiting</h3><p data-sw="Vituo vya kazi za kidijitali katika kila eneo bunge, vyenye intaneti, umeme na mafunzo ya kazi za mtandaoni, vikiunganishwa na waajiri walio ughaibuni.">Digital Work Hubs in every constituency, with internet, power and training for online and remote jobs, linked to employers in the diaspora.</p></article>
+      <article><span class="yk" data-sw="Haki">Fair chance</span><h3 data-sw="Sehemu yako ya kazi za kaunti">Your share of county work</h3><p data-sw="Kila mkataba wa ujenzi wa kaunti utakuwa na nafasi kwa vijana wa hapa waliofunzwa. Kazi za kaunti zitajazwa kwa sifa na mikataba ya utendaji, si kwa kujuana.">Every county works contract carries a quota of trained local youth. County jobs are filled on merit, with performance contracts, not connections.</p></article>
+      <article><span class="yk" data-sw="Biashara">Business</span><h3 data-sw="Hazina ya vijana unayoiona">A youth fund you can see</h3><p data-sw="Hazina ya Biashara ya Vijana yenye mafunzo na ushauri, na orodha ya kila anayepokea pesa ikichapishwa ili wote waone.">A Youth Enterprise Fund with business training and mentoring, and the list of everyone who receives money published for all to check.</p></article>
+      <article><span class="yk" data-sw="Bodaboda">Boda boda</span><h3 data-sw="Wanabodaboda wanaoheshimiwa">Riders who are respected</h3><p data-sw="Msaada wa leseni, mafunzo bora ya uendeshaji, bima ya pamoja na vyama vya akiba (SACCO), ili kazi ya bodaboda iwe biashara inayokua.">Help with licensing, proper rider training, group insurance and savings SACCOs, so boda boda work becomes a business that grows.</p></article>
+      <article><span class="yk" data-sw="Ujuzi">Skills</span><h3 data-sw="Ufundi au shahada">A trade or a degree</h3><p data-sw="Vyuo vya ufundi vilivyoimarishwa, Chuo Kikuu cha Nyamira kilichokamilika, na mafunzo ya ajira za afya na malezi nyumbani na ughaibuni.">Stronger vocational colleges, a completed Nyamira University, and training for health and care careers at home and abroad.</p></article>
+      <article><span class="yk" data-sw="Viwanda">Factories</span><h3 data-sw="Viwanda = Ajira">Viwanda = Ajira</h3><p data-sw="Kuongeza thamani ya chai, ndizi na maziwa yetu katika kituo cha Sironga, ili ajira zibaki Nyamira badala ya mazao ghafi kuondoka.">Value addition for our tea, bananas and milk at the Sironga hub, so the jobs stay in Nyamira instead of the raw produce leaving.</p></article>
+      <article><span class="yk" data-sw="Michezo na utamaduni">Sport and culture</span><h3 data-sw="Mahali pa kucheza na kuonyesha vipaji">Somewhere to play and perform</h3><p data-sw="Viwanja vya Manga na Nyamaiya vilivyokwama kukamilishwa, michezo katika kila wadi, na msaada kwa wanamuziki, wasanii na wabunifu wa Kigusii.">The stalled Manga and Nyamaiya stadiums completed, sport for every ward, and support for Gusii musicians, artists and creatives.</p></article>
+      <article><span class="yk" data-sw="Msaada">Help</span><h3 data-sw="Mkono wa msaada, si hukumu">A hand up, not judgement</h3><p data-sw="Kinga na urekebishaji kwa matumizi mabaya ya dawa za kulevya na pombe, kwa ushirikiano na makanisa na vikundi vya jamii.">Prevention and rehabilitation for drug and alcohol abuse, run with churches and community groups.</p></article>
     </div>
     <div class="yhold">
-      <p><b>Hold me to it.</b> Every year the county will publish how many young people were trained, placed or funded in each ward. If the numbers are not there, you will see it.</p>
-      <div class="btns"><a class="btn red" href="#register">Register to vote</a><a class="btn ghost" href="#volunteer">Join Youth for Change</a></div>
+      <p data-sw="&lt;b&gt;Nishikilie kwa ahadi hii.&lt;/b&gt; Kila mwaka kaunti itachapisha idadi ya vijana waliofunzwa, kuajiriwa au kufadhiliwa katika kila wadi. Kama takwimu hazipo, utaziona."><b>Hold me to it.</b> Every year the county will publish how many young people were trained, placed or funded in each ward. If the numbers are not there, you will see it.</p>
+      <div class="btns"><a class="btn red" href="#register" data-sw="Jiandikishe kupiga kura">Register to vote</a><a class="btn ghost" href="#volunteer" data-sw="Jiunge na Vijana wa Mabadiliko">Join Youth for Change</a></div>
     </div>
   </div>
 </section>
@@ -1143,8 +1208,9 @@ section.flag{position:relative}
 <!-- 7 PILLAR 1 -->
 <section class="page pillar dark photo split" id="p1" data-bg="img/health.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">01</span><div class="head" style="margin:0"><span class="pagenum">Pillar One</span><h2>Healthcare360 Nyamira</h2><p class="lede">A county health system that works from the village health promoter to the referral hospital.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">01</span><div class="head" style="margin:0"><span class="pagenum">Pillar One</span><h2 data-sw="Healthcare360 Nyamira">Healthcare360 Nyamira</h2><p class="lede">A county health system that works from the village health promoter to the referral hospital.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Dawa katika kila rafu, vifaa vinavyofanya kazi, hospitali za Level 4 za kweli, na wahudumu wa afya wanaolipwa na kubaki.">Medicines on every shelf, working equipment, real Level 4 hospitals and health workers who are paid and stay.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Hakuna mgonjwa katika kituo cha kaunti atakayeambiwa anunue dawa za msingi mahali pengine.">No patient in a county facility will be told to buy basic medicines elsewhere.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-1.jpg" data-title="Healthcare360 Nyamira" data-pledge="No patient in a county facility will be told to buy basic medicines elsewhere." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1153,7 +1219,7 @@ section.flag{position:relative}
           <li>There are only 12 health workers per 10,000 residents, and maternal mortality is 349 per 100,000 births.</li>
           <li>Hospital equipment breaks down and stays broken, with no maintenance plan.</li>
         </ul>
-        <div><span class="fig">Ksh 100M</span><p class="note">Health products fund ceiling 2026/27, down from Ksh 500M proposed</p></div>
+        <div><span class="fig">Ksh 100M</span><p class="note">Health products fund ceiling 2026/27, down from Ksh 500M proposed. <a href="https://www.nyamira.go.ke/static/documents/23_02_2026_02_41_12_pm_Popular_version-1.pdf" target="_blank" rel="noopener">Source</a></p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -1189,8 +1255,9 @@ section.flag{position:relative}
 <!-- 8 PILLAR 2 -->
 <section class="page pillar dark photo split" id="p2" data-bg="img/roads-billboard.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">02</span><div class="head" style="margin:0"><span class="pagenum">Pillar Two</span><h2>Roads That Last</h2><p class="lede">Every farm, school and clinic within reach of a road that stays open in the long rains.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">02</span><div class="head" style="margin:0"><span class="pagenum">Pillar Two</span><h2 data-sw="Barabara Zinazodumu">Roads That Last</h2><p class="lede">Every farm, school and clinic within reach of a road that stays open in the long rains.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Ramani ya barabara ya kila wadi iliyo wazi kwa umma, barabara zinazojengwa mara moja na kutunzwa daima, mitambo ya kaunti, na wakandarasi wa ndani wanaolipwa kwa wakati.">A public road map for every ward, roads built once and maintained always, county machinery, and local contractors paid on time.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Kila mkataba wa barabara, gharama yake na maendeleo yake vitawekwa mtandaoni na kwenye ubao wa matangazo wa wadi.">Every road contract, its cost and its progress posted online and on the ward notice board.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-2.jpg" data-title="Roads That Last" data-pledge="Every road contract, its cost and its progress posted online and on the ward notice board." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1199,7 +1266,7 @@ section.flag{position:relative}
           <li>The 2026/27 roads development ceiling is Ksh 489M against Ksh 798M planned.</li>
           <li>Roads are graded once and then left to wash away. Culverts and bridges fail.</li>
         </ul>
-        <div><span class="fig">61%</span><p class="note">Share of the planned roads development budget actually funded, 2026/27</p></div>
+        <div><span class="fig">61%</span><p class="note">Share of the planned roads development budget actually funded, 2026/27. <a href="https://www.nyamira.go.ke/static/documents/23_02_2026_02_41_12_pm_Popular_version-1.pdf" target="_blank" rel="noopener">Source</a></p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -1243,8 +1310,9 @@ section.flag{position:relative}
 <!-- 9 PILLAR 3 -->
 <section class="page pillar dark photo split" id="p3" data-bg="img/water.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">03</span><div class="head" style="margin:0"><span class="pagenum">Pillar Three</span><h2>Clean Water for Every Home</h2><p class="lede">Our hills are full of springs and rivers. No family should walk for dirty water.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">03</span><div class="head" style="margin:0"><span class="pagenum">Pillar Three</span><h2 data-sw="Maji Safi kwa Kila Nyumba">Clean Water for Every Home</h2><p class="lede">Our hills are full of springs and rivers. No family should walk for dirty water.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Kila chemchemi kulindwa, miradi ya maji iliyokwama kukamilishwa, maji ya mfereji kupanuliwa, na maji katika kila shule na kituo cha afya.">Every spring protected, stalled water projects finished, piped water expanded, and water at every school and health facility.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Upatikanaji wa maji safi kuongezeka kila mwaka, na takwimu kuchapishwa.">Safe water access raised every year, and the figure published.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-3.jpg" data-title="Clean Water for Every Home" data-pledge="Safe water access raised every year, and the figure published." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1253,7 +1321,7 @@ section.flag{position:relative}
           <li>Water projects stall half-built, and boreholes break and are abandoned.</li>
           <li>Women and girls lose hours each day fetching water, and waterborne disease fills clinics.</li>
         </ul>
-        <div><span class="fig">Ksh 55M</span><p class="note">Water development ceiling, 2026/27, vs Ksh 441M in the Annual Development Plan</p></div>
+        <div><span class="fig">Ksh 55M</span><p class="note">Water development ceiling, 2026/27 (<a href="https://www.nyamira.go.ke/static/documents/23_02_2026_02_41_12_pm_Popular_version-1.pdf" target="_blank" rel="noopener">Fiscal Strategy Paper</a>), vs Ksh 441M in the <a href="https://www.nyamira.go.ke/static/documents/updated_CADP_2026-2027.pdf" target="_blank" rel="noopener">Annual Development Plan</a></p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -1273,8 +1341,9 @@ section.flag{position:relative}
 <!-- 10 PILLAR 4 -->
 <section class="page pillar dark photo split" id="p4" data-bg="img/farming.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">04</span><div class="head" style="margin:0"><span class="pagenum">Pillar Four</span><h2>Farming That Pays</h2><p class="lede">Most Nyamira families farm. Farming should make them richer, not poorer.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">04</span><div class="head" style="margin:0"><span class="pagenum">Pillar Four</span><h2 data-sw="Kilimo Chenye Faida">Farming That Pays</h2><p class="lede">Most Nyamira families farm. Farming should make them richer, not poorer.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Kuongeza thamani nyumbani, haki kwa wakulima wa chai, mazao ya thamani kwa mashamba madogo, maziwa yenye faida, na afisa wa ugani katika kila wadi.">Value addition at home, a fair deal for tea, high-value crops for small plots, dairy that earns, and an extension officer in every ward.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Kituo cha kusindika au kukusanya mazao katika kila eneo bunge ndani ya muhula wa kwanza.">An agro-processing or aggregation centre in each constituency within the first term.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-4.jpg" data-title="Farming That Pays" data-pledge="An agro-processing or aggregation centre in each constituency within the first term." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1358,8 +1427,9 @@ section.flag{position:relative}
 <!-- 11 PILLAR 5 -->
 <section class="page pillar dark photo split nopic" id="p5" data-bg="img/youth-education.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">05</span><div class="head" style="margin:0"><span class="pagenum">Pillar Five</span><h2>Youth Jobs and Enterprise</h2><p class="lede">Our young people are educated and ready. They need work, tools and a fair chance.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">05</span><div class="head" style="margin:0"><span class="pagenum">Pillar Five</span><h2 data-sw="Ajira na Biashara kwa Vijana">Youth Jobs and Enterprise</h2><p class="lede">Our young people are educated and ready. They need work, tools and a fair chance.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Vituo vya kazi za kidijitali, mafunzo kazini kupitia mikataba ya kaunti, hazina ya vijana iliyo wazi, mafunzo na bima kwa wanabodaboda, na ajira za afya na malezi.">Digital work hubs, apprenticeships on county contracts, an open youth fund, boda boda training and insurance, and health and care careers.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Ripoti ya umma kila mwaka ya kila kijana aliyefunzwa, kuajiriwa au kufadhiliwa, wadi kwa wadi.">A public yearly report of every young person trained, placed or funded, ward by ward.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-5.jpg" data-title="Youth Jobs and Enterprise" data-pledge="A public yearly report of every young person trained, placed or funded, ward by ward." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1388,8 +1458,9 @@ section.flag{position:relative}
 <!-- 12 PILLAR 6 -->
 <section class="page pillar dark photo split" id="p6" data-bg="img/youth-education.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">06</span><div class="head" style="margin:0"><span class="pagenum">Pillar Six</span><h2>Education and Skills</h2><p class="lede">From the first ECDE classroom to the vocational college, every child learns and every youth gains a trade.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">06</span><div class="head" style="margin:0"><span class="pagenum">Pillar Six</span><h2 data-sw="Elimu na Ujuzi">Education and Skills</h2><p class="lede">From the first ECDE classroom to the vocational college, every child learns and every youth gains a trade.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Kituo cha mfano cha ECDE katika kila wadi, vyuo vya kisasa vya ufundi, mfumo wa haki wa basari wa kidijitali, na ufadhili wa masomo.">A model ECDE centre in every ward, modern vocational colleges, a fair digital bursary system and scholarships.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Orodha ya kila basari kuchapishwa kwa kila wadi, kila mwaka.">Every bursary list published by ward, every year.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-6.jpg" data-title="Education and Skills" data-pledge="Every bursary list published by ward, every year." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1398,7 +1469,7 @@ section.flag{position:relative}
           <li>Vocational training centres are underfunded and teach outdated trades.</li>
           <li>Bursaries are thinly spread and often allocated by patronage.</li>
         </ul>
-        <div><span class="fig">47.9%</span><p class="note">Secondary net attendance, 2015/16</p></div>
+        <div><span class="fig">47.9%</span><p class="note">Secondary net attendance, 2015/16. <a href="https://ipfglobal.or.ke/wp-content/uploads/2023/10/Nyamira-County-Kenya-County-Fact-Sheets-3rd-Edition-by-CRA.pdf" target="_blank" rel="noopener">Source: CRA</a></p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -1433,8 +1504,9 @@ section.flag{position:relative}
 <!-- 13 PILLAR 7 -->
 <section class="page pillar dark photo split nopic" id="p7" data-bg="img/money-families.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">07</span><div class="head" style="margin:0"><span class="pagenum">Pillar Seven</span><h2>Clean Money, Open Books</h2><p class="lede">Every shilling belongs to the people of Nyamira. They have a right to see where it goes.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">07</span><div class="head" style="margin:0"><span class="pagenum">Pillar Seven</span><h2 data-sw="Pesa Safi, Vitabu Wazi">Clean Money, Open Books</h2><p class="lede">Every shilling belongs to the people of Nyamira. They have a right to see where it goes.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Kulipa madeni ya kaunti, bajeti na mikataba iliyo wazi, ukusanyaji wa mapato kidijitali, na kuajiri kwa sifa.">Pay what the county owes, open budgets and contracts, digital revenue collection, and hiring on merit.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Kadi ya matokeo ya Gavana kwa umma kila robo mwaka: pesa zilizoingia, zilizotumika, na miradi iliyokamilika.">A public Governor&#x27;s scorecard every quarter: money in, money out, projects done.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-7.jpg" data-title="Clean Money, Open Books" data-pledge="A public Governor&#x27;s scorecard every quarter: money in, money out, projects done." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1464,8 +1536,9 @@ section.flag{position:relative}
 <!-- 14 PILLAR 8 -->
 <section class="page pillar dark photo split" id="p8" data-bg="img/money-families.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">08</span><div class="head" style="margin:0"><span class="pagenum">Pillar Eight</span><h2>Women, Families and Care</h2><p class="lede">A strong county is built on safe mothers, thriving women and cared-for elders.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">08</span><div class="head" style="margin:0"><span class="pagenum">Pillar Eight</span><h2 data-sw="Wanawake, Familia na Malezi">Women, Families and Care</h2><p class="lede">A strong county is built on safe mothers, thriving women and cared-for elders.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Uzazi salama, msaada kwa biashara za wanawake, malezi kwa wazee na watu wenye ulemavu, na ulinzi wa watoto.">Safe motherhood, support for women&#x27;s enterprise, care for elders and people with disabilities, and child protection.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Vikundi vya wanawake na vijana kupata sehemu yao ya kisheria ya zabuni za kaunti, na matokeo kuchapishwa.">Women and youth groups get their legal share of county tenders, and the results are published.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-8.jpg" data-title="Women, Families and Care" data-pledge="Women and youth groups get their legal share of county tenders, and the results are published." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1474,7 +1547,7 @@ section.flag{position:relative}
           <li>Elders, widows and people with disabilities are often left without support.</li>
           <li>Child poverty affects about one in three children.</li>
         </ul>
-        <div><span class="fig">349</span><p class="note">Maternal deaths per 100,000 live births, 2019</p></div>
+        <div><span class="fig">349</span><p class="note">Maternal deaths per 100,000 live births, 2019. <a href="https://ipfglobal.or.ke/wp-content/uploads/2023/10/Nyamira-County-Kenya-County-Fact-Sheets-3rd-Edition-by-CRA.pdf" target="_blank" rel="noopener">Source: CRA</a></p></div>
       </div>
       <div class="plan">
         <h4>The solution</h4>
@@ -1494,8 +1567,9 @@ section.flag{position:relative}
 <!-- 15 PILLAR 9 -->
 <section class="page pillar dark photo split nopic" id="p9" data-bg="img/safe-green.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">09</span><div class="head" style="margin:0"><span class="pagenum">Pillar Nine</span><h2>Safe and Ready County</h2><p class="lede">When disaster strikes, Nyamira will have a plan, trained people and vehicles that start.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">09</span><div class="head" style="margin:0"><span class="pagenum">Pillar Nine</span><h2 data-sw="Kaunti Salama na Iliyo Tayari">Safe and Ready County</h2><p class="lede">When disaster strikes, Nyamira will have a plan, trained people and vehicles that start.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Mpango wa dharura wa kaunti, nambari moja ya dharura na kituo kimoja cha kutuma msaada, ambulensi katika kila eneo la wadi, na zimamoto na uokoaji.">A county emergency plan, one emergency number and dispatch centre, an ambulance in every ward catchment, and fire and rescue.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Mpango wa dharura wa kaunti uliojaribiwa ndani ya mwaka wa kwanza ofisini.">A tested county emergency plan within the first year in office.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-9.jpg" data-title="Safe and Ready County" data-pledge="A tested county emergency plan within the first year in office." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1524,8 +1598,9 @@ section.flag{position:relative}
 <!-- 16 PILLAR 10 -->
 <section class="page pillar dark photo split" id="p10" data-bg="img/safe-green.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">10</span><div class="head" style="margin:0"><span class="pagenum">Pillar Ten</span><h2>Land, Climate and Energy</h2><p class="lede">Protect the hills, rivers and soil that feed us, and bring power to every home.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">10</span><div class="head" style="margin:0"><span class="pagenum">Pillar Ten</span><h2 data-sw="Ardhi, Tabianchi na Nishati">Land, Climate and Energy</h2><p class="lede">Protect the hills, rivers and soil that feed us, and bring power to every home.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Umeme kwa nyumba na masoko, miti na kingo za mito kulindwa, kilimo kinachostahimili tabianchi, na kliniki za ardhi.">Power for homes and markets, trees and riverbanks protected, climate-smart farming, and land clinics.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Fedha za tabianchi kutumika waziwazi, wadi kwa wadi, chini ya usimamizi wa jamii.">Climate funds spent in the open, ward by ward, with community oversight.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-10.jpg" data-title="Land, Climate and Energy" data-pledge="Climate funds spent in the open, ward by ward, with community oversight." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1554,8 +1629,9 @@ section.flag{position:relative}
 <!-- 17 PILLAR 11 -->
 <section class="page pillar dark photo split" id="p11" data-bg="img/markets.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">11</span><div class="head" style="margin:0"><span class="pagenum">Pillar Eleven</span><h2>Markets, Towns and Investment</h2><p class="lede">Planned towns and modern markets where business grows and traders are respected.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">11</span><div class="head" style="margin:0"><span class="pagenum">Pillar Eleven</span><h2 data-sw="Masoko, Miji na Uwekezaji">Markets, Towns and Investment</h2><p class="lede">Planned towns and modern markets where business grows and traders are respected.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Masoko ya kisasa, miji iliyopangwa, leseni za biashara mahali pamoja, na kongamano la uwekezaji.">Modern markets, planned towns, one-stop business licensing and an investment forum.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Wafanyabiashara kushauriwa kabla soko lolote halijabadilishwa au kuhamishwa.">Traders consulted before any market is redesigned or moved.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-11.jpg" data-title="Markets, Towns and Investment" data-pledge="Traders consulted before any market is redesigned or moved." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1583,8 +1659,9 @@ section.flag{position:relative}
 <!-- 18 PILLAR 12 -->
 <section class="page pillar dark photo split nopic" id="p12" data-bg="img/markets.webp">
   <div class="wrap">
-    <div class="ph"><span class="big">12</span><div class="head" style="margin:0"><span class="pagenum">Pillar Twelve</span><h2>Gusii Culture, Sport and Diaspora</h2><p class="lede">Proud of where we come from, connected to where our people have gone.</p></div></div>
-    <div class="cols">
+    <div class="ph"><span class="big">12</span><div class="head" style="margin:0"><span class="pagenum">Pillar Twelve</span><h2 data-sw="Utamaduni wa Kigusii, Michezo na Diaspora">Gusii Culture, Sport and Diaspora</h2><p class="lede">Proud of where we come from, connected to where our people have gone.</p></div></div>
+    <div class="in30"><p class="in30-h" data-sw="Kwa sekunde 30">In 30 seconds</p><p data-sw="Kituo cha Urithi wa Kigusii, sherehe za kitamaduni na uchumi wa ubunifu, michezo katika kila wadi, na Ofisi ya Diaspora ya Nyamira.">A Gusii Heritage Centre, festivals and the creative economy, sport in every ward, and a Nyamira Diaspora Office.</p><p class="in30-p"><b data-sw="Ahadi:">Pledge:</b> <span data-sw="Kongamano la Diaspora na Uwekezaji la Nyamira kila Desemba.">A Nyamira Diaspora and Investment Homecoming every December.</span></p><div class="in30-a"><button type="button" class="btn red sm pshare" data-card="img/pledge/pillar-12.jpg" data-title="Gusii Culture, Sport and Diaspora" data-pledge="A Nyamira Diaspora and Investment Homecoming every December." data-sw="Shiriki ahadi hii">Share this pledge</button><button type="button" class="btn ghost sm pmore" aria-expanded="false" data-sw="Soma mpango kamili">Read the full plan</button></div></div>
+    <div class="cols pfull" hidden>
       <div class="problem">
         <h4>The challenge</h4>
         <ul>
@@ -1635,6 +1712,23 @@ section.flag{position:relative}
       <div><span class="when">Days 11–30</span><ul><li>Audit of stalled projects, staff and equipment</li><li>All medical systems and equipment up and running</li><li>Launch the county biomedical repair unit</li><li>Ward development forums in all 20 wards</li></ul></div>
       <div><span class="when">Days 31–60</span><ul><li>Digital revenue collection pilot in main markets</li><li>Begin pending bills payment schedule</li><li>Routine road maintenance crews deployed</li></ul></div>
       <div><span class="when">Days 61–100</span><ul><li>First public Governor's scorecard</li><li>Emergency operations plan drafted</li><li>Budget re-aligned to the 12 Pillars</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY NYAMIRA MATTERS TO KENYA -->
+<section class="page dark" id="kenya">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow" data-sw="Kwa Kenya nzima">For all of Kenya</p>
+      <h2 data-sw="Kwa nini Nyamira ni muhimu kwa Kenya">Why Nyamira matters to Kenya</h2>
+      <p class="lede" data-sw="Nyamira ni ndogo kwenye ramani lakini kubwa mezani. Kinachotokea hapa kinaonyesha kama ugatuzi unaweza kufanya kazi kwa kaunti ya kawaida ya wakulima.">Nyamira is small on the map and big on the plate. What happens here shows whether devolution can work for an ordinary farming county.</p>
+    </div>
+    <div class="kgrid">
+      <article><h3>Tea, bananas and milk</h3><p>Nyamira's red highland soils feed homes and markets far beyond the county. When our farmers earn more and our produce is processed here, Kenya's food supply and its export earnings grow too.</p></article>
+      <article><h3>A county of small farms</h3><p>Nyamira is one of Kenya's most densely farmed counties. If value addition, fair prices and good roads can lift families on small plots here, the same model can work in every crowded farming county.</p></article>
+      <article><h3>Clean county government</h3><p>Pending bills, stalled projects and missing medicines are national problems. Open budgets, public contracts and a quarterly scorecard in Nyamira can show the rest of Kenya what accountable devolution looks like.</p></article>
+      <article><h3>Part of the Lake Region</h3><p>Through the Lake Region Economic Bloc, Nyamira can trade, plan and invest with its neighbours, connecting the Gusii highlands to Lake Victoria and to the wider East African market.</p></article>
     </div>
   </div>
 </section>
@@ -1712,6 +1806,10 @@ section.flag{position:relative}
         </tbody>
       </table>
     </div>
+    <div class="rcard">
+      <div><p class="eyebrow">Hold me to this</p><h3>A public report card, four times a year</h3><p>Within 30 days of the end of every quarter of the county's financial year, the scorecard is published online and on every ward notice board, starting with the first full quarter in office.</p></div>
+      <ol class="rdates"><li><b>31 Oct</b><span>July to September</span></li><li><b>31 Jan</b><span>October to December</span></li><li><b>30 Apr</b><span>January to March</span></li><li><b>31 Jul</b><span>April to June, with the full-year report</span></li></ol>
+    </div>
   </div>
 </section>
 
@@ -1728,6 +1826,27 @@ section.flag{position:relative}
       <details class="q"><summary>What will be different about how you govern?</summary><p>Everything will be measured and published, including drug stock, road kilometres, pending bills and revenue. Projects will be chosen with residents at ward forums. Staff will be hired on merit and held to performance contracts.</p></details>
       <details class="q"><summary>Why does healthcare come first?</summary><p>Health is the largest county function and the service residents complain about most. It is also Gideon's profession. A working hospital is the clearest proof that a county government works.</p></details>
       <details class="q"><summary>How can I share my ward's priorities?</summary><p>Come to a campaign meeting, call the campaign line, or tell a volunteer in your ward. Your priorities will feed into the ward plans.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- DIASPORA -->
+<section class="page dark" id="diaspora">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow" data-sw="Watu wetu walio mbali">Our people abroad and in the cities</p>
+      <h2 data-sw="Diaspora: Nyamira inawahitaji">Diaspora: Nyamira needs you</h2>
+      <p class="lede" data-sw="Maelfu ya wana na binti wa Nyamira wanaishi Nairobi, kote Kenya, Marekani, Uingereza, Ghuba na kwingineko. Dkt. Gideon ni mmoja wenu. Hivi ndivyo unavyoweza kusaidia kuleta mabadiliko nyumbani.">Thousands of Nyamira's sons and daughters live in Nairobi, across Kenya, in the United States, the United Kingdom, the Gulf and beyond. Dr. Gideon is one of you. Here is how you can help bring change home.</p>
+    </div>
+    <div class="kgrid">
+      <article><h3>Bring your skills</h3><p>Doctors, nurses, engineers, teachers, accountants and ICT professionals: join medical missions, mentor young people, or help shape the plan for your field.</p></article>
+      <article><h3>Get your family registered</h3><p>Call home. Make sure parents, brothers, sisters and cousins aged 18 and over are on the voter register, and that they know their polling station.</p></article>
+      <article><h3>Invest at home</h3><p>The Nyamira Investment Forum and the December Diaspora and Investment Homecoming will connect you to farming, processing, property and business opportunities.</p></article>
+      <article><h3>Be a voice online</h3><p>Share the plan, the videos and the pledges with your WhatsApp groups and social media. Diaspora voices carry weight at home.</p></article>
+    </div>
+    <div class="yhold">
+      <p><b>Diaspora line (USA): +1 651 500 8680.</b> Any financial support follows Kenya's election campaign finance rules, so speak to the finance team before giving.</p>
+      <div class="btns"><a class="btn red" href="#volunteer">Sign up to help</a><a class="btn ghost" href="#contact">Contact the campaign</a></div>
     </div>
   </div>
 </section>
@@ -1752,6 +1871,35 @@ section.flag{position:relative}
         <a class="btn red" href="#volunteer" style="text-align:center">Volunteer in your ward</a>
         <a class="btn" href="#agents" style="text-align:center;border:2px solid var(--ink)">Become a polling station agent</a>
         <a class="btn" href="#donate" style="text-align:center;border:2px solid var(--ink)">Support the campaign</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRESS ROOM -->
+<section class="page" id="press">
+  <div class="wrap">
+    <div class="head">
+      <p class="eyebrow">For journalists</p>
+      <h2>Press room</h2>
+      <p class="lede">Accurate information, photos and the full plan, free for news use with credit to the Nyakundi 2027 campaign.</p>
+    </div>
+    <div class="pgrid">
+      <div class="card">
+        <h3>Short biography</h3>
+        <p>Dr. Gideon Moseti Nyakundi is a global healthcare executive and health-policy technocrat with more than two decades of leadership in U.S. health systems and international health reform. Born in Manga, Kitutu Masaba, he holds a Doctor of Health Administration and two master's degrees, and is the author of books on health policy, education and Gusii culture. He is a candidate for Governor of Nyamira County in 2027.</p>
+        <p class="muted" style="font-size:.95rem">Name: Dr. Gideon Moseti Nyakundi. Credentials: DHA, MHA. Slogan: "Omonto, Nabanto. Omonto bw'Abanto."</p>
+      </div>
+      <div class="card">
+        <h3>Downloads</h3>
+        <ul class="dl">
+          <li><a href="press/Nyakundi2027-Manifesto.pdf" download>The 12 Pillars manifesto (PDF)</a></li>
+          <li><a href="press/Dr-Gideon-Nyakundi-portrait.jpg" download>Official portrait (JPG)</a></li>
+          <li><a href="press/Dr-Gideon-Nyakundi-office.jpg" download>Office photo (JPG)</a></li>
+          <li><a href="img/share-card.jpg" download="Nyakundi2027-banner.jpg">Campaign banner, 1200 &times; 630 (JPG)</a></li>
+        </ul>
+        <h3 style="margin-top:18px">Media contact</h3>
+        <p>Call, SMS or WhatsApp <b>0723 636 511</b> and say you are calling from the media.</p>
       </div>
     </div>
   </div>
@@ -1860,9 +2008,9 @@ section.flag{position:relative}
 <section class="page dark photo" id="vote" data-bg="img/trail.webp">
   <div class="wrap vote-grid">
     <div class="prose" style="max-width:none">
-      <p class="eyebrow">A humble request</p>
-      <h2>Nyamira, I humbly ask for <span class="gold">your vote.</span></h2>
-      <p class="lede" style="max-width:56ch">To every mother and father, every farmer and trader, every young person and every elder in our twenty wards: I come home to serve, not to be served. With your vote, together we will heal Nyamira and build the new Nyamira.</p>
+      <p class="eyebrow" data-sw="Ombi la unyenyekevu">A humble request</p>
+      <h2 data-sw="Nyamira, kwa unyenyekevu naomba &lt;span class=&quot;gold&quot;&gt;kura yako.&lt;/span&gt;">Nyamira, I humbly ask for <span class="gold">your vote.</span></h2>
+      <p class="lede" style="max-width:56ch" data-sw="Kwa kila mama na baba, kila mkulima na mfanyabiashara, kila kijana na kila mzee katika wadi zetu ishirini: ninarudi nyumbani kuhudumu, si kuhudumiwa. Kwa kura yako, pamoja tutaiponya Nyamira na kujenga Nyamira mpya.">To every mother and father, every farmer and trader, every young person and every elder in our twenty wards: I come home to serve, not to be served. With your vote, together we will heal Nyamira and build the new Nyamira.</p>
       <blockquote lang="guz" style="margin:4px 0;padding:14px 0 14px 18px;border-left:4px solid var(--banana);font-size:1.18rem;line-height:1.55;color:#fff">Abana ba minto, nachire na ogwa'kenosi nkobasaba amagoro! Kamoranche ing'a okoboko kwaini buna omorai oino e'gabana. Ase oboamo nimbatinyie amariga. Ninyeagache Nyamira etogwenere naende egwenere ebiare biria bigocha. Nyasae abasesenie botambe.</blockquote>
       <p class="slogan">Omonto, Nabanto.<br>Omonto bw'Abanto.</p>
       <p class="ballotbox"><i aria-hidden="true"></i>Vote Dr. Gideon Moseti Nyakundi · Governor, Nyamira 2027</p>
@@ -1916,7 +2064,7 @@ section.flag{position:relative}
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrops(); setNav(false); } });
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ closeDrops(); setNav(false); }));
   const topLinks=[...nav.querySelectorAll(':scope > ul > li > a')];
-  const groupOf=id=>{ if(['youth','why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['register','change','volunteer','agents','faq','vote','people'].includes(id)) return 'involvedMenu'; return null; };
+  const groupOf=id=>{ if(['start','kenya','youth','why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['diaspora','press','register','change','volunteer','agents','faq','vote','people'].includes(id)) return 'involvedMenu'; return null; };
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) return;
       const id=en.target.id; topLinks.forEach(l=>l.classList.remove('active')); drops.forEach(d=>d.querySelector('.drop').classList.remove('active'));
@@ -2197,54 +2345,78 @@ section.flag{position:relative}
     });
   })();
 
-  /* ---------- Share any video: WhatsApp, X, Facebook, Telegram, LinkedIn, TikTok/Instagram (via the phone's share sheet or download) ---------- */
+  /* ---------- Share sheet for videos and pledge cards: WhatsApp, X, Facebook, Telegram, LinkedIn, phone share sheet (TikTok, Instagram...), download ---------- */
   (function(){
     const ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>';
-    const enc=encodeURIComponent;
-    function open(v){
-      const sec=v.closest('section'); const id=sec&&sec.id?sec.id:'';
-      const url=location.origin+location.pathname+(id?'#'+id:'');
-      const label=v.getAttribute('aria-label')||'A new song for a new Nyamira';
-      const text=label+' — Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. #Nyakundi2027 #NewNyamira';
-      const src=(v.querySelector('source')||{}).src||(v.querySelector('source')||{}).dataset?.src||'';
-      const file=src?src.split('/').pop():'video.mp4';
-      const box=document.createElement('div'); box.className='shs'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-label','Share this video');
+    const enc=encodeURIComponent, clean=t=>String(t||'').replace(/[<>&"]/g,'');
+    function sheet(o){ /* o: {heading,label,url,text,src,file,mime,what} */
+      const box=document.createElement('div'); box.className='shs'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-label',o.heading);
       const links=[
-        ['WhatsApp','#25D366','W','https://wa.me/?text='+enc(text+' '+url)],
-        ['X','#000','X','https://x.com/intent/post?text='+enc(text)+'&url='+enc(url)],
-        ['Facebook','#1877F2','f','https://www.facebook.com/sharer/sharer.php?u='+enc(url)],
-        ['Telegram','#229ED9','T','https://t.me/share/url?url='+enc(url)+'&text='+enc(text)],
-        ['LinkedIn','#0A66C2','in','https://www.linkedin.com/sharing/share-offsite/?url='+enc(url)]
+        ['WhatsApp','#25D366','W','https://wa.me/?text='+enc(o.text+' '+o.url)],
+        ['X','#000','X','https://x.com/intent/post?text='+enc(o.text)+'&url='+enc(o.url)],
+        ['Facebook','#1877F2','f','https://www.facebook.com/sharer/sharer.php?u='+enc(o.url)],
+        ['Telegram','#229ED9','T','https://t.me/share/url?url='+enc(o.url)+'&text='+enc(o.text)],
+        ['LinkedIn','#0A66C2','in','https://www.linkedin.com/sharing/share-offsite/?url='+enc(o.url)]
       ];
-      box.innerHTML='<div class="shs-card"><h3>Share this video</h3><p>'+label.replace(/[<>&]/g,'')+'</p><div class="shs-grid">'
-        +'<button type="button" data-k="native"><i style="background:var(--earth)">↗</i>Share video</button>'
+      box.innerHTML='<div class="shs-card"><h3>'+clean(o.heading)+'</h3><p>'+clean(o.label)+'</p><div class="shs-grid">'
+        +'<button type="button" data-k="native"><i style="background:var(--earth)">↗</i><span>Share '+o.what+'</span></button>'
         +links.map(l=>'<a href="'+l[3]+'" target="_blank" rel="noopener"><i style="background:'+l[1]+'">'+l[2]+'</i>'+l[0]+'</a>').join('')
-        +'<a href="'+(src||'#')+'" download="Nyakundi2027-'+file+'"><i style="background:var(--leaf)">↓</i>Download</a>'
+        +'<a href="'+(o.src||'#')+'" download="'+clean(o.file)+'"><i style="background:var(--leaf)">↓</i>Download</a>'
         +'<button type="button" data-k="copy"><i style="background:#5d6779">⧉</i><span>Copy link</span></button>'
-        +'</div><p class="shs-note"><b>TikTok, Instagram, Snapchat:</b> tap <b>Share video</b> on your phone and pick the app, or download the video and post it from the app.</p><button type="button" class="shs-close">Close</button></div>';
+        +'</div><p class="shs-note"><b>TikTok, Instagram, Snapchat, X:</b> tap <b>Share '+o.what+'</b> on your phone and pick the app, or download it and post it from the app.</p><button type="button" class="shs-close">Close</button></div>';
       const close=()=>{ box.remove(); document.removeEventListener('keydown',key); };
       const key=e=>{ if(e.key==='Escape') close(); };
       box.addEventListener('click',async e=>{
         if(e.target===box||e.target.closest('.shs-close')) return close();
         const b=e.target.closest('button[data-k]'); if(!b) return;
-        if(b.dataset.k==='copy'){ try{ await navigator.clipboard.writeText(url); b.querySelector('span').textContent='Copied'; }catch(_){ prompt('Copy this link',url); } return; }
-        if(b.dataset.k==='native'){
-          try{
-            if(src&&navigator.canShare){ b.querySelector('i').textContent='…'; const r=await fetch(src); const blob=await r.blob(); const f=new File([blob],'Nyakundi2027-'+file,{type:'video/mp4'});
-              if(navigator.canShare({files:[f]})){ await navigator.share({files:[f],title:'Nyakundi 2027',text:text+' '+url}); return close(); } }
-            if(navigator.share){ await navigator.share({title:'Nyakundi 2027',text:text,url:url}); return close(); }
-            await navigator.clipboard.writeText(text+' '+url); b.lastChild.textContent='Link copied';
-          }catch(_){ } finally{ b.querySelector('i').textContent='↗'; }
-        }
+        const lbl=b.querySelector('span');
+        if(b.dataset.k==='copy'){ try{ await navigator.clipboard.writeText(o.url); lbl.textContent='Copied'; }catch(_){ prompt('Copy this link',o.url); } return; }
+        const ico=b.querySelector('i');
+        try{
+          if(o.src&&navigator.canShare){ ico.textContent='…'; const r=await fetch(o.src); const blob=await r.blob(); const f=new File([blob],o.file,{type:o.mime});
+            if(navigator.canShare({files:[f]})){ await navigator.share({files:[f],title:'Nyakundi 2027',text:o.text+' '+o.url}); return close(); } }
+          if(navigator.share){ await navigator.share({title:'Nyakundi 2027',text:o.text,url:o.url}); return close(); }
+          await navigator.clipboard.writeText(o.text+' '+o.url); lbl.textContent='Link copied';
+        }catch(_){ } finally{ ico.textContent='↗'; }
       });
       document.addEventListener('keydown',key); document.body.appendChild(box); box.querySelector('.shs-close').focus();
     }
+    window.__shareSheet=sheet;
     document.querySelectorAll('video').forEach(v=>{
       const host=v.parentElement; if(getComputedStyle(host).position==='static') host.style.position='relative';
       const b=document.createElement('button'); b.type='button'; b.className='vsharebtn'; b.innerHTML=ICON+'Share'; b.setAttribute('aria-label','Share this video');
-      b.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation(); open(v); });
+      b.addEventListener('click',e=>{ e.preventDefault(); e.stopPropagation();
+        const sec=v.closest('section'); const url=location.origin+location.pathname+(sec&&sec.id?'#'+sec.id:'');
+        const label=v.getAttribute('aria-label')||'A new song for a new Nyamira';
+        const so=v.querySelector('source')||{}; const src=so.getAttribute?(so.getAttribute('src')||so.getAttribute('data-src')||''):'';
+        sheet({heading:'Share this video',label,url,what:'video',text:label+' — Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. #Nyakundi2027 #NewNyamira',src,file:'Nyakundi2027-'+(src.split('/').pop()||'video.mp4'),mime:'video/mp4'});
+      });
       host.appendChild(b);
     });
+    document.querySelectorAll('.pshare').forEach(b=>b.addEventListener('click',()=>{
+      const sec=b.closest('section'); const url=location.origin+location.pathname+'#'+sec.id;
+      sheet({heading:'Share this pledge',label:b.dataset.title+': '+b.dataset.pledge,url,what:'picture',text:'My pledge for Nyamira: '+b.dataset.pledge+' — Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. #Nyakundi2027',src:b.dataset.card,file:'Nyakundi2027-'+b.dataset.card.split('/').pop(),mime:'image/jpeg'});
+    }));
+  })();
+
+  /* ---------- Pillars: show the full plan on request ---------- */
+  document.querySelectorAll('.pmore').forEach(b=>b.addEventListener('click',()=>{
+    const full=b.closest('section').querySelector('.pfull'); const open=full.hidden; full.hidden=!open; b.setAttribute('aria-expanded',open);
+    const sw=document.documentElement.lang==='sw';
+    b.textContent=open?(sw?'Funga mpango kamili':'Hide the full plan'):(sw?'Soma mpango kamili':'Read the full plan');
+    b.dataset.en=open?'Hide the full plan':'Read the full plan'; b.dataset.sw=open?'Funga mpango kamili':'Soma mpango kamili';
+  }));
+  /* open the full plan when someone arrives on a pillar link */
+  const openFromHash=()=>{ const t=location.hash&&document.querySelector(location.hash+' .pmore[aria-expanded="false"]'); if(t) t.click(); };
+  window.addEventListener('hashchange',openFromHash); openFromHash();
+
+  /* ---------- Kiswahili / English ---------- */
+  (function(){ const b=$('langBtn'); if(!b) return;
+    const set=l=>{ document.querySelectorAll('[data-sw]').forEach(el=>{ if(el.dataset.en===undefined) el.dataset.en=el.innerHTML; el.innerHTML=l==='sw'?el.dataset.sw:el.dataset.en; });
+      document.documentElement.lang=l==='sw'?'sw':'en'; b.textContent=l==='sw'?'English':'Kiswahili'; try{ localStorage.setItem('nyk-lang',l); }catch(_){} };
+    b.addEventListener('click',()=>set(document.documentElement.lang==='sw'?'en':'sw'));
+    let saved=null; try{ saved=localStorage.getItem('nyk-lang'); }catch(_){}
+    if(saved==='sw') set('sw');
   })();
 })();
 </script>

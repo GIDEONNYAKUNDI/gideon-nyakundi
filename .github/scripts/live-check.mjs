@@ -59,6 +59,10 @@ check('page title', /Nyakundi|Gideon/i.test(await page.title() + await page.text
 check('no script errors on the page', errors.length === 0, errors.join(' | '));
 check('voter registration form present', !!(await page.$('#regForm')));
 check('Youth Deal present', !!(await page.$('#youth')));
+check('Start-here panel with 12 pillars', (await page.$$('#start .stile')).length === 12);
+check('Kiswahili switch present', !!(await page.$('#langBtn')));
+check('manifesto PDF downloadable', (await code('/press/Nyakundi2027-Manifesto.pdf')) === 200);
+check('sitemap for search engines', (await code('/sitemap.xml')) === 200);
 check('share buttons on videos', (await page.$$('.vsharebtn')).length >= 5);
 check('privacy notice linked', !!(await page.$('a[href="privacy.html"]')));
 check('privacy notice page loads', (await code('/privacy.html')) === 200);
