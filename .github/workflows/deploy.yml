@@ -77,3 +77,17 @@ jobs:
             echo "$url -> $code"
             [ "$code" = "200" ] || { echo "::error::$url returned $code after deploying."; exit 1; }
           done
+
+      # IndexNow tells Bing, Yandex, Seznam, Naver and Yep that the pages changed, so they recrawl soon.
+      # The key file at the site root proves we own the site. Google reads the sitemap (listed in robots.txt) instead.
+      - name: Ask search engines to recrawl
+        continue-on-error: true
+        env:
+          INDEXNOW_KEY: c1f3ee75cf40dcdb3080ba62e7fc5111
+        run: |
+          body=$(jq -nc --arg host "$CPANEL_HOST" --arg key "$INDEXNOW_KEY" '{host:$host,key:$key,
+            keyLocation:"https://\($host)/\($key).txt",
+            urlList:["https://\($host)/","https://\($host)/privacy.html","https://\($host)/sitemap.xml"]}')
+          code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -H 'Content-Type: application/json; charset=utf-8' \
+            -d "$body" https://api.indexnow.org/indexnow)
+          echo "IndexNow -> $code (200 or 202 means accepted)"

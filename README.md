@@ -22,6 +22,12 @@ Every push to `main` goes live on kucaparty.com automatically. The GitHub Action
 
 The workflow uses the repository secret `CPANEL_TOKEN`, a cPanel API token for the `kucapart` account (cPanel → Security → Manage API Tokens). To replace the token, create a new one in cPanel, update the secret under Settings → Secrets and variables → Actions, then revoke the old token.
 
+## Search engines
+
+`index.html` carries the title, description, share-card tags and schema.org data (Person, campaign Organization, WebSite, WebPage). `robots.txt` keeps crawlers out of the back office and points to `sitemap.xml`; update the `lastmod` dates there when the content changes. `ops/htaccess-block.conf` sends `www.kucaparty.com` and `/index.html` to `https://kucaparty.com/` so search engines see a single address.
+
+After every deploy the workflow notifies Bing, Yandex, Seznam, Naver and Yep through IndexNow. The key file `c1f3ee75cf40dcdb3080ba62e7fc5111.txt` at the site root must stay. Google finds the site through the sitemap and Google Search Console.
+
 ## Back office (polling station agents, volunteers, pledges)
 
 The website forms save to a MySQL database on the cPanel hosting, and the team works from a
