@@ -346,15 +346,15 @@ section.flag>.wrap{display:flex;flex-direction:column;justify-content:space-betw
 .impression{display:grid;gap:8px;max-width:360px}
 .impression img{width:100%;border-radius:2px;box-shadow:0 14px 34px rgba(0,0,0,.45)}
 /* Vote */
-#vote .vote-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:end}
+#vote .vote-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:32px;align-items:end}
 #vote .vote-grid>*{min-width:0}
-#vote .portrait{max-width:420px;margin-bottom:-88px}
+#vote .portrait{width:100%;max-width:720px;height:auto;justify-self:end;align-self:end;margin:0 -48px -88px 0;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
 #vote h2{font-size:clamp(2.4rem,5.4vw,4.2rem)}
 #vote .gold{color:var(--banana)}
 .ballotbox{display:inline-flex;align-items:center;gap:14px;border:2px solid var(--banana);padding:14px 20px;font-family:var(--display);font-weight:700;font-size:1.15rem;letter-spacing:.04em;color:#fff;background:rgba(8,16,34,.55)}
 .ballotbox i{display:inline-block;width:26px;height:26px;border:2px solid var(--banana);position:relative}
 .ballotbox i::after{content:"";position:absolute;left:7px;top:1px;width:8px;height:15px;border:solid var(--earth);border-width:0 4px 4px 0;transform:rotate(40deg)}
-@media (max-width:820px){#vote .vote-grid{grid-template-columns:1fr}#vote .portrait{margin-bottom:-60px;max-width:300px}}
+@media (max-width:820px){#vote .vote-grid{grid-template-columns:1fr}#vote .portrait{margin:0 auto -60px;max-width:420px;justify-self:center}}
 
 /* ---------- Refinements ---------- */
 section.photo td,section.photo th{color:#eef2f8}
@@ -374,7 +374,7 @@ section.photo .pagenum{color:#cfd6e2}
   .hero.photo::before{background:linear-gradient(180deg,rgba(6,11,22,.9) 0%,rgba(6,11,22,.8) 55%,rgba(6,11,22,.25) 100%)}
   .hero .portrait{max-width:280px}
   .about-grid .portrait{order:2;margin:0 auto -60px;max-width:280px}
-  #vote .portrait{max-width:260px;margin-inline:auto}
+  #vote .portrait{max-width:360px;margin-inline:auto}
   section.flag{min-height:520px}
 }
 
@@ -1669,7 +1669,7 @@ section.page.dark.photo.split.nopic .ph{padding-bottom:24px;border-bottom:1px so
         <a class="btn ghost" href="#volunteer">Volunteer in my ward</a>
       </div>
     </div>
-    <img class="portrait" src="img/portrait-join.webp" alt="Dr. Gideon Moseti Nyakundi" width="640" height="628" loading="lazy">
+    <img class="portrait" src="img/portrait-vote.webp" alt="Dr. Gideon Moseti Nyakundi" width="802" height="1000" loading="lazy">
   </div>
 </section>
 
