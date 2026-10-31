@@ -21,7 +21,7 @@
 <meta name="twitter:image" content="https://kucaparty.com/img/share-card.jpg">
 <link rel="icon" type="image/png" href="img/favicon.png">
 <link rel="apple-touch-icon" href="img/apple-touch-icon.png">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","name":"Dr. Gideon Moseti Nyakundi","alternateName":"Gideon Nyakundi","jobTitle":"Candidate for Governor, Nyamira County","birthPlace":"Manga, Nyamira County, Kenya","image":"https://kucaparty.com/press/Dr-Gideon-Nyakundi-portrait.jpg","url":"https://kucaparty.com/"},{"@type":"WebSite","name":"Nyakundi 2027","url":"https://kucaparty.com/","inLanguage":["en","sw"]}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","name":"Dr. Gideon Moseti Nyakundi","alternateName":"Gideon Nyakundi","jobTitle":"Candidate for Governor, Nyamira County","birthPlace":"Manga, Nyamira County, Kenya","image":"https://kucaparty.com/press/view/portrait.webp","url":"https://kucaparty.com/"},{"@type":"WebSite","name":"Nyakundi 2027","url":"https://kucaparty.com/","inLanguage":["en","sw"]}]}</script>
 <style>body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 <title>Dr. Gideon Moseti Nyakundi · Governor, Nyamira 2027</title>
 <meta name="claude:viewport-fit-sides" content="cover">
@@ -733,6 +733,15 @@ section.page.pillar.dark.photo.split#p2::before{height:clamp(240px,44vw,680px);b
 .dl{list-style:none;padding:0;margin:0;display:grid;gap:8px}.dl a{display:block;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--earth);text-decoration:none;font-weight:700;color:var(--leaf)}
 @media (max-width:820px){.pgrid{grid-template-columns:1fr}}
 .stat .src a{color:inherit;text-decoration:underline}
+.dl button.pview{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--line);border-left:3px solid var(--earth);background:#fff;font:700 1rem var(--display);color:var(--leaf);cursor:pointer}
+.dl button.pview:hover{background:#f4f6fa}
+.pv{position:fixed;inset:0;z-index:220;background:rgba(6,11,22,.92);display:flex;flex-direction:column}
+.pv-bar{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;color:#fff;font:700 1rem var(--display)}
+.pv-bar button{background:none;border:1.5px solid rgba(255,255,255,.7);color:#fff;border-radius:999px;padding:6px 14px;font:700 .9rem var(--display);cursor:pointer}
+.pv-body{flex:1;overflow:auto;display:grid;justify-items:center;gap:14px;padding:6px 12px 30px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.pv-body img{max-width:min(100%,900px);height:auto;display:block;box-shadow:0 10px 30px rgba(0,0,0,.5);pointer-events:none;-webkit-user-drag:none}
+.pv-body.single{align-content:center}.pv-body.single img{max-height:calc(100vh - 90px);width:auto}
+@media print{.pv{display:none!important}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -1893,13 +1902,14 @@ section.page.pillar.dark.photo.split#p2::before{height:clamp(240px,44vw,680px);b
         <p class="muted" style="font-size:.95rem">Name: Dr. Gideon Moseti Nyakundi. Credentials: DHA, MHA. Slogan: "Omonto, Nabanto. Omonto bw'Abanto."</p>
       </div>
       <div class="card">
-        <h3>Downloads</h3>
+        <h3>View</h3>
         <ul class="dl">
-          <li><a href="press/Nyakundi2027-Manifesto.pdf" download>The 12 Pillars manifesto (PDF)</a></li>
-          <li><a href="press/Dr-Gideon-Nyakundi-portrait.jpg" download>Official portrait (JPG)</a></li>
-          <li><a href="press/Dr-Gideon-Nyakundi-office.jpg" download>Office photo (JPG)</a></li>
-          <li><a href="img/share-card.jpg" download="Nyakundi2027-banner.jpg">Campaign banner, 1200 &times; 630 (JPG)</a></li>
+          <li><button type="button" class="pview" data-kind="manifesto" data-pages="13">The 12 Pillars manifesto</button></li>
+          <li><button type="button" class="pview" data-src="press/view/portrait.webp" data-alt="Official portrait of Dr. Gideon Moseti Nyakundi">Official portrait</button></li>
+          <li><button type="button" class="pview" data-src="press/view/office.webp" data-alt="Dr. Gideon Moseti Nyakundi at his desk">Office photo</button></li>
+          <li><button type="button" class="pview" data-src="img/share-card.jpg" data-alt="Nyakundi 2027 campaign banner">Campaign banner</button></li>
         </ul>
+        <p class="muted" style="font-size:.9rem;margin-top:8px">For view only. Journalists who need files for publication can request them from the media contact.</p>
         <h3 style="margin-top:18px">Media contact</h3>
         <p>Call, SMS or WhatsApp <b>0723 636 511</b> and say you are calling from the media.</p>
       </div>
@@ -2419,6 +2429,27 @@ section.page.pillar.dark.photo.split#p2::before{height:clamp(240px,44vw,680px);b
     b.addEventListener('click',()=>set(document.documentElement.lang==='sw'?'en':'sw'));
     let saved=null; try{ saved=localStorage.getItem('nyk-lang'); }catch(_){}
     if(saved==='sw') set('sw');
+  })();
+
+  /* ---------- Press room: view only (no download links) ---------- */
+  (function(){
+    const open=(title,srcs)=>{
+      const box=document.createElement('div'); box.className='pv'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-label',title);
+      box.innerHTML='<div class="pv-bar"><span></span><button type="button">Close</button></div><div class="pv-body'+(srcs.length===1?' single':'')+'"></div>';
+      box.querySelector('.pv-bar span').textContent=title;
+      const body=box.querySelector('.pv-body');
+      srcs.forEach(([src,alt])=>{ const im=new Image(); im.src=src; im.alt=alt; im.draggable=false; im.loading='lazy'; body.appendChild(im); });
+      const stop=e=>e.preventDefault();
+      body.addEventListener('contextmenu',stop); body.addEventListener('dragstart',stop);
+      const close=()=>{ box.remove(); document.removeEventListener('keydown',key); document.body.style.overflow=''; };
+      const key=e=>{ if(e.key==='Escape') close(); if((e.ctrlKey||e.metaKey)&&/^[sp]$/i.test(e.key)) e.preventDefault(); };
+      box.querySelector('.pv-bar button').addEventListener('click',close);
+      document.addEventListener('keydown',key); document.body.style.overflow='hidden'; document.body.appendChild(box); box.querySelector('.pv-bar button').focus();
+    };
+    document.querySelectorAll('.pview').forEach(b=>b.addEventListener('click',()=>{
+      if(b.dataset.kind==='manifesto'){ const n=+b.dataset.pages; open('The 12 Pillars of Change', Array.from({length:n},(_,i)=>['press/view/manifesto-'+String(i+1).padStart(2,'0')+'.webp','Manifesto page '+(i+1)])); }
+      else open(b.textContent, [[b.dataset.src,b.dataset.alt]]);
+    }));
   })();
 })();
 </script>

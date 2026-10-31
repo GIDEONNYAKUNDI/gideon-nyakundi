@@ -1,0 +1,5 @@
+Options -Indexes
+# Press material is view-only on the website. The original files are never served.
+<FilesMatch "\.(pdf|jpe?g|png|zip|docx?)$">
+    Require all denied
+</FilesMatch>

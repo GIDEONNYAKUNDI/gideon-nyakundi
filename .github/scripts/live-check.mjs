@@ -61,7 +61,9 @@ check('voter registration form present', !!(await page.$('#regForm')));
 check('Youth Deal present', !!(await page.$('#youth')));
 check('Start-here panel with 12 pillars', (await page.$$('#start .stile')).length === 12);
 check('Kiswahili switch present', !!(await page.$('#langBtn')));
-check('manifesto PDF downloadable', (await code('/press/Nyakundi2027-Manifesto.pdf')) === 200);
+check('manifesto viewable in the press room', (await code('/press/view/manifesto-01.webp')) === 200);
+for (const f of ['/press/Nyakundi2027-Manifesto.pdf', '/press/Dr-Gideon-Nyakundi-portrait.jpg', '/press/Dr-Gideon-Nyakundi-office.jpg']) { const c = await code(f); check(`press original not downloadable: ${f}`, c === 403 || c === 404, String(c)); }
+check('press room has no download links', (await page.$$('#press a[download]')).length === 0);
 check('sitemap for search engines', (await code('/sitemap.xml')) === 200);
 check('share buttons on videos', (await page.$$('.vsharebtn')).length >= 5);
 check('privacy notice linked', !!(await page.$('a[href="privacy.html"]')));
