@@ -539,6 +539,21 @@ section.photo.split.hasvid::before{display:none}
 .vband.vtile.wide .vcap{right:240px;bottom:24px}
 .vband.vtile .vsound{right:16px!important;bottom:16px}
 @media (max-width:760px){.vgallery{grid-template-columns:1fr}.vband.vtile.wide{aspect-ratio:16/9}.vband.vtile .vcap{right:16px;bottom:62px}}
+
+/* ---------- Pillar 2: balanced layout ---------- */
+#p2 .cols{grid-template-columns:1fr 1fr;align-items:stretch;gap:28px}
+#p2 .problem{display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);padding:28px;border-radius:2px;align-content:start}
+#p2 .problem ul,#p2 .plan ol{gap:12px;font-size:1.04rem;line-height:1.6}
+#p2 .problem>div{margin-top:auto;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
+#p2 .problem .fig{font-size:3.2rem}
+.roadflag{display:grid;grid-template-columns:.9fr 1.1fr;gap:28px;margin-top:28px;align-items:stretch}
+.roadflag>*{min-width:0}
+.roadimg{margin:0;display:grid;gap:8px}
+.roadimg img{width:100%;height:100%;min-height:300px;max-height:420px;object-fit:cover;object-position:50% 62%;border-radius:2px;box-shadow:0 16px 40px rgba(0,0,0,.4)}
+.roadpledge{display:grid;gap:16px;align-content:center;padding:32px;background:linear-gradient(135deg,rgba(212,176,76,.16),rgba(212,176,76,.04));border:1.5px solid var(--banana);border-radius:2px}
+.roadstatement{font-family:var(--display);font-weight:700;font-size:clamp(1.5rem,2.6vw,2.2rem);line-height:1.15;color:#fff}
+.roadpledge .pledge{margin:0}
+@media (max-width:820px){#p2 .cols,.roadflag{grid-template-columns:1fr}.roadimg img{max-height:340px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -945,9 +960,14 @@ section.photo.split.hasvid::before{display:none}
           <li><b>Local contractors, paid on time.</b> Reserve labour-based works for youth and women groups, and pay certified work within 60 days.</li>
           <li><b>Bridges and footbridges</b> on river crossings where children cross to school.</li>
         </ol>
-        <p class="pledge"><b>Flagship pledge:</b> Dr Gideon will build the stalled Manga–Mote–Momwamu road into a modern tarmacked road.</p>
-        <p class="pledge">Pledge: every road contract, its cost and its progress posted online and on the ward notice board.</p>
-        <figure class="impression" style="margin:6px 0 0"><img src="img/road-impression.webp" alt="Artist's impression of a new tarmac road through Nyamira's tea hills" loading="lazy" width="570" height="864"><figcaption class="caption">Artist's impression</figcaption></figure>
+      </div>
+    </div>
+    <div class="roadflag">
+      <figure class="roadimg"><img src="img/road-impression.webp" alt="Artist's impression of a new tarmac road through Nyamira's tea hills" loading="lazy" width="570" height="864"><figcaption class="caption">Artist's impression</figcaption></figure>
+      <div class="roadpledge">
+        <p class="eyebrow">Flagship pledge</p>
+        <p class="roadstatement">Dr Gideon will build the stalled Manga–Mote–Momwamu road into a modern tarmacked road.</p>
+        <p class="pledge">Every road contract, its cost and its progress posted online and on the ward notice board.</p>
       </div>
     </div>
   </div>
