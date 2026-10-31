@@ -675,7 +675,9 @@ section[data-bg]{--bg:none}
 .concept{position:absolute;right:max(14px,env(safe-area-inset-right,0px));bottom:12px;z-index:3;font:600 .72rem var(--mono);letter-spacing:.12em;text-transform:uppercase;color:#fff;background:rgba(8,16,34,.72);border:1px solid rgba(255,255,255,.35);padding:4px 9px;pointer-events:none}
 section.flag{position:relative}
 .roadimg,.vtile-fig{position:relative}
-#p2{position:relative}#p2 .concept-top{bottom:auto;top:calc(clamp(220px,34vw,460px) - 34px)}
+#p2{position:relative}#p2 .concept-top{bottom:auto;top:calc(clamp(240px,44vw,680px) - 34px)}
+section.page.pillar.dark.photo.split#p2::before{height:clamp(240px,44vw,680px);background-position:center,center 30%}
+@media (max-width:700px){section.page.pillar.dark.photo.split#p2::before{height:320px;background-position:center,100% 30%}#p2 .concept-top{top:286px}}
 /* share sheet for videos */
 .vsharebtn{position:absolute;top:12px;right:12px;z-index:4;display:inline-flex;align-items:center;gap:6px;background:rgba(5,8,15,.62);color:#fff;border:1.5px solid rgba(255,255,255,.7);border-radius:999px;padding:6px 12px;font:600 .8rem var(--display);letter-spacing:.04em;cursor:pointer}
 .vsharebtn:hover{background:var(--earth);border-color:var(--earth)}
