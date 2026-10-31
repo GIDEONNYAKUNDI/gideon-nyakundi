@@ -1,0 +1,31 @@
+# Checks the live website's security from the outside after every deployment, and every day.
+name: Security check (live site)
+
+on:
+  workflow_run:
+    workflows: ["Deploy to kucaparty.com"]
+    types: [completed]
+  schedule:
+    - cron: "17 4 * * *"      # daily, 07:17 Nairobi time
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install Playwright
+        run: |
+          npm init -y >/dev/null
+          npm install --no-audit --no-fund playwright@1.48.2
+          npx playwright install --with-deps chromium
+      - name: Check the live site
+        run: node .github/scripts/live-check.mjs

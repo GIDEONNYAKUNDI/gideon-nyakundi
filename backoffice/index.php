@@ -53,27 +53,49 @@ if ($p === 'logout') { $_SESSION = []; session_destroy(); header('Location: ./')
 $me = current_user();
 if (!$me) {
     $err = '';
+    $pending = (int)($_SESSION['pending_uid'] ?? 0);
+    if ($pending && (time() - (int)($_SESSION['pending_at'] ?? 0)) > 300) { unset($_SESSION['pending_uid']); $pending = 0; $err = 'That took too long. Sign in again.'; }
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && csrf_ok()) {
-        if (too_many('login', 8, 900)) { $err = 'Too many attempts. Wait 15 minutes and try again.'; }
-        else {
-            $s = db()->prepare('SELECT id, pass_hash FROM users WHERE username = ?');
-            $s->execute([trim((string)($_POST['username'] ?? ''))]);
-            $row = $s->fetch();
-            if ($row && password_verify((string)($_POST['password'] ?? ''), $row['pass_hash'])) {
-                session_regenerate_id(true); $_SESSION['uid'] = (int)$row['id'];
+        $user = mb_strtolower(trim((string)($_POST['username'] ?? '')));
+        $ukey = hash('sha256', 'u|' . $user . '|' . (cfg()['secret'] ?? ''));
+        if (too_many('login', 8, 900) || ($user !== '' && too_many('loginu', 6, 900, $ukey))) { $err = 'Too many attempts. Wait 15 minutes and try again.'; }
+        elseif ($pending && isset($_POST['code'])) {
+            $s = db()->prepare('SELECT totp_secret FROM users WHERE id = ?'); $s->execute([$pending]);
+            if (in_array($pending, allowed_ids(), true) && totp_ok((string)$s->fetchColumn(), (string)$_POST['code'])) {
+                unset($_SESSION['pending_uid'], $_SESSION['pending_at']);
+                session_regenerate_id(true); $_SESSION['uid'] = $pending;
                 header('Location: ./'); exit;
             }
             record_hit('login'); usleep(600000);
+            $err = 'That code is not right. Use the 6-digit code showing in your authenticator app now.';
+        } else {
+            $s = db()->prepare('SELECT id, pass_hash, totp_secret FROM users WHERE LOWER(username) = ?');
+            $s->execute([$user]);
+            $row = $s->fetch();
+            if ($row && password_verify((string)($_POST['password'] ?? ''), $row['pass_hash']) && in_array((int)$row['id'], allowed_ids(), true)) {
+                if ($row['totp_secret'] !== '') { $_SESSION['pending_uid'] = (int)$row['id']; $_SESSION['pending_at'] = time(); header('Location: ./'); exit; }
+                session_regenerate_id(true); $_SESSION['uid'] = (int)$row['id'];
+                header('Location: ./'); exit;
+            }
+            record_hit('login'); if ($user !== '') record_hit('loginu', $ukey); usleep(600000);
             $err = 'Wrong username or password.';
         }
     }
     page_head('Sign in');
-    echo '<main class="narrow"><h1>Back office sign in</h1>';
-    if ($err) echo '<p class="err">' . h($err) . '</p>';
-    echo '<form method="post" class="stack"><input type="hidden" name="csrf" value="' . h(csrf()) . '">
-      <label>Username<input name="username" required autocomplete="username"></label>
-      <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
-      <button class="btn">Sign in</button></form></main>';
+    if ($pending) {
+        echo '<main class="narrow"><h1>Two-step sign-in</h1><p class="muted">Open your authenticator app and enter the 6-digit code for Nyakundi 2027.</p>';
+        if ($err) echo '<p class="err">' . h($err) . '</p>';
+        echo '<form method="post" class="stack"><input type="hidden" name="csrf" value="' . h(csrf()) . '">
+          <label>6-digit code<input name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9 ]*" maxlength="7" required autofocus></label>
+          <button class="btn">Continue</button></form><p><a href="?p=logout">Cancel</a></p></main>';
+    } else {
+        echo '<main class="narrow"><h1>Back office sign in</h1><p class="muted">Private. Authorised campaign officials only.</p>';
+        if ($err) echo '<p class="err">' . h($err) . '</p>';
+        echo '<form method="post" class="stack"><input type="hidden" name="csrf" value="' . h(csrf()) . '">
+          <label>Username<input name="username" required autocomplete="username"></label>
+          <label>Password<input name="password" type="password" required autocomplete="current-password"></label>
+          <button class="btn">Sign in</button></form></main>';
+    }
     page_foot(); exit;
 }
 
@@ -85,10 +107,10 @@ $flash = ''; $flashBad = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_ok()) { http_response_code(400); exit('Session expired. Go back and reload the page.'); }
     $a = $_POST['action'] ?? '';
-    if ($a === 'update' && in_array($_POST['table'] ?? '', ['agents', 'volunteers', 'pledges'], true)) {
+    if ($a === 'update' && in_array($_POST['table'] ?? '', ['agents', 'volunteers', 'pledges', 'voters'], true)) {
         $t = $_POST['table'];
         if ($t === 'pledges' && !$isAdmin) { http_response_code(403); exit; }
-        $allowed = $t === 'agents' ? AGENT_STATUSES : ($t === 'volunteers' ? VOL_STATUSES : PLEDGE_STATUSES);
+        $allowed = $t === 'agents' ? AGENT_STATUSES : ($t === 'volunteers' ? VOL_STATUSES : ($t === 'voters' ? VOTER_STATUSES : PLEDGE_STATUSES));
         $st = in_array($_POST['status'] ?? '', $allowed, true) ? $_POST['status'] : 'New';
         $sql = "UPDATE $t SET status = ?, notes = ?, updated_at = ?, updated_by = ? WHERE id = ?";
         $args = [$st, mb_substr((string)($_POST['notes'] ?? ''), 0, 2000), now(), $me['username'], (int)($_POST['id'] ?? 0)];
@@ -96,21 +118,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         db()->prepare($sql)->execute($args);
         $flash = 'Saved.';
     }
-    if ($a === 'delete' && $isAdmin && in_array($_POST['table'] ?? '', ['agents', 'volunteers', 'pledges'], true)) {
+    if ($a === 'delete' && $isAdmin && in_array($_POST['table'] ?? '', ['agents', 'volunteers', 'pledges', 'voters'], true)) {
         db()->prepare('DELETE FROM ' . $_POST['table'] . ' WHERE id = ?')->execute([(int)($_POST['id'] ?? 0)]);
         $flash = 'Deleted.';
     }
     if ($a === 'adduser' && $isAdmin) {
         $u = trim((string)($_POST['username'] ?? '')); $pw = (string)($_POST['password'] ?? '');
-        $role = ($_POST['role'] ?? '') === 'admin' ? 'admin' : 'coordinator';
-        $c = array_key_exists($_POST['constituency'] ?? '', CONSTITUENCIES) ? $_POST['constituency'] : '';
-        if (!preg_match('/^[A-Za-z0-9._-]{3,60}$/', $u)) $flash = 'Username: 3 to 60 letters, numbers, dot, dash or underscore.';
-        elseif (strlen($pw) < 10) $flash = 'Password must be at least 10 characters.';
-        elseif ($role === 'coordinator' && $c === '') $flash = 'Choose the constituency this coordinator looks after.';
+        if ((int)db()->query('SELECT COUNT(*) FROM users')->fetchColumn() >= MAX_ACCOUNTS) $flash = 'The back office is limited to ' . MAX_ACCOUNTS . ' accounts. Remove an account before adding another.';
+        elseif (!preg_match('/^[A-Za-z0-9._-]{3,60}$/', $u)) $flash = 'Username: 3 to 60 letters, numbers, dot, dash or underscore.';
+        elseif (strlen($pw) < 12) $flash = 'Password must be at least 12 characters.';
         else {
-            try { db()->prepare('INSERT INTO users (username, pass_hash, role, constituency, created_at) VALUES (?,?,?,?,?)')->execute([$u, password_hash($pw, PASSWORD_DEFAULT), $role, $role === 'admin' ? '' : $c, now()]); $flash = 'Account created for ' . $u . '.'; }
+            try { db()->prepare('INSERT INTO users (username, pass_hash, role, constituency, created_at) VALUES (?,?,?,?,?)')->execute([$u, password_hash($pw, PASSWORD_DEFAULT), 'admin', '', now()]); $flash = 'Account created for ' . $u . '.'; }
             catch (Throwable $e) { $flash = 'That username is already taken.'; }
         }
+    }
+    if ($a === 'totp_on') {
+        $sec = (string)($_SESSION['totp_new'] ?? '');
+        if ($sec !== '' && totp_ok($sec, (string)($_POST['code'] ?? ''))) { db()->prepare('UPDATE users SET totp_secret = ? WHERE id = ?')->execute([$sec, $me['id']]); unset($_SESSION['totp_new']); $me['totp_secret'] = $sec; $flash = 'Two-step sign-in is on. You will need your authenticator app each time you sign in.'; }
+        else { $flash = 'That code is not right. Check the time on your phone and try the newest code.'; $flashBad = true; }
+    }
+    if ($a === 'totp_off') {
+        if (totp_ok((string)$me['totp_secret'], (string)($_POST['code'] ?? ''))) { db()->prepare("UPDATE users SET totp_secret = '' WHERE id = ?")->execute([$me['id']]); $me['totp_secret'] = ''; $flash = 'Two-step sign-in is off.'; $flashBad = true; }
+        else { $flash = 'That code is not right.'; $flashBad = true; }
     }
     if ($a === 'deluser' && $isAdmin && (int)($_POST['id'] ?? 0) !== (int)$me['id']) {
         db()->prepare('DELETE FROM users WHERE id = ?')->execute([(int)$_POST['id']]);
@@ -151,7 +180,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $s = db()->prepare('SELECT pass_hash FROM users WHERE id = ?'); $s->execute([$me['id']]);
         $pw = (string)($_POST['new'] ?? '');
         if (!password_verify((string)($_POST['old'] ?? ''), (string)$s->fetchColumn())) $flash = 'Your current password is wrong.';
-        elseif (strlen($pw) < 10) $flash = 'New password must be at least 10 characters.';
+        elseif (strlen($pw) < 12) $flash = 'New password must be at least 12 characters.';
         else { db()->prepare('UPDATE users SET pass_hash = ? WHERE id = ?')->execute([password_hash($pw, PASSWORD_DEFAULT), $me['id']]); $flash = 'Password changed.'; }
     }
 }
@@ -165,14 +194,14 @@ function filters(string $table, string $scope): array {
     if (!empty($_GET['s'])) { $w[] = 'status = ?'; $args[] = (string)$_GET['s']; }
     if (!empty($_GET['q'])) {
         $q = '%' . str_replace(['%', '_'], ['\%', '\_'], (string)$_GET['q']) . '%';
-        $cols = $table === 'pledges' ? ['name', 'phone', 'email'] : ($table === 'agents' ? ['name', 'phone', 'email', 'station'] : ['name', 'phone', 'email', 'village']);
+        $cols = $table === 'pledges' ? ['name', 'phone', 'email'] : ($table === 'agents' ? ['name', 'phone', 'email', 'station'] : ($table === 'voters' ? ['name', 'phone', 'email', 'reg_status'] : ['name', 'phone', 'email', 'village']));
         $w[] = '(' . implode(' OR ', array_map(fn($x) => "$x LIKE ?", $cols)) . ')';
         foreach ($cols as $_) $args[] = $q;
     }
     return [$w ? ' WHERE ' . implode(' AND ', $w) : '', $args];
 }
 function list_phones(string $table, string $scope): array {
-    if (!in_array($table, ['agents', 'volunteers', 'pledges'], true)) return [];
+    if (!in_array($table, ['agents', 'volunteers', 'pledges', 'voters'], true)) return [];
     [$w, $a] = filters($table, $table === 'pledges' ? '' : $scope);
     $s = db()->prepare("SELECT DISTINCT phone FROM $table$w"); $s->execute($a);
     return $s->fetchAll(PDO::FETCH_COLUMN);
@@ -316,6 +345,7 @@ function filter_bar(string $p, string $scope, array $statuses, bool $wards = tru
 /* ---------- CSV exports (before any HTML) ---------- */
 if (!empty($_GET['export'])) {
     if ($p === 'agents') { [$w, $a] = filters('agents', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, station_code, stream, name, phone, email, registered_here, experience, training, status, notes, updated_by FROM agents$w ORDER BY constituency, ward, station, stream"); $s->execute($a); export_csv('agents', $s->fetchAll()); }
+    if ($p === 'voters') { [$w, $a] = filters('voters', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, name, phone, email, reg_status, status, notes FROM voters$w ORDER BY constituency, ward"); $s->execute($a); export_csv('voters', $s->fetchAll()); }
     if ($p === 'volunteers') { [$w, $a] = filters('volunteers', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, stream, village, age, roles, message, name, phone, email, status, notes FROM volunteers$w ORDER BY constituency, ward"); $s->execute($a); export_csv('volunteers', $s->fetchAll()); }
     if ($p === 'pledges' && $isAdmin) { [$w, $a] = filters('pledges', ''); $s = db()->prepare("SELECT id, created_at, name, phone, email, amount_ksh, method, status, notes FROM pledges$w ORDER BY created_at DESC"); $s->execute($a); export_csv('pledges', $s->fetchAll()); }
     if ($p === 'gaps') {
@@ -356,13 +386,14 @@ if ($p === 'home') {
         $wardT[$wk]['streams'] = ($wardT[$wk]['streams'] ?? 0) + 1; $wardT[$wk]['covered'] = ($wardT[$wk]['covered'] ?? 0) + ($r['agents'] ? 1 : 0);
     }
     $cnt = fn($t) => (int)db()->query("SELECT COUNT(*) FROM $t" . ($scope && $t !== 'pledges' ? ' WHERE constituency = ' . db()->quote($scope) : ''))->fetchColumn();
-    $agents = $cnt('agents'); $vols = $cnt('volunteers');
+    $agents = $cnt('agents'); $vols = $cnt('volunteers'); $voters = $cnt('voters');
     $all = $tot['ALL'] ?? ['streams' => 0, 'covered' => 0];
     echo '<h1>' . ($scope ? h($scope) : 'Nyamira County') . ' at a glance</h1><div class="tiles">';
     echo '<div><b>' . number_format($agents) . '</b><span>agents registered</span></div>';
     echo '<div><b>' . number_format($all['covered']) . ' / ' . number_format($all['streams']) . '</b><span>streams with an agent</span></div>';
     echo '<div><b>' . number_format($all['streams'] - $all['covered']) . '</b><span>streams still without an agent</span></div>';
     echo '<div><b>' . number_format($vols) . '</b><span>volunteers</span></div>';
+    echo '<div><b>' . number_format($voters) . '</b><span>ready-to-vote pledges</span></div>';
     if ($isAdmin) { $pl = db()->query('SELECT COUNT(*) n, COALESCE(SUM(amount_ksh),0) s FROM pledges')->fetch(); echo '<div><b>Ksh ' . number_format((int)$pl['s']) . '</b><span>pledged by ' . (int)$pl['n'] . ' people</span></div>'; }
     echo '</div>';
     if ($isAdmin) echo messaging_panel();
@@ -401,6 +432,19 @@ if ($p === 'agents') {
     echo '</tbody></table><p class="muted">Showing the latest 500. Use the filters or download the CSV for everything.</p>';
 }
 
+if ($p === 'voters') {
+    [$w, $a] = filters('voters', $scope);
+    $s = db()->prepare("SELECT * FROM voters$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
+    $need = (int)db()->query("SELECT COUNT(*) FROM voters WHERE reg_status = 'I need help to register'" . ($scope ? ' AND constituency = ' . db()->quote($scope) : ''))->fetchColumn();
+    echo '<h1>Voter registration</h1><p class="muted">People who told us on the website where they are with voter registration. ' . ($need ? '<b>' . number_format($need) . ' need help to register</b>: call them first.' : '') . '</p>' . filter_bar('voters', $scope, VOTER_STATUSES, true, $isAdmin);
+    echo '<table><thead><tr><th>Date</th><th>Name and phone</th><th>Ward</th><th>Registration</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
+    foreach ($s->fetchAll() as $r) {
+        $flag = $r['reg_status'] === 'I need help to register' ? ' class="gap"' : '';
+        echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . '</td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small></td><td><span' . $flag . '>' . h($r['reg_status']) . '</span></td><td>' . status_form('voters', $r, VOTER_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('voters', (int)$r['id']) . '</td>' : '') . '</tr>';
+    }
+    echo '</tbody></table>';
+}
+
 if ($p === 'volunteers') {
     [$w, $a] = filters('volunteers', $scope);
     $s = db()->prepare("SELECT * FROM volunteers$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
@@ -436,12 +480,12 @@ if ($p === 'sms' && $isAdmin) {
 
     // Compose: to a filtered list (from "Text this list") or to typed numbers.
     $t = (string)($_GET['t'] ?? '');
-    $listMode = in_array($t, ['agents', 'volunteers', 'pledges'], true);
+    $listMode = in_array($t, ['agents', 'volunteers', 'pledges', 'voters'], true);
     $qs = $_GET; unset($qs['to']);
     echo '<h2>Send an SMS</h2><form method="post" action="?' . h(http_build_query($qs)) . '" class="stack narrow" style="max-width:640px"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="sms_send">';
     if ($listMode) {
         $count = count(list_phones($t, $scope));
-        $desc = array_filter([['agents' => 'Polling agents', 'volunteers' => 'Volunteers', 'pledges' => 'Pledges'][$t], $_GET['c'] ?? '', $_GET['w'] ?? '', $_GET['s'] ?? '', !empty($_GET['q']) ? '"' . $_GET['q'] . '"' : '']);
+        $desc = array_filter([['agents' => 'Polling agents', 'volunteers' => 'Volunteers', 'pledges' => 'Pledges', 'voters' => 'Voter registration'][$t], $_GET['c'] ?? '', $_GET['w'] ?? '', $_GET['s'] ?? '', !empty($_GET['q']) ? '"' . $_GET['q'] . '"' : '']);
         echo '<input type="hidden" name="to" value="list"><p>To <b>' . number_format($count) . ' people</b>: ' . h(implode(' · ', $desc)) . '. <a href="?p=sms">Type numbers instead</a></p>';
     } else {
         echo '<label>Phone numbers (one per line, or separated by commas)<textarea name="numbers" rows="3" required placeholder="0712 345 678">' . h($_GET['to'] ?? '') . '</textarea></label><p class="muted" style="margin:0">To text a group, filter the Agents, Volunteers or Pledges list and press <b>Text this list</b>.</p>';
@@ -492,18 +536,28 @@ if ($p === 'import' && $isAdmin) {
 if ($p === 'settings' && $isAdmin) settings_page((string)($_GET['tab'] ?? 'sms'));
 
 if ($p === 'account') {
-    echo '<h1>My account</h1><p>Signed in as <b>' . h($me['username']) . '</b> (' . h($me['role']) . ($me['constituency'] ? ', ' . h($me['constituency']) : '') . ').</p>';
-    echo '<form method="post" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="password"><label>Current password<input type="password" name="old" required autocomplete="current-password"></label><label>New password (at least 10 characters)<input type="password" name="new" required autocomplete="new-password"></label><button class="btn">Change password</button></form>';
-    if ($isAdmin) {
-        echo '<h2>Team accounts</h2><p class="muted">Coordinators see only the agents and volunteers in their constituency, and cannot see pledges. Administrators see everything.</p><table><thead><tr><th>Username</th><th>Role</th><th>Constituency</th><th>Created</th><th></th></tr></thead><tbody>';
-        foreach (db()->query('SELECT * FROM users ORDER BY role, username') as $u) {
-            $del = (int)$u['id'] === (int)$me['id'] ? '' : '<form method="post" onsubmit="return confirm(\'Remove this account?\')"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="deluser"><input type="hidden" name="id" value="' . (int)$u['id'] . '"><button class="btn sm ghost">Remove</button></form>';
-            echo '<tr><td>' . h($u['username']) . '</td><td>' . h($u['role']) . '</td><td>' . h($u['constituency'] ?: 'All') . '</td><td>' . h(substr($u['created_at'], 0, 10)) . '</td><td>' . $del . '</td></tr>';
-        }
-        echo '</tbody></table><h2>Add a team member</h2><form method="post" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="adduser"><label>Username<input name="username" required></label><label>Password (at least 10 characters; give it to them in person)<input name="password" type="password" required autocomplete="new-password"></label><label>Role<select name="role"><option value="coordinator">Constituency coordinator</option><option value="admin">Administrator</option></select></label><label>Constituency (for coordinators)<select name="constituency"><option value="">Choose</option>';
-        foreach (CONSTITUENCIES as $c => $_) echo '<option>' . h($c) . '</option>';
-        echo '</select></label><button class="btn">Create account</button></form>';
+    echo '<h1>Access and security</h1><p>Signed in as <b>' . h($me['username']) . '</b>.</p>';
+    echo '<div class="card"><h2>Two-step sign-in</h2>';
+    if ($me['totp_secret'] !== '') {
+        echo '<p><span class="pill on">On</span> Signing in needs your password and a code from your authenticator app.</p><form method="post" class="inline"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="totp_off"><input name="code" inputmode="numeric" placeholder="Current 6-digit code" required><button class="btn sm ghost">Turn off</button></form>';
+    } else {
+        if (empty($_SESSION['totp_new'])) $_SESSION['totp_new'] = b32_encode(random_bytes(20));
+        $sec = $_SESSION['totp_new'];
+        $uri = 'otpauth://totp/' . rawurlencode('Nyakundi 2027:' . $me['username']) . '?secret=' . $sec . '&issuer=' . rawurlencode('Nyakundi 2027');
+        echo '<p><span class="pill off">Off</span> Strongly recommended. Even if someone learns your password, they cannot get in without your phone.</p><ol class="small"><li>Install <b>Google Authenticator</b> or <b>Microsoft Authenticator</b> on your phone.</li><li>Add an account and choose <b>Enter a setup key</b>. Name: <b>Nyakundi 2027</b>. Key: <code style="font-size:1.05rem;letter-spacing:.08em">' . h(trim(chunk_split($sec, 4, ' '))) . '</code> (time-based).</li><li>Type the 6-digit code the app shows:</li></ol><form method="post" class="inline"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="totp_on"><input name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="6-digit code" required><button class="btn sm">Turn on</button></form><p class="small muted">On a phone you can also <a href="' . h($uri) . '">open this link</a> to add the key straight into the app.</p>';
     }
+    echo '</div>';
+    echo '<div class="card"><h2>Change password</h2><form method="post" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="password"><label>Current password<input type="password" name="old" required autocomplete="current-password"></label><label>New password (at least 12 characters)<input type="password" name="new" required autocomplete="new-password"></label><button class="btn">Change password</button></form></div>';
+    $users = db()->query('SELECT id, username, created_at, totp_secret FROM users ORDER BY id')->fetchAll();
+    $ok = allowed_ids();
+    echo '<div class="card"><h2>Who can access the back office</h2><p class="muted">Only ' . MAX_ACCOUNTS . ' accounts are allowed: Dr. Gideon and David. Any other account can never sign in.</p><table><thead><tr><th>Username</th><th>Created</th><th>Two-step</th><th>Access</th><th></th></tr></thead><tbody>';
+    foreach ($users as $u) {
+        $del = (int)$u['id'] === (int)$me['id'] ? '' : '<form method="post" onsubmit="return confirm(\'Remove this account?\')"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="deluser"><input type="hidden" name="id" value="' . (int)$u['id'] . '"><button class="btn sm ghost">Remove</button></form>';
+        echo '<tr><td>' . h($u['username']) . '</td><td>' . h(substr($u['created_at'], 0, 10)) . '</td><td>' . ($u['totp_secret'] !== '' ? '<span class="pill on">On</span>' : '<span class="pill off">Off</span>') . '</td><td>' . (in_array((int)$u['id'], $ok, true) ? 'Allowed' : '<span class="gap">Blocked</span>') . '</td><td>' . $del . '</td></tr>';
+    }
+    echo '</tbody></table>';
+    if (count($users) < MAX_ACCOUNTS) echo '<h3>Add the second person</h3><form method="post" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="adduser"><label>Username<input name="username" required></label><label>Password (at least 12 characters; give it to them in person)<input name="password" type="password" required autocomplete="new-password"></label><button class="btn">Create account</button></form>';
+    echo '</div>';
 }
 echo '</main>';
 page_foot();
@@ -557,9 +611,9 @@ details summary{cursor:pointer}
 @media (max-width:760px){table,thead,tbody,tr,td{display:block}thead{display:none}tr{border-bottom:2px solid var(--line);padding:6px 0}td{border:0;padding:4px 10px}}
 </style></head><body><header><a class="brand" href="./">Nyakundi <span>2027</span> · Back office</a>';
     if ($me) {
-        $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers'];
+        $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers', 'voters' => 'Voters'];
         if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['import'] = 'Import'; $tabs['settings'] = 'Settings'; }
-        $tabs['account'] = $me['role'] === 'admin' ? 'Team' : 'My account';
+        $tabs['account'] = 'Security';
         echo '<nav>'; foreach ($tabs as $k => $v) echo '<a href="?p=' . $k . '"' . ($p === $k ? ' class="on"' : '') . '>' . $v . '</a>'; echo '</nav>';
         echo '<span class="who">' . h($me['username']) . ' · <a href="?p=logout">Sign out</a></span>';
     }

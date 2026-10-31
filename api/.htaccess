@@ -1,0 +1,10 @@
+Options -Indexes
+<FilesMatch "\.php$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^(save|sms-delivery)\.php$">
+  Require all granted
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>

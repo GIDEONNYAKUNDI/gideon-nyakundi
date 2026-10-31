@@ -3,3 +3,4 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/kucapart/public_html/
     - /bin/cp -rf * $DEPLOYPATH
+    - /bin/bash ops/install-htaccess.sh $DEPLOYPATH

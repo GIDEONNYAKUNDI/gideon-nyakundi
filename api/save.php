@@ -43,7 +43,7 @@ try {
     $email = mb_strtolower(s($in, 'email', 160));
     if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) out(400, ['ok' => false, 'error' => 'Please check your e-mail address, or leave it empty.']);
 
-    if ($type === 'agent' || $type === 'volunteer') {
+    if ($type === 'agent' || $type === 'volunteer' || $type === 'voter') {
         $ward = s($in, 'ward', 40);
         $const = ward_constituency($ward);
         if ($const === '') out(400, ['ok' => false, 'error' => 'Please choose a valid ward.']);
@@ -60,6 +60,12 @@ try {
         $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'station' => s($in, 'station', 160), 'stream' => s($in, 'stream', 10), 'village' => s($in, 'village'), 'age' => s($in, 'age', 20), 'roles' => $roles, 'message' => s($in, 'message', 1000), 'email' => $email];
         db()->prepare('INSERT INTO volunteers (created_at, constituency, ward, station, stream, village, age, roles, message, name, phone, email) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)')
             ->execute([now(), $const, $ward, $rec['station'], $rec['stream'], $rec['village'], $rec['age'], $roles, $rec['message'], $name, $phone, $email]);
+    } elseif ($type === 'voter') {
+        $reg = s($in, 'regStatus', 60);
+        if (!in_array($reg, ['I am registered and have checked', 'I will register this month', 'I need help to register'], true)) out(400, ['ok' => false, 'error' => 'Please tell us where you are with registration.']);
+        $rec = ['name' => $name, 'phone' => $phone, 'constituency' => $const, 'ward' => $ward, 'reg_status' => $reg, 'email' => $email];
+        db()->prepare('INSERT INTO voters (created_at, constituency, ward, name, phone, email, reg_status) VALUES (?,?,?,?,?,?,?)')
+            ->execute([now(), $const, $ward, $name, $phone, $email, $reg]);
     } elseif ($type === 'pledge') {
         $amt = (int)preg_replace('/\D/', '', (string)($in['amountKsh'] ?? ''));
         if ($amt < 1 || $amt > 100000000) out(400, ['ok' => false, 'error' => 'Please choose an amount.']);
@@ -80,4 +86,4 @@ try {
 echo json_encode(['ok' => true]);
 if (function_exists('fastcgi_finish_request')) fastcgi_finish_request(); else { @ob_end_flush(); flush(); }
 ignore_user_abort(true);
-try { notify_signup($type, $id, $rec); } catch (Throwable $e) { error_log('save.php notify: ' . $e->getMessage()); }
+try { if ($type !== 'voter') notify_signup($type, $id, $rec); } catch (Throwable $e) { error_log('save.php notify: ' . $e->getMessage()); }

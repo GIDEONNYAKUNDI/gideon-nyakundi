@@ -59,3 +59,12 @@ To text a group, filter the Agents, Volunteers or Pledges list (for example one 
 - `backoffice/_messaging.php` HostPinnacle SMS, SMTP e-mail and the saved settings.
 - `backoffice/_settings.php` the Settings page (SMS connection, confirmation messages, mail server).
 - `nyamira-polling-stations.json` the IEBC list of centres and streams used for the coverage figures.
+
+## Security
+
+- Only two people can use the back office (Dr. Gideon and David). The code allows at most two accounts, and any extra account is blocked from signing in.
+- Two-step sign-in with an authenticator app (Back office → Security). Repeated wrong passwords lock sign-in for 15 minutes.
+- `config.php` (database password) lives only on the server and is never on GitHub. The code libraries, settings and `config.php` cannot be opened from a browser (`backoffice/.htaccess`).
+- Every deploy refreshes a security block in `public_html/.htaccess` (`ops/install-htaccess.sh`): security headers, no folder listings, and hidden, backup, note and data files (`.md`, `.csv`, `.xlsx`, `.sql`, …) are never served. Lines cPanel writes there, such as the PHP version, are kept.
+- The sign-up API accepts posts only from the website itself, needs the consent box, and limits how often one connection can submit.
+- `.github/workflows/security-check.yml` checks the live site from the outside with Playwright after every deploy and every day. A red ✗ in the Actions tab means a check failed.

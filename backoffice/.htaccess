@@ -1,7 +1,17 @@
 # The site root only serves index.html; the back office starts at index.php.
 DirectoryIndex index.php
+Options -Indexes
 
-# Never serve the settings file.
-<Files "config.php">
+# Only index.php is a page. config.php (the database password), the code libraries
+# (_lib.php, _messaging.php, _settings.php) and config.sample.php can never be opened from a browser.
+<FilesMatch "\.php$">
     Require all denied
+</FilesMatch>
+<Files "index.php">
+    Require all granted
 </Files>
+
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow"
+    Header always set Cache-Control "no-store"
+</IfModule>
