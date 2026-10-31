@@ -3,6 +3,7 @@
 declare(strict_types=1);
 require __DIR__ . '/_lib.php';
 require __DIR__ . '/_messaging.php';
+require __DIR__ . '/_settings.php';
 
 security_headers();
 
@@ -78,7 +79,7 @@ if (!$me) {
 
 $isAdmin = $me['role'] === 'admin';
 $scope = $isAdmin ? '' : (string)$me['constituency'];   // coordinators see only their constituency
-$flash = '';
+$flash = ''; $flashBad = false;
 
 /* ---------- actions ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -118,28 +119,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($a === 'sms_send' && $isAdmin) {
         $msg = trim((string)($_POST['message'] ?? ''));
         $phones = ($_POST['to'] ?? '') === 'list' ? list_phones((string)($_GET['t'] ?? ''), $scope) : (preg_split('/[\s,;]+/', (string)($_POST['numbers'] ?? '')) ?: []);
-        if ($msg === '') $flash = 'Write the message first.';
+        if ($msg === '') { $flash = 'Write the message first.'; $flashBad = true; }
         else {
             $valid = array_values(array_unique(array_filter(array_map('kenya_phone', $phones))));
             $skipped = count(array_unique(array_filter(array_map('trim', $phones)))) - count($valid);
             $r = sms_send($valid, mb_substr($msg, 0, 918), count($valid) > 1 ? 'bulk' : 'manual', $me['username']);
+            $flashBad = $r['failed'] > 0 || $r['sent'] === 0;
             $flash = 'SMS sent to ' . $r['sent'] . ' of ' . ($r['sent'] + $r['failed']) . ' number' . ($r['sent'] + $r['failed'] === 1 ? '' : 's') . '.' . ($skipped > 0 ? ' Skipped ' . $skipped . ' that ' . ($skipped === 1 ? 'is not a valid phone number' : 'are not valid phone numbers') . '.' : '') . ($r['error'] ? ' Problem: ' . $r['error'] : '');
         }
     }
     if ($a === 'webhook' && $isAdmin) {
-        $tok = (string)(sms_cfg()['callback_token'] ?? '');
-        if ($tok === '' || strpos($tok, 'CHANGE-ME') === 0) $flash = 'First set a callback_token in backoffice/config.php.';
+        if (sms_cfg()['userid'] === '') { $flash = 'Connect HostPinnacle in Settings first.'; $flashBad = true; }
         else {
             $https = !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off';
-            $r = sms_register_webhook(($https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api/sms-delivery.php?token=' . rawurlencode($tok));
+            $r = sms_register_webhook(($https ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/api/sms-delivery.php?token=' . rawurlencode(callback_token()));
             $flash = $r['ok'] ? 'Delivery reports will now come back from HostPinnacle.' : 'HostPinnacle did not accept the webhook: ' . $r['error'];
+            $flashBad = !$r['ok'];
         }
     }
     if ($a === 'test_email' && $isAdmin) {
         $to = array_filter(array_map('trim', explode(',', (string)($_POST['email'] ?? ''))));
         $err = send_mail($to, 'Test e-mail from the Nyakundi 2027 back office', 'Sent by ' . $me['username'] . ' at ' . gmdate('j M Y, H:i') . " UTC.\n\nIf you can read this, e-mail from the website works.");
-        $flash = $err ? 'The test e-mail failed: ' . $err : 'Test e-mail sent to ' . implode(', ', $to) . '.';
+        $flash = $err ? 'The test e-mail failed: ' . $err : 'Test e-mail sent to ' . implode(', ', $to) . '. Check the inbox (and the spam folder).';
+        $flashBad = (bool)$err;
     }
+    if ($isAdmin && ($res = settings_handle($a, $me)) !== null) [$flash, $flashBad] = $res;
     if ($a === 'password') {
         $s = db()->prepare('SELECT pass_hash FROM users WHERE id = ?'); $s->execute([$me['id']]);
         $pw = (string)($_POST['new'] ?? '');
@@ -248,7 +252,7 @@ function coverage_rows(string $scope): array {
 
 /* ---------- pages ---------- */
 page_head('Back office', $me, $p);
-if ($flash) echo '<p class="flash">' . h($flash) . '</p>';
+if ($flash) echo '<p class="flash' . ($flashBad ? ' bad' : '') . '" role="status">' . h($flash) . '</p>';
 echo '<main>';
 
 if ($p === 'home') {
@@ -268,7 +272,9 @@ if ($p === 'home') {
     echo '<div><b>' . number_format($all['streams'] - $all['covered']) . '</b><span>streams still without an agent</span></div>';
     echo '<div><b>' . number_format($vols) . '</b><span>volunteers</span></div>';
     if ($isAdmin) { $pl = db()->query('SELECT COUNT(*) n, COALESCE(SUM(amount_ksh),0) s FROM pledges')->fetch(); echo '<div><b>Ksh ' . number_format((int)$pl['s']) . '</b><span>pledged by ' . (int)$pl['n'] . ' people</span></div>'; }
-    echo '</div><h2>Agent coverage by ward</h2><table><thead><tr><th>Constituency</th><th>Ward</th><th>Streams</th><th>With agent</th><th>Coverage</th><th></th></tr></thead><tbody>';
+    echo '</div>';
+    if ($isAdmin) echo messaging_panel();
+    echo '<h2>Agent coverage by ward</h2><table><thead><tr><th>Constituency</th><th>Ward</th><th>Streams</th><th>With agent</th><th>Coverage</th><th></th></tr></thead><tbody>';
     foreach ($wardT as $k => $v) {
         [$c, $w] = explode('|', $k); $pc = $v['streams'] ? round(100 * $v['covered'] / $v['streams']) : 0;
         echo '<tr><td>' . h($c) . '</td><td>' . h($w) . '</td><td>' . $v['streams'] . '</td><td>' . $v['covered'] . '</td><td><span class="bar"><i style="width:' . $pc . '%"></i></span> ' . $pc . '%</td><td><a href="?p=gaps&w=' . urlencode($w) . '">See streams</a></td></tr>';
@@ -330,8 +336,9 @@ if ($p === 'sms' && $isAdmin) {
     $bad = ($n['failed'] ?? 0) + ($n['undeliv'] ?? 0) + ($n['undelivered'] ?? 0) + ($n['rejected'] ?? 0) + ($n['expired'] ?? 0);
     $bal = sms_balance();
     echo '<h1>SMS</h1><p class="muted">Sent through HostPinnacle' . (!empty($c['sender_id']) ? ' as <b>' . h($c['sender_id']) . '</b>' : '') . '. Everyone who signs up on the website gets a confirmation SMS automatically.</p>';
-    if (empty($c['enabled'])) echo '<p class="err">SMS is switched off. Fill in the HostPinnacle details in backoffice/config.php and set enabled to true.</p>';
-    elseif (!empty($c['test_mode'])) echo '<p class="err">Test mode: HostPinnacle accepts messages but does not deliver them. Set test_mode to false in backoffice/config.php to go live.</p>';
+    if (empty($c['enabled'])) echo '<p class="err">SMS is switched off. <a href="?p=settings&amp;tab=sms">Connect HostPinnacle in Settings</a>.</p>';
+    elseif (!empty($c['test_mode'])) echo '<p class="err">Test mode: HostPinnacle accepts messages but does not deliver them. <a href="?p=settings&amp;tab=sms">Go live in Settings</a>.</p>';
+    echo '<p class="muted">Change what people are sent after signing up under <a href="?p=settings&amp;tab=messages">Settings &gt; Confirmation messages</a>.</p>';
     echo '<div class="tiles"><div><b>' . number_format(array_sum($n)) . '</b><span>SMS sent</span></div><div><b>' . number_format($good) . '</b><span>delivered</span></div><div><b>' . number_format($bad) . '</b><span>failed</span></div>'
         . '<div><b>' . ($bal !== null ? h($bal) : '-') . '</b><span>HostPinnacle balance</span></div></div>';
 
@@ -374,8 +381,8 @@ if ($p === 'sms' && $isAdmin) {
 
 if ($p === 'email' && $isAdmin) {
     $c = smtp_cfg();
-    echo '<h1>E-mail</h1><p class="muted">Every e-mail the website sent. New sign-ups are e-mailed to <b>' . h(implode(', ', $c['notify']) ?: 'nobody yet (set notify in backoffice/config.php)') . '</b>' . (!empty($c['host']) ? ' through ' . h($c['host'] . ':' . ($c['port'] ?? '')) : '') . '.</p>';
-    if (empty($c['enabled'])) echo '<p class="err">E-mail is switched off. Fill in the SMTP details in backoffice/config.php and set enabled to true.</p>';
+    echo '<h1>E-mail</h1><p class="muted">Every e-mail the website sent. New sign-ups are e-mailed to <b>' . h(implode(', ', $c['notify']) ?: 'nobody yet') . '</b>' . (!empty($c['host']) ? ' through ' . h($c['host'] . ':' . ($c['port'] ?? '')) : '') . '.</p>';
+    if (empty($c['enabled'])) echo '<p class="err">E-mail is switched off. <a href="?p=settings&amp;tab=email">Set up the mail server in Settings</a>.</p>';
     echo '<form method="post" class="filters"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="test_email"><input name="email" value="' . h(implode(', ', $c['notify'])) . '" placeholder="you@example.com" style="min-width:280px" required><button class="btn sm">Send a test e-mail</button></form>';
     echo '<table><thead><tr><th>Sent (Kenya time)</th><th>To</th><th>Subject</th><th>Status</th></tr></thead><tbody>';
     $rows = db()->query('SELECT * FROM email_log ORDER BY id DESC LIMIT 300')->fetchAll();
@@ -383,6 +390,8 @@ if ($p === 'email' && $isAdmin) {
     foreach ($rows as $r) echo '<tr><td>' . h(ke_time($r['created_at'])) . '</td><td>' . h($r['to_addr']) . '</td><td><details><summary>' . h($r['subject']) . '</summary><pre style="white-space:pre-wrap;font-size:.85rem">' . h($r['body']) . '</pre></details></td><td>' . tag($r['status']) . ($r['error'] ? '<br><small>' . h($r['error']) . '</small>' : '') . '</td></tr>';
     echo '</tbody></table>';
 }
+
+if ($p === 'settings' && $isAdmin) settings_page((string)($_GET['tab'] ?? 'sms'));
 
 if ($p === 'account') {
     echo '<h1>My account</h1><p>Signed in as <b>' . h($me['username']) . '</b> (' . h($me['role']) . ($me['constituency'] ? ', ' . h($me['constituency']) : '') . ').</p>';
@@ -423,6 +432,20 @@ small{color:var(--muted)}a{color:var(--blue)}.gap{color:var(--red);font-weight:6
 input,select,textarea{font:inherit;padding:7px 9px;border:1px solid #c5ccd8;border-radius:3px;background:#fff;max-width:100%}textarea{width:100%;resize:vertical}
 .tag{display:inline-block;padding:1px 8px;border-radius:10px;font-size:.8rem;font-weight:600;background:#eef1f6;color:var(--muted)}.tag.ok{background:#e3f3e9;color:#1f6b40}.tag.bad{background:#fbe4e4;color:#a3222a}.tag.wait{background:#fbf1d6;color:#7a5a0c}
 details summary{cursor:pointer}
+.flash.bad{background:#fbe9e9;border-left-color:var(--red)}.small{font-size:.86rem}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.card{background:#fff;border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:16px}.card h2{margin:0 0 4px;font-size:1.08rem}
+.card.link{display:grid;gap:4px;text-decoration:none;color:var(--ink);margin:0;border-top:3px solid var(--blue)}.card.link:hover{border-color:var(--gold)}.card.link b{color:var(--blue);font-size:1.05rem}
+.card.help{background:#f8f9fc}.card.help ol{margin:6px 0 0;padding-left:18px;display:grid;gap:6px}
+.pill{display:inline-block;justify-self:start;padding:1px 9px;border-radius:10px;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#eef1f6;color:var(--muted)}.pill.on{background:#e3f3e9;color:#1f6b40}.pill.test{background:#fbf1d6;color:#7a5a0c}.pill.off{background:#fbe4e4;color:#a3222a}
+.subnav{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 18px;border-bottom:1px solid var(--line)}.subnav a{padding:10px 14px;text-decoration:none;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-1px;font-weight:600}.subnav a.on{color:var(--blue);border-color:var(--red)}
+.cols{display:grid;grid-template-columns:minmax(0,3fr) minmax(0,2fr);gap:18px;align-items:start}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.stack label small{font-weight:400}.switch{display:flex!important;grid-template-columns:none;gap:10px;align-items:flex-start;font-weight:600}.switch input{width:18px;height:18px;margin-top:2px;accent-color:var(--green)}
+.inline{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.inline input{flex:1;min-width:180px}
+.tpl-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px;align-items:center;margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}.chip{font:inherit;font-size:.85rem;padding:3px 10px;border-radius:12px;border:1px solid #b9c6e0;background:#eef3fc;color:var(--blue);cursor:pointer}.chip.plain{background:#fff;border-color:var(--line);color:var(--muted)}
+.bubble{margin-top:6px;background:#e9f6ec;border:1px solid #cfe8d6;border-radius:14px 14px 14px 4px;padding:12px 14px;white-space:pre-wrap;line-height:1.45;max-width:420px}
+@media (max-width:860px){.cols,.two{grid-template-columns:1fr}}
 .stack{display:grid;gap:12px}.stack label{display:grid;gap:4px;font-weight:600}
 .row-edit{display:flex;flex-wrap:wrap;gap:6px}.row-edit input{min-width:140px;flex:1}
 .btn{font:inherit;font-weight:700;background:var(--red);color:#fff;border:0;padding:9px 16px;border-radius:3px;cursor:pointer;text-decoration:none;display:inline-block}.btn.sm{padding:6px 11px;font-size:.88rem}.btn.ghost{background:#fff;color:var(--blue);border:1px solid var(--blue)}
@@ -431,7 +454,7 @@ details summary{cursor:pointer}
 </style></head><body><header><a class="brand" href="./">Nyakundi <span>2027</span> · Back office</a>';
     if ($me) {
         $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers'];
-        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; }
+        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['settings'] = 'Settings'; }
         $tabs['account'] = $me['role'] === 'admin' ? 'Team' : 'My account';
         echo '<nav>'; foreach ($tabs as $k => $v) echo '<a href="?p=' . $k . '"' . ($p === $k ? ' class="on"' : '') . '>' . $v . '</a>'; echo '</nav>';
         echo '<span class="who">' . h($me['username']) . ' · <a href="?p=logout">Sign out</a></span>';

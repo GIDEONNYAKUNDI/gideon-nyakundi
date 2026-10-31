@@ -9,8 +9,101 @@ if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === '_messaging.php') { http_res
 
 const HP_BASE = 'https://smsportal.hostpinnacle.co.ke/SMSApi';
 
-function sms_cfg(): array { return (cfg()['sms'] ?? []) + ['enabled' => false, 'test_mode' => true, 'templates' => [], 'alert_numbers' => []]; }
-function smtp_cfg(): array { return (cfg()['smtp'] ?? []) + ['enabled' => false, 'notify' => []]; }
+const SECRET_SETTINGS = ['sms.password', 'sms.api_key', 'smtp.pass'];
+const FORM_LABELS = ['volunteer' => 'Volunteer sign-up', 'agent' => 'Polling agent registration', 'pledge' => 'Pledge'];
+const TEMPLATE_TAGS = ['volunteer' => ['{name}', '{ward}', '{station}', '{stream}'], 'agent' => ['{name}', '{ward}', '{station}', '{stream}'], 'pledge' => ['{name}', '{amount}']];
+const TEMPLATE_DEFAULTS = [
+    'volunteer' => 'Thank you {name} for joining Team Nyakundi 2027. Your {ward} Ward coordinator will call you soon. Omonto, Nabanto!',
+    'agent'     => 'Thank you {name}. You are registered as an agent for {station}, Stream {stream}, {ward} Ward. We will call you about training.',
+    'pledge'    => 'Thank you {name} for your pledge of Ksh {amount}. The finance team will call you with the official payment details. Do not send money to individuals.',
+];
+
+/* ---------- settings saved from the back office (they override config.php) ---------- */
+
+function settings(bool $reload = false): array {
+    static $s = null;
+    if ($s === null || $reload) {
+        $s = [];
+        try { foreach (db()->query('SELECT k, v, updated_at, updated_by FROM settings') as $r) $s[$r['k']] = $r; } catch (Throwable $e) { }
+    }
+    return $s;
+}
+function has_setting(string $k): bool { return isset(settings()[$k]); }
+function setting(string $k, string $default = ''): string {
+    if (!has_setting($k)) return $default;
+    $v = (string)settings()[$k]['v'];
+    return in_array($k, SECRET_SETTINGS, true) ? secret_open($v) : $v;
+}
+function settings_save(array $kv, string $by): void {
+    $del = db()->prepare('DELETE FROM settings WHERE k = ?');
+    $ins = db()->prepare('INSERT INTO settings (k, v, updated_at, updated_by) VALUES (?,?,?,?)');
+    db()->beginTransaction();
+    foreach ($kv as $k => $v) {
+        $del->execute([$k]);
+        $ins->execute([$k, in_array($k, SECRET_SETTINGS, true) ? secret_seal((string)$v) : (string)$v, now(), $by]);
+    }
+    db()->commit();
+    settings(true);
+}
+
+/* Passwords and API keys are stored encrypted with a key derived from config.php's secret. */
+function secret_key(): string { return hash('sha256', 'nyk-settings|' . (cfg()['secret'] ?? ''), true); }
+function secret_seal(string $plain): string {
+    if ($plain === '') return '';
+    $iv = random_bytes(12); $tag = '';
+    $ct = openssl_encrypt($plain, 'aes-256-gcm', secret_key(), OPENSSL_RAW_DATA, $iv, $tag);
+    return 'enc:' . base64_encode($iv . $tag . $ct);
+}
+function secret_open(string $v): string {
+    if (strpos($v, 'enc:') !== 0) return $v;
+    $raw = base64_decode(substr($v, 4), true);
+    if ($raw === false || strlen($raw) < 29) return '';
+    $p = openssl_decrypt(substr($raw, 28), 'aes-256-gcm', secret_key(), OPENSSL_RAW_DATA, substr($raw, 0, 12), substr($raw, 12, 16));
+    return $p === false ? '' : $p;
+}
+
+/* config.php placeholders such as PUT-... count as empty. */
+function filled($v): string { $v = trim((string)$v); return preg_match('/^(PUT-|CHANGE-ME)/', $v) ? '' : $v; }
+function list_setting(string $k, array $fallback): array {
+    $raw = has_setting($k) ? setting($k) : implode(',', array_map('strval', $fallback));
+    return array_values(array_filter(array_map('trim', preg_split('/[\s,;]+/', $raw) ?: []), fn($x) => filled($x) !== ''));
+}
+function template_text(string $t): string {
+    $f = filled(cfg()['sms']['templates'][$t] ?? '');
+    return setting('tpl.' . $t, $f !== '' ? $f : TEMPLATE_DEFAULTS[$t]);
+}
+function template_on(string $t): bool {
+    if (has_setting('tpl.' . $t . '.on')) return setting('tpl.' . $t . '.on') === '1';
+    $f = cfg()['sms']['templates'][$t] ?? null;
+    return $f === null || trim((string)$f) !== '';
+}
+
+function sms_cfg(): array {
+    $f = cfg()['sms'] ?? [];
+    $b = fn(string $k, bool $d) => has_setting('sms.' . $k) ? setting('sms.' . $k) === '1' : (bool)($f[$k] ?? $d);
+    $s = fn(string $k) => has_setting('sms.' . $k) ? setting('sms.' . $k) : filled($f[$k] ?? '');
+    $tpl = [];
+    foreach (TEMPLATE_DEFAULTS as $t => $_) $tpl[$t] = template_on($t) ? template_text($t) : '';
+    return ['enabled' => $b('enabled', false), 'test_mode' => $b('test_mode', true), 'userid' => $s('userid'), 'password' => $s('password'),
+        'api_key' => $s('api_key'), 'sender_id' => $s('sender_id'), 'callback_token' => $s('callback_token'),
+        'alert_numbers' => list_setting('sms.alert_numbers', (array)($f['alert_numbers'] ?? [])), 'templates' => $tpl, 'base_url' => $f['base_url'] ?? HP_BASE];
+}
+function smtp_cfg(): array {
+    $f = cfg()['smtp'] ?? [];
+    $s = fn(string $k, string $d = '') => has_setting('smtp.' . $k) ? setting('smtp.' . $k) : (filled($f[$k] ?? '') ?: $d);
+    $user = $s('user');
+    return ['enabled' => has_setting('smtp.enabled') ? setting('smtp.enabled') === '1' : (bool)($f['enabled'] ?? false),
+        'host' => $s('host'), 'port' => (int)$s('port', '465'), 'secure' => $s('secure', 'ssl'), 'user' => $user, 'pass' => $s('pass'),
+        'from_email' => $s('from_email', $user), 'from_name' => $s('from_name', 'Nyakundi 2027 Website'),
+        'notify' => array_values(array_filter(list_setting('smtp.notify', (array)($f['notify'] ?? [])), fn($a) => (bool)filter_var($a, FILTER_VALIDATE_EMAIL)))];
+}
+
+/* The secret in the delivery-report link; created on first use. */
+function callback_token(): string {
+    $t = sms_cfg()['callback_token'];
+    if ($t === '') { $t = bin2hex(random_bytes(24)); settings_save(['sms.callback_token' => $t], 'system'); }
+    return $t;
+}
 
 /* Kenyan numbers to 2547XXXXXXXX / 2541XXXXXXXX (the format HostPinnacle wants). '' if not a valid number. */
 function kenya_phone(string $raw): string {

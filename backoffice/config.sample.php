@@ -16,8 +16,10 @@ return [
     // Any long random text. Used to protect logins. Change it once, then leave it.
     'secret'  => 'CHANGE-ME-to-a-long-random-sentence-only-you-know',
 
+    // Optional. SMS, the confirmation messages and e-mail are normally set up in the back office
+    // under Settings, which overrides everything below. Keep the secret above unchanged afterwards:
+    // it encrypts the passwords saved there.
     // SMS through HostPinnacle (https://smsportal.hostpinnacle.co.ke).
-    // userid and password are your portal login; the API key is under Account > API Key.
     'sms' => [
         'enabled'   => false,       // true once the details below are filled in
         'test_mode' => true,        // true: HostPinnacle accepts messages but does not deliver them. false to go live.

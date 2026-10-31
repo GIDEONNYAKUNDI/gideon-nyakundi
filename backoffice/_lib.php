@@ -51,6 +51,7 @@ function install_schema(): void {
         "CREATE TABLE IF NOT EXISTS hits (id $pk, kind VARCHAR(20) NOT NULL, ip_hash VARCHAR(64) NOT NULL, at INT NOT NULL)$tail",
         "CREATE TABLE IF NOT EXISTS sms_log (id $pk, created_at VARCHAR(19) NOT NULL, phone VARCHAR(20) NOT NULL, message TEXT NOT NULL, kind VARCHAR(20) NOT NULL DEFAULT 'manual', status VARCHAR(40) NOT NULL DEFAULT 'queued', provider_id VARCHAR(80), error VARCHAR(255), record_type VARCHAR(20) NOT NULL DEFAULT '', record_id INT NOT NULL DEFAULT 0, sent_by VARCHAR(60) NOT NULL DEFAULT '', updated_at VARCHAR(19))$tail",
         "CREATE TABLE IF NOT EXISTS email_log (id $pk, created_at VARCHAR(19) NOT NULL, to_addr VARCHAR(255) NOT NULL, subject VARCHAR(255) NOT NULL, body TEXT NOT NULL, status VARCHAR(20) NOT NULL, error VARCHAR(500), record_type VARCHAR(20) NOT NULL DEFAULT '', record_id INT NOT NULL DEFAULT 0)$tail",
+        "CREATE TABLE IF NOT EXISTS settings (k VARCHAR(60) NOT NULL PRIMARY KEY, v TEXT NOT NULL, updated_at VARCHAR(19), updated_by VARCHAR(60))$tail",
         "CREATE TABLE IF NOT EXISTS webhook_log (id $pk, created_at VARCHAR(19) NOT NULL, payload TEXT NOT NULL, ip_hash VARCHAR(64) NOT NULL DEFAULT '')$tail",
     ];
     foreach ($t as $q) db()->exec($q);
