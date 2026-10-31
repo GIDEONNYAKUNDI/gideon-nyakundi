@@ -143,6 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $flash = $err ? 'The test e-mail failed: ' . $err : 'Test e-mail sent to ' . implode(', ', $to) . '. Check the inbox (and the spam folder).';
         $flashBad = (bool)$err;
     }
+    if ($a === 'import_vol' && $isAdmin) {
+        [$flash, $flashBad] = import_volunteers($_FILES['csv'] ?? null, $me['username']);
+    }
     if ($isAdmin && ($res = settings_handle($a, $me)) !== null) [$flash, $flashBad] = $res;
     if ($a === 'password') {
         $s = db()->prepare('SELECT pass_hash FROM users WHERE id = ?'); $s->execute([$me['id']]);
@@ -199,6 +202,43 @@ function status_form(string $table, array $r, array $statuses): string {
     foreach ($statuses as $s) $o .= '<option' . ($s === $r['status'] ? ' selected' : '') . '>' . h($s) . '</option>';
     return '<form method="post" class="row-edit"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="update"><input type="hidden" name="table" value="' . $table . '"><input type="hidden" name="id" value="' . (int)$r['id'] . '">'
         . '<select name="status">' . $o . '</select><input name="notes" value="' . h($r['notes'] ?? '') . '" placeholder="Notes"><button class="btn sm">Save</button></form>';
+}
+/* Import volunteers from an uploaded CSV: needs name, constituency and a valid phone number. */
+function import_volunteers($f, string $by): array {
+    if (!$f || ($f['error'] ?? 1) !== UPLOAD_ERR_OK || !is_uploaded_file($f['tmp_name'])) return ['Choose a CSV file to upload.', true];
+    if ($f['size'] > 10 * 1024 * 1024) return ['That file is larger than 10 MB.', true];
+    $fh = fopen($f['tmp_name'], 'r');
+    $head = fgetcsv($fh, 0, ',', '"', '\\');
+    if (!$head) return ['The file is empty.', true];
+    $head = array_map(fn($x) => strtolower(trim(preg_replace('/^\xEF\xBB\xBF/', '', (string)$x))), $head);
+    $col = function (array $names) use ($head) { foreach ($names as $n) { $i = array_search($n, $head, true); if ($i !== false) return $i; } return null; };
+    $ci = $col(['constituency']); $ni = $col(['name', 'full name', 'full_name', 'names']); $pi = $col(['phone', 'phone number', 'phone_number', 'telephone', 'mobile']);
+    $wi = $col(['ward']); $vi = $col(['village', 'village or sub-location']); $oi = $col(['notes', 'note']);
+    if ($ci === null || $ni === null || $pi === null) return ['The header row must include constituency, name and phone columns.', true];
+    $consts = []; foreach (CONSTITUENCIES as $c => $_) $consts[strtolower($c)] = $c;
+    $existing = [];
+    foreach (db()->query('SELECT name, phone FROM volunteers') as $r) $existing[strtolower(trim($r['name'])) . '|' . $r['phone']] = true;
+    $ins = db()->prepare('INSERT INTO volunteers (created_at, constituency, ward, village, name, phone, notes, updated_by) VALUES (?,?,?,?,?,?,?,?)');
+    $added = 0; $bad = 0; $dup = 0; $t = now();
+    db()->beginTransaction();
+    while (($r = fgetcsv($fh, 0, ',', '"', '\\')) !== false) {
+        if (count(array_filter($r, fn($x) => trim((string)$x) !== '')) === 0) continue;
+        $name = trim(preg_replace('/\s+/', ' ', (string)($r[$ni] ?? '')));
+        $c = $consts[preg_replace('/\s+constituency$/', '', strtolower(trim((string)($r[$ci] ?? ''))))] ?? '';
+        $d = preg_replace('/\D/', '', (string)($r[$pi] ?? ''));
+        if (strlen($d) === 12 && strpos($d, '254') === 0) $d = '0' . substr($d, 3);
+        if (strlen($d) === 9 && ($d[0] === '7' || $d[0] === '1')) $d = '0' . $d;
+        if ($name === '' || $c === '' || !preg_match('/^0[17]\d{8}$/', $d)) { $bad++; continue; }
+        $key = strtolower($name) . '|' . $d;
+        if (isset($existing[$key])) { $dup++; continue; }
+        $existing[$key] = true;
+        $ward = $wi !== null ? trim((string)($r[$wi] ?? '')) : '';
+        if ($ward !== '' && !in_array($ward, CONSTITUENCIES[$c], true)) $ward = '';
+        $ins->execute([$t, $c, $ward, mb_substr($vi !== null ? trim((string)($r[$vi] ?? '')) : '', 0, 120), mb_substr($name, 0, 120), $d, mb_substr($oi !== null ? trim((string)($r[$oi] ?? '')) : 'Imported from volunteer list', 0, 2000), $by]);
+        $added++;
+    }
+    db()->commit(); fclose($fh);
+    return ['Imported ' . number_format($added) . ' volunteers.' . ($dup ? ' Skipped ' . number_format($dup) . ' already in the database.' : '') . ($bad ? ' Skipped ' . number_format($bad) . ' rows without a name, constituency or valid phone number.' : ''), $added === 0];
 }
 function filter_bar(string $p, string $scope, array $statuses, bool $wards = true, bool $sms = false): string {
     $o = '<form method="get" class="filters"><input type="hidden" name="p" value="' . h($p) . '">';
@@ -313,7 +353,7 @@ if ($p === 'agents') {
 if ($p === 'volunteers') {
     [$w, $a] = filters('volunteers', $scope);
     $s = db()->prepare("SELECT * FROM volunteers$w ORDER BY created_at DESC LIMIT 500"); $s->execute($a);
-    echo '<h1>Volunteers</h1>' . filter_bar('volunteers', $scope, VOL_STATUSES, true, $isAdmin);
+    echo '<h1>Volunteers</h1>' . ($isAdmin ? '<p><a href="?p=import">Import a volunteer list (CSV)</a></p>' : '') . filter_bar('volunteers', $scope, VOL_STATUSES, true, $isAdmin);
     echo '<table><thead><tr><th>Registered</th><th>Name and phone</th><th>Ward</th><th>Village</th><th>How they will help</th><th>Top priority</th><th>Status and notes</th>' . ($isAdmin ? '<th></th>' : '') . '</tr></thead><tbody>';
     foreach ($s->fetchAll() as $r) {
         echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br><a href="tel:' . h(preg_replace('/[^\d+]/', '', $r['phone'])) . '">' . h($r['phone']) . '</a>' . ($isAdmin ? sms_link($r['phone']) : '') . mail_link($r['email'] ?? '') . '<br><small>' . h($r['age']) . '</small></td><td>' . h($r['ward']) . '<br><small>' . h($r['constituency']) . '</small>' . ($r['station'] ? '<br><small>' . h($r['station']) . ($r['stream'] ? ' · stream ' . h($r['stream']) : '') . '</small>' : '') . '</td><td>' . h($r['village']) . '</td><td><small>' . h($r['roles']) . '</small></td><td><small>' . h($r['message']) . '</small></td><td>' . status_form('volunteers', $r, VOL_STATUSES) . '</td>' . ($isAdmin ? '<td>' . delete_btn('volunteers', (int)$r['id']) . '</td>' : '') . '</tr>';
@@ -393,6 +433,11 @@ if ($p === 'email' && $isAdmin) {
     echo '</tbody></table>';
 }
 
+if ($p === 'import' && $isAdmin) {
+    echo '<h1>Import a volunteer list</h1><div class="card help"><p>Upload a <b>CSV</b> file with a header row. It must have columns for <b>constituency</b>, <b>name</b> (or "full name") and <b>phone</b> (or "phone number"). Columns for <b>ward</b>, <b>village</b> and <b>notes</b> are used if present; anything else is ignored.</p><ol><li>Every row needs a name, one of the four constituencies and a valid Kenyan mobile number. Rows without them are skipped.</li><li>Phone numbers are tidied to the 07XX XXX XXX form. A name already in the database with the same phone number is skipped, so uploading the same file twice does not create doubles.</li><li>From Excel: File &gt; Save As &gt; "CSV UTF-8 (Comma delimited)".</li></ol></div>';
+    echo '<form method="post" enctype="multipart/form-data" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="import_vol"><label>CSV file<input type="file" name="csv" accept=".csv,text/csv" required></label><button class="btn">Import volunteers</button></form>';
+}
+
 if ($p === 'settings' && $isAdmin) settings_page((string)($_GET['tab'] ?? 'sms'));
 
 if ($p === 'account') {
@@ -462,7 +507,7 @@ details summary{cursor:pointer}
 </style></head><body><header><a class="brand" href="./">Nyakundi <span>2027</span> · Back office</a>';
     if ($me) {
         $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers'];
-        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['settings'] = 'Settings'; }
+        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['import'] = 'Import'; $tabs['settings'] = 'Settings'; }
         $tabs['account'] = $me['role'] === 'admin' ? 'Team' : 'My account';
         echo '<nav>'; foreach ($tabs as $k => $v) echo '<a href="?p=' . $k . '"' . ($p === $k ? ' class="on"' : '') . '>' . $v . '</a>'; echo '</nav>';
         echo '<span class="who">' . h($me['username']) . ' · <a href="?p=logout">Sign out</a></span>';
