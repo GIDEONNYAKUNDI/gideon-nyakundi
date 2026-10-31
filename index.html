@@ -1671,33 +1671,6 @@ section.page.dark.photo.split.nopic .ph{padding-bottom:24px;border-bottom:1px so
   </div>
 </section>
 
-<!-- CAMPAIGN DESK (owner only) -->
-<section class="page" id="desk" hidden>
-  <div class="wrap">
-    <div class="head">
-      <p class="eyebrow">Campaign Desk · visible only to you</p>
-      <h2>Sign-ups and polling stations</h2>
-      <p class="lede">Volunteers, agents and pledges submitted on this site. All 354 polling centres from the IEBC gazette are built in. Use the polling stations tab only to correct a ward's list; your saved version replaces the built-in one for that ward.</p>
-    </div>
-    <div class="grid3" id="deskCounts"></div>
-    <div class="tabs" id="deskTabs" style="margin-top:28px">
-      <button type="button" class="tab" data-k="agents" aria-selected="true">Agents</button>
-      <button type="button" class="tab" data-k="volunteers" aria-selected="false">Volunteers</button>
-      <button type="button" class="tab" data-k="pledges" aria-selected="false">Pledges</button>
-      <button type="button" class="tab" data-k="stations" aria-selected="false">Polling stations</button>
-    </div>
-    <div id="deskBody" class="tablewrap" style="margin-top:0"></div>
-    <div id="stationEditor" hidden class="form" style="margin-top:20px">
-      <div class="frow">
-        <label for="se-ward">Ward<select id="se-ward"></select></label>
-        <span class="note" style="align-self:end">One station per line. Add streams after a bar: <b>Rigoma Primary School | 3</b></span>
-      </div>
-      <label for="se-list">Polling stations<textarea id="se-list" rows="10"></textarea></label>
-      <div class="factions"><button class="btn red" type="button" id="se-save">Save stations for this ward</button><p class="fmsg" id="seMsg" role="status"></p></div>
-    </div>
-  </div>
-</section>
-
 </main>
 
 <footer>
@@ -1814,7 +1787,7 @@ section.page.dark.photo.split.nopic .ph{padding-bottom:24px;border-bottom:1px so
   ready.then(()=>{
     if(!db) return;
     db.collection('stations').onSnapshot(snap=>{ const m={}; snap.docs.forEach(d=>{ const x=d.data(); if(x&&Array.isArray(x.list)) m[d.id]=x.list; }); stations=Object.assign({},BASE,m); const keepS=aS.value; fillVStations(); fillStations(); if([...aS.options].some(o=>o.value===keepS)){ aS.value=keepS; otherRow.hidden=aS.value!=='__other'; fillStreams(); trace(); } if(deskOn) renderDesk(); },()=>{});
-    if(user&&user.isOwner()) startDesk();
+    if(user&&user.isOwner()&&$('desk')) startDesk();
   });
 
   function formData(form){ const fd=new FormData(form), o={}; for(const [k,v] of fd.entries()){ if(k==='roles'){ (o.roles=o.roles||[]).push(v); } else o[k]=String(v).trim(); } return o; }
