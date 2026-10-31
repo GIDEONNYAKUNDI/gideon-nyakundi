@@ -596,6 +596,32 @@ section.flag .statement{background:rgba(8,16,34,.62);padding:14px 20px;border-le
 section.flag .eyebrow,section.flag .caption{background:rgba(8,16,34,.6);padding:5px 10px;width:fit-content}
 section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.6)}
 .consent{display:flex!important;gap:10px;align-items:flex-start;font-weight:400!important;line-height:1.5;margin-top:4px}.consent input{width:20px;height:20px;flex:none;margin-top:2px}.hp{position:absolute!important;left:-9999px;width:1px;height:1px;opacity:0}
+.thx{position:fixed;inset:0;z-index:200;background:rgba(6,11,22,.72);display:grid;place-items:center;padding:16px;opacity:0;transition:opacity .25s;overflow-y:auto;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.thx.on{opacity:1}
+.thx-card{position:relative;width:100%;max-width:560px;background:linear-gradient(180deg,#13264d 0%,#0e1a33 100%);color:#fff;border-top:5px solid var(--earth);box-shadow:0 30px 80px rgba(0,0,0,.55);padding:30px 30px 22px;transform:translateY(16px) scale(.98);transition:transform .3s;max-height:calc(100vh - 32px);overflow-y:auto;box-sizing:border-box}
+.thx.on .thx-card{transform:none}
+.thx-flag{height:5px;margin:16px -30px -22px;background:linear-gradient(90deg,var(--earth) 0 33%,var(--banana) 33% 66%,var(--green) 66%)}
+.thx-btns .thx-done{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.75)}
+.thx-btns .thx-done:hover{background:rgba(255,255,255,.1)}
+.thx-x{position:absolute;top:10px;right:12px;background:none;border:0;color:#c9d2e3;font-size:1.8rem;line-height:1;cursor:pointer;padding:4px 8px}
+.thx-top{display:flex;gap:18px;align-items:center;margin-bottom:14px}
+.thx-top img{width:96px;height:96px;border-radius:50%;object-fit:cover;object-position:50% 20%;border:3px solid var(--banana);background:#fff;flex:none}
+.thx-eye{font-family:var(--mono);font-size:.82rem;letter-spacing:.16em;text-transform:uppercase;color:var(--banana);margin:0 0 4px}
+.thx-top h3{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,5vw,2.3rem);line-height:1.05;margin:0;color:#fff}
+.thx-lead{font-size:1.08rem;line-height:1.6;color:#e6ebf3;margin:0 0 16px}
+.thx-path{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 20px}
+.thx-path span{background:rgba(255,255,255,.08);border:1px solid rgba(212,176,76,.45);padding:5px 10px;font-size:.92rem;font-weight:600}
+.thx-path i{color:var(--banana);font-style:normal}
+.thx-steps{list-style:none;margin:0 0 18px;padding:0;display:grid;gap:12px}
+.thx-steps li{display:flex;gap:14px;align-items:flex-start}
+.thx-steps li>b{flex:none;width:30px;height:30px;border-radius:50%;background:var(--earth);display:grid;place-items:center;font-family:var(--display);font-size:.95rem}
+.thx-steps strong{display:block;font-family:var(--display);color:var(--banana);font-size:1rem}
+.thx-steps span{color:#dfe5ee;line-height:1.5;font-size:.98rem}
+.thx-slogan{font-style:italic;color:var(--banana);font-size:1.2rem;margin:4px 0 2px}
+.thx-sign{font-family:var(--display);font-weight:700;margin:0 0 18px}.thx-sign small{display:block;font-weight:400;color:#c9d2e3;font-size:.88rem}
+.thx-btns{display:flex;flex-wrap:wrap;gap:10px}.thx-btns .btn{flex:1 1 200px;text-align:center}
+.thx-safe{font-size:.86rem;color:#b5c0d6;margin:14px 0 6px;line-height:1.5}
+@media (max-width:520px){.thx-card{padding:24px 18px 18px}.thx-flag{margin:16px -18px -18px}.thx-top img{width:72px;height:72px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -1855,14 +1881,15 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
     if(!d.name||!phoneOk(d.phone)||!d.constituency||!d.ward){ say(m,'Please enter your name, a valid phone number, your constituency and ward.','err'); return; }
     d.county='Nyamira'; if(d.station&&d.stream){ d.stationCode=streamCode((stations[slug(d.ward)]||[]).find(x=>x.name===d.station),Number(d.stream)); }
     const ok=await save('volunteers',d,m,'Thank you, '+d.name.split(' ')[0]+'. Your '+d.ward+' Ward coordinator will call you.', d.name+', '+d.phone+', '+d.ward+' Ward, '+d.constituency+(d.station?', '+d.station+(d.stream?' stream '+d.stream:''):''),e.target);
-    if(ok) e.target.reset(), vC.dispatchEvent(new Event('change'));
+    if(ok){ thanks('volunteer',{...d}); e.target.reset(); vC.dispatchEvent(new Event('change')); }
   });
 
   $('agentForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('agentMsg'), d=formData(e.target);
     const st=stationName();
     if(!d.name||!phoneOk(d.phone)||!aW.value||!st||!d.stream){ say(m,'Please choose your ward, polling station and stream, and enter your name and a valid phone number.','err'); return; }
     const rec={county:'Nyamira',constituency:curConst,ward:aW.value,station:st,stationCode:(aS.value!=='__other'?streamCode((stations[slug(aW.value)]||[]).find(x=>x.name===st),Number(d.stream))||'':'')||d.stationCode||'',stream:d.stream,registeredHere:d.registeredHere||'',name:d.name,phone:d.phone,experience:d.experience||'',training:d.training||''};
-    await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream+(rec.stationCode?' ('+rec.stationCode+')':''),e.target);
+    const ok=await save('agents',rec,m,'Registered: '+rec.name+', '+rec.station+', '+(rec.stream==='unknown'?'stream to be assigned':'Stream '+rec.stream)+', '+rec.ward+' Ward. We will call you about training.', rec.name+', '+rec.phone+', Nyamira > '+rec.constituency+' > '+rec.ward+' > '+rec.station+' > Stream '+rec.stream+(rec.stationCode?' ('+rec.stationCode+')':''),e.target);
+    if(ok) thanks('agent',rec);
   });
 
   $('pledgeForm').addEventListener('submit',async e=>{ e.preventDefault(); const m=$('pledgeMsg'), d=formData(e.target);
@@ -1934,6 +1961,42 @@ section.flag .head h2{text-shadow:0 2px 18px rgba(0,0,0,.8),0 0 2px rgba(0,0,0,.
       card.innerHTML='<p class="eyebrow">'+esc(d.k)+'</p><p class="big">'+fmt(gap)+' short</p><p>Only '+Math.round(d.f/d.p*100)+'% of what was '+d.w+' is funded for 2026/27.</p><p class="fix"><b>Dr. Gideon\'s plan:</b> '+esc(d.fix)+'</p><p><a href="#'+d.pl+'">Read the full pillar →</a></p>'; }
     show(0);
   })();
+
+  /* ---------- Thank-you card after registering ---------- */
+  function thanks(kind,r){
+    const first=String(r.name||'').trim().split(/\s+/)[0]||'friend';
+    const esc2=t=>String(t==null?'':t).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const isA=kind==='agent';
+    const path=['Nyamira',r.constituency,r.ward?r.ward+' Ward':'',r.station,r.stream?(r.stream==='unknown'?'Stream to be assigned':'Stream '+r.stream):''].filter(Boolean);
+    const steps=isA?[
+      ['Your call','Your '+esc2(r.ward)+' Ward coordinator will call you on '+esc2(r.phone)+' to confirm your polling station and stream.'],
+      ['Your training','You will be trained before the 2027 election and receive your accreditation in person.'],
+      ['Election day','Be at your station from 6 a.m. until the results form is signed. You protect every vote cast there.']
+    ]:[
+      ['Your call','Your '+esc2(r.ward)+' Ward coordinator will call you on '+esc2(r.phone)+' to welcome you to the team.'],
+      ['Ten neighbours','Share the 12 Pillars with ten people at home, at church, at the market and in your chama.'],
+      ['Your ward','Help us register voters and find a trained agent for every stream in '+esc2(r.ward)+'.']
+    ];
+    const invite=isA?'I have just registered as a polling station agent for Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. Protect the vote with me: ':'I have just joined Dr. Gideon Moseti Nyakundi’s movement for the new Nyamira. Volunteer in your ward: ';
+    const link=location.origin+location.pathname+(isA?'#agents':'#volunteer');
+    const box=document.createElement('div'); box.className='thx'; box.setAttribute('role','dialog'); box.setAttribute('aria-modal','true'); box.setAttribute('aria-labelledby','thx-h');
+    box.innerHTML='<div class="thx-card"><button type="button" class="thx-x" aria-label="Close">×</button>'
+      +'<div class="thx-top"><img src="img/portrait-about.webp" alt="" width="96" height="96"><div><p class="thx-eye">'+(isA?'Welcome, agent':'Karibu to the movement')+'</p><h3 id="thx-h">Asante sana, '+esc2(first)+'.</h3></div></div>'
+      +'<p class="thx-lead">'+(isA?'You are now a Nyakundi 2027 polling station agent. Thank you for standing up to protect the vote.':'You are now a Nyakundi 2027 volunteer. Change in Nyamira starts with people like you, in every village and every ward.')+'</p>'
+      +'<div class="thx-path">'+path.map(x=>'<span>'+esc2(x)+'</span>').join('<i aria-hidden="true">›</i>')+'</div>'
+      +'<ol class="thx-steps">'+steps.map((x,n)=>'<li><b>'+(n+1)+'</b><div><strong>'+x[0]+'</strong><span>'+x[1]+'</span></div></li>').join('')+'</ol>'
+      +'<p class="thx-slogan">Omonto, Nabanto. Omonto bw’Abanto.</p>'
+      +'<p class="thx-sign">Dr. Gideon Moseti Nyakundi<small>Governor, Nyamira 2027</small></p>'
+      +'<div class="thx-btns"><a class="btn red" target="_blank" rel="noopener" href="https://wa.me/?text='+encodeURIComponent(invite+link)+'">Invite friends on WhatsApp</a><button type="button" class="btn ghost thx-done">Done</button></div>'
+      +'<p class="thx-safe">Questions? Call or WhatsApp 0723 636 511. The campaign will never ask you to send money or your ID number by phone.</p><div class="thx-flag" aria-hidden="true"></div></div>';
+    const prev=document.activeElement;
+    const close=()=>{ box.classList.remove('on'); document.removeEventListener('keydown',key); setTimeout(()=>box.remove(),250); document.body.style.overflow=''; if(prev&&prev.focus) prev.focus(); };
+    const key=ev=>{ if(ev.key==='Escape') close(); };
+    box.addEventListener('click',ev=>{ if(ev.target===box||ev.target.closest('.thx-x,.thx-done')) close(); });
+    document.addEventListener('keydown',key);
+    document.body.appendChild(box); document.body.style.overflow='hidden';
+    requestAnimationFrame(()=>{ box.classList.add('on'); box.querySelector('.thx-x').focus({preventScroll:true}); });
+  }
 })();
 </script>
 
