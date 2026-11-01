@@ -172,6 +172,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $flash = $err ? 'The test e-mail failed: ' . $err : 'Test e-mail sent to ' . implode(', ', $to) . '. Check the inbox (and the spam folder).';
         $flashBad = (bool)$err;
     }
+    if ($a === 'import_agents' && $isAdmin) {
+        [$flash, $flashBad] = import_agents($_FILES['csv'] ?? null, $me['username']);
+    }
     if ($a === 'import_vol' && $isAdmin) {
         [$flash, $flashBad] = import_volunteers($_FILES['csv'] ?? null, $me['username']);
     }
@@ -276,6 +279,44 @@ function read_sheet(string $path, string $name): array {
     while (($r = fgetcsv($fh, 0, $delim, '"', '\\')) !== false) $rows[] = $r;
     fclose($fh);
     return $rows;
+}
+
+/* Import polling station agents from an uploaded Excel or CSV file: needs name, phone, ward and polling station. */
+function import_agents($f, string $by): array {
+    if (!$f || ($f['error'] ?? 1) !== UPLOAD_ERR_OK || !is_uploaded_file($f['tmp_name'])) return ['Choose a CSV or Excel file to upload.', true];
+    if ($f['size'] > 10 * 1024 * 1024) return ['That file is larger than 10 MB.', true];
+    try { $rows = read_sheet($f['tmp_name'], (string)($f['name'] ?? '')); } catch (Throwable $e) { return [$e->getMessage(), true]; }
+    while ($rows && count(array_filter($rows[0], fn($x) => trim((string)$x) !== '')) === 0) array_shift($rows);
+    if (!$rows) return ['The file is empty.', true];
+    $head = array_map(fn($x) => strtolower(trim(preg_replace('/^\xEF\xBB\xBF/', '', (string)$x))), array_shift($rows));
+    $find = function (string $re) use ($head) { foreach ($head as $i => $h) if (preg_match($re, $h)) return $i; return null; };
+    $ni = $find('/name/'); $pi = $find('/phone|tel|mobile/'); $wi = $find('/^ward/'); $si = $find('/station|centre|center/');
+    $ri = $find('/stream/'); $oi = $find('/notes?/');
+    if ($ni === null || $pi === null || $wi === null || $si === null) return ['The header row must include name, phone, ward and polling station columns.', true];
+    $existing = [];
+    foreach (db()->query('SELECT name, phone FROM agents') as $r) $existing[strtolower(trim($r['name'])) . '|' . $r['phone']] = true;
+    $ins = db()->prepare('INSERT INTO agents (created_at, constituency, ward, station, station_code, stream, registered_here, name, phone, experience, training, notes, updated_by) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)');
+    $added = 0; $bad = 0; $dup = 0; $t = now();
+    db()->beginTransaction();
+    foreach ($rows as $r) {
+        if (count(array_filter($r, fn($x) => trim((string)$x) !== '')) === 0) continue;
+        $name = trim(preg_replace('/\s+/', ' ', (string)($r[$ni] ?? '')));
+        $ward = trim((string)($r[$wi] ?? '')); $const = ward_constituency($ward);
+        $station = trim(preg_replace('/\s+/', ' ', (string)($r[$si] ?? '')));
+        $d = preg_replace('/\D/', '', (string)($r[$pi] ?? ''));
+        if (strlen($d) === 12 && strpos($d, '254') === 0) $d = '0' . substr($d, 3);
+        if (strlen($d) === 9 && ($d[0] === '7' || $d[0] === '1')) $d = '0' . $d;
+        if ($name === '' || $const === '' || $station === '' || !preg_match('/^0[17]\d{8}$/', $d)) { $bad++; continue; }
+        $key = strtolower($name) . '|' . $d;
+        if (isset($existing[$key])) { $dup++; continue; }
+        $existing[$key] = true;
+        $stream = $ri !== null ? trim((string)($r[$ri] ?? '')) : '';
+        if (!preg_match('/^\d{1,2}$/', $stream)) $stream = 'unknown';
+        $ins->execute([$t, $const, $ward, mb_substr($station, 0, 160), '', $stream, '', mb_substr($name, 0, 120), $d, '', '', mb_substr($oi !== null ? trim((string)($r[$oi] ?? '')) : 'Imported agent list', 0, 2000), $by]);
+        $added++;
+    }
+    db()->commit();
+    return ['Imported ' . number_format($added) . ' polling station agents.' . ($dup ? ' Skipped ' . number_format($dup) . ' already in the database.' : '') . ($bad ? ' Skipped ' . number_format($bad) . ' rows without a name, valid phone number, Nyamira ward or polling station.' : ''), $added === 0];
 }
 
 /* Import volunteers from an uploaded CSV or Excel file: needs name, constituency and a valid phone number. */
@@ -529,8 +570,10 @@ if ($p === 'email' && $isAdmin) {
 }
 
 if ($p === 'import' && $isAdmin) {
-    echo '<h1>Import a volunteer list</h1><div class="card help"><p>Upload an <b>Excel (.xlsx)</b> or <b>CSV</b> file with a header row. It must have columns for <b>constituency</b>, <b>name</b> (or "full name") and <b>phone</b> (or "phone number"). Columns for <b>ward</b>, <b>village</b> and <b>notes</b> are used if present; anything else is ignored.</p><ol><li>Every row needs a name, one of the four constituencies and a valid Kenyan mobile number. Rows without them are skipped.</li><li>Phone numbers are tidied to the 07XX XXX XXX form. A name already in the database with the same phone number is skipped, so uploading the same file twice does not create doubles.</li><li>Only the first sheet of an Excel file is read.</li></ol></div>';
+    echo '<h1>Import lists</h1><h2>Import a volunteer list</h2><div class="card help"><p>Upload an <b>Excel (.xlsx)</b> or <b>CSV</b> file with a header row. It must have columns for <b>constituency</b>, <b>name</b> (or "full name") and <b>phone</b> (or "phone number"). Columns for <b>ward</b>, <b>village</b> and <b>notes</b> are used if present; anything else is ignored.</p><ol><li>Every row needs a name, one of the four constituencies and a valid Kenyan mobile number. Rows without them are skipped.</li><li>Phone numbers are tidied to the 07XX XXX XXX form. A name already in the database with the same phone number is skipped, so uploading the same file twice does not create doubles.</li><li>Only the first sheet of an Excel file is read.</li></ol></div>';
     echo '<form method="post" enctype="multipart/form-data" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="import_vol"><label>Excel or CSV file<input type="file" name="csv" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required></label><button class="btn">Import volunteers</button></form>';
+    echo '<h2 style="margin-top:34px">Import polling station agents</h2><div class="card help"><p>Upload an <b>Excel (.xlsx)</b> or <b>CSV</b> file with columns for <b>name</b>, <b>phone</b>, <b>ward</b> and <b>polling station</b>. Columns for <b>stream</b> and <b>notes</b> are used if present. The constituency is worked out from the ward. A name already in the database with the same phone number is skipped.</p></div>';
+    echo '<form method="post" enctype="multipart/form-data" class="stack narrow"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="import_agents"><label>Excel or CSV file<input type="file" name="csv" accept=".xlsx,.csv,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required></label><button class="btn">Import polling station agents</button></form>';
 }
 
 if ($p === 'settings' && $isAdmin) settings_page((string)($_GET['tab'] ?? 'sms'));
