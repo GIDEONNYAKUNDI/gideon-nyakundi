@@ -747,6 +747,14 @@ section.page.pillar.dark.photo.split#p2::before{height:clamp(240px,44vw,680px);b
 @media print{.pv{display:none!important}}
 a[href*="verify.iebc.or.ke"]{color:#ff4b55!important;font-weight:700;text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:3px}
 a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
+#song{background:linear-gradient(90deg,rgba(192,39,45,.22),rgba(212,176,76,.12) 50%,rgba(46,125,79,.22)),#0d1a36;padding-top:64px;padding-bottom:64px}
+.song-card{display:grid;grid-template-columns:220px 1fr;gap:30px;align-items:center;max-width:900px}
+.song-art{width:220px;height:220px;object-fit:cover;border-radius:8px;box-shadow:0 18px 40px rgba(0,0,0,.45)}
+.song-body h2{margin:2px 0 4px;font-size:clamp(2rem,4.6vw,3rem)}
+.song-title{font:600 1rem var(--display);color:var(--banana);margin:0 0 8px}
+.song-lede{color:#e6ebf3;margin:0 0 14px;line-height:1.6}
+#songAudio{width:100%;max-width:520px;display:block;margin-bottom:12px}
+@media (max-width:640px){.song-card{grid-template-columns:1fr;justify-items:start}.song-art{width:180px;height:180px}}
 .totop{position:fixed;right:calc(16px + env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--earth);color:#fff;text-decoration:none;font:700 .8rem var(--body);padding:12px 14px;border-radius:3px;text-transform:uppercase;letter-spacing:.08em;z-index:40}
 </style>
 </head>
@@ -764,6 +772,7 @@ a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
           <button class="drop" aria-expanded="false" aria-controls="manifestoMenu">Manifesto ▾</button>
           <div class="menu" id="manifestoMenu" hidden>
             <a href="#youth"><b>·</b>The Youth Deal</a>
+            <a href="#song"><b>·</b>Hope for Nyamira (song)</a>
             <a href="#why"><b>·</b>Why Gideon</a>
             <a href="#today"><b>·</b>Nyamira Today</a>
             <a href="#challenges"><b>·</b>The Challenges</a>
@@ -1196,6 +1205,24 @@ a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
     </div>
   </div>
 </section>
+
+<!-- HOPE FOR NYAMIRA: reggae song -->
+<section class="page dark" id="song" aria-label="Hope for Nyamira, a reggae song">
+  <div class="wrap">
+    <div class="song-card">
+      <img class="song-art" src="img/hope-for-nyamira.webp" alt="Hope for Nyamira" width="600" height="600" loading="lazy" decoding="async">
+      <div class="song-body">
+        <p class="eyebrow" data-sw="Wimbo wa matumaini">A song of hope</p>
+        <h2 data-sw="Matumaini kwa Nyamira">Hope for Nyamira</h2>
+        <p class="song-title">&ldquo;Good Day Nyamira na Gideon&rdquo; &middot; reggae &middot; 6 min</p>
+        <p class="song-lede" data-sw="Wimbo wa reggae kwa vijana wa Nyamira na kwa siku mpya inayokuja. Usikilize, uucheze kwa sauti, na uushiriki.">A reggae song for Nyamira's youth and for the new day that is coming. Listen, play it loud, and pass it on.</p>
+        <audio id="songAudio" controls preload="none" src="media/good-day-nyamira.mp3">Your browser cannot play this song.</audio>
+        <div class="song-acts"><button type="button" class="btn red sm" id="songShare" data-sw="Shiriki wimbo huu">Share this song</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <!-- 6 PILLARS INDEX -->
 <section class="page dark photo" id="pillars" data-bg="img/pillars.webp">
@@ -2081,7 +2108,7 @@ a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
   document.addEventListener('keydown',e=>{ if(e.key==='Escape'){ closeDrops(); setNav(false); } });
   nav.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ closeDrops(); setNav(false); }));
   const topLinks=[...nav.querySelectorAll(':scope > ul > li > a')];
-  const groupOf=id=>{ if(['start','kenya','youth','why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['diaspora','press','register','change','volunteer','agents','faq','vote','people'].includes(id)) return 'involvedMenu'; return null; };
+  const groupOf=id=>{ if(['start','kenya','youth','song','why','today','challenges','pillars','first100','scorecard','career','hospital','roads-failing','sironga-today','sironga','viwanda','university','stadiums','airport'].includes(id)||/^p\d+$/.test(id)) return 'manifestoMenu'; if(['diaspora','press','register','change','volunteer','agents','faq','vote','people'].includes(id)) return 'involvedMenu'; return null; };
   if('IntersectionObserver' in window){
     const io=new IntersectionObserver(es=>es.forEach(en=>{ if(!en.isIntersecting) return;
       const id=en.target.id; topLinks.forEach(l=>l.classList.remove('active')); drops.forEach(d=>d.querySelector('.drop').classList.remove('active'));
@@ -2455,6 +2482,15 @@ a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
       if(b.dataset.kind==='manifesto'){ const n=+b.dataset.pages; open('The 12 Pillars of Change', Array.from({length:n},(_,i)=>['press/view/manifesto-'+String(i+1).padStart(2,'0')+'.webp','Manifesto page '+(i+1)])); }
       else open(b.textContent, [[b.dataset.src,b.dataset.alt]]);
     }));
+  })();
+
+  /* ---------- Hope for Nyamira: song ---------- */
+  (function(){ const a=$('songAudio'), b=$('songShare'); if(!a) return;
+    a.addEventListener('play',()=>document.querySelectorAll('video').forEach(v=>{ if(!v.muted) v.muted=true; }));
+    document.querySelectorAll('video').forEach(v=>v.addEventListener('volumechange',()=>{ if(!v.muted&&!a.paused) a.pause(); }));
+    if(b) b.addEventListener('click',()=>{ if(!window.__shareSheet) return;
+      window.__shareSheet({heading:'Share this song',label:'Hope for Nyamira: "Good Day Nyamira na Gideon"',url:location.origin+location.pathname+'#song',what:'song',
+        text:'Hope for Nyamira — a reggae song for the new Nyamira. Dr. Gideon Moseti Nyakundi, Governor Nyamira 2027. #Nyakundi2027',src:'media/good-day-nyamira.mp3',file:'Good-Day-Nyamira-na-Gideon.mp3',mime:'audio/mpeg'}); });
   })();
 })();
 </script>
