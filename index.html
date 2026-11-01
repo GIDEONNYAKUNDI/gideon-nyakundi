@@ -491,7 +491,7 @@ section.photo.split.hasvid::before{display:none}
 .bio-creds{font-family:var(--mono);font-size:.9rem;letter-spacing:.18em;color:#fff}
 .bio-tag{font-family:var(--body);font-style:italic;font-weight:300;font-size:clamp(1.25rem,2.4vw,1.7rem);color:#fff}
 .bio-intro{font-size:1.12rem;line-height:1.7;max-width:62ch;color:#e6ebf3}
-.bio-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:2px solid var(--banana);border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:44px}
+.bio-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:0;border-top:2px solid var(--banana);border-bottom:1px solid rgba(255,255,255,.18);margin-bottom:44px}
 .bio-stats>div{padding:20px 16px;display:grid;gap:4px;border-right:1px solid rgba(255,255,255,.12)}
 .bio-stats>div:last-child{border-right:0}
 .bio-stats b{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,4.6vw,3.4rem);line-height:1;color:var(--banana)}
@@ -512,7 +512,7 @@ section.photo.split.hasvid::before{display:none}
 .bio-edu b{font-family:var(--display);font-size:1rem;color:#fff;line-height:1.3}
 .bio-vision{border:1.5px solid var(--banana);padding:28px 30px;display:grid;gap:12px;background:rgba(8,16,34,.66);max-width:900px}
 .bio-vision p:not(.eyebrow):not(.slogan){font-size:1.15rem;line-height:1.7;color:#fff}
-@media (max-width:900px){.bio-head{grid-template-columns:1fr}.bio-head .portrait{justify-self:center;max-width:330px;order:-1}.bio-stats{grid-template-columns:1fr 1fr}.bio-stats>div:nth-child(2){border-right:0}.bio-grid{grid-template-columns:1fr}.bio-systems,.bio-edu{grid-template-columns:1fr 1fr}}
+@media (max-width:900px){.bio-head{grid-template-columns:1fr}.bio-head .portrait{justify-self:center;max-width:330px;order:-1}.bio-stats{grid-template-columns:1fr 1fr}.bio-stats>div:nth-child(2n){border-right:0}.bio-stats>div:last-child{grid-column:1/-1}.bio-grid{grid-template-columns:1fr}.bio-systems,.bio-edu{grid-template-columns:1fr 1fr}}
 @media (max-width:560px){.bio-systems,.bio-edu{grid-template-columns:1fr}}
 
 /* ---------- Page 4: career climb ---------- */
@@ -944,7 +944,8 @@ a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
 
     <div class="bio-stats">
       <div><b>2</b><span>decades of leadership</span></div>
-      <div><b>17</b><span>hospitals led regionally</span></div>
+      <div><b>6</b><span>healthcare systems led across the USA</span></div>
+      <div><b>10+</b><span>countries served as a consultant</span></div>
       <div><b>350+</b><span>community health centers</span></div>
       <div><b>50+</b><span>facilities directed</span></div>
     </div>
