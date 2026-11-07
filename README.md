@@ -55,6 +55,10 @@ Everything is set up by an administrator in the back office under **Settings**; 
 
 Passwords and API keys entered there are stored encrypted with the `secret` from `config.php`; if that secret is ever changed, re-enter them. The `sms` and `smtp` blocks in `config.php` are optional defaults that the Settings page overrides.
 
+**Supporter survey (WhatsApp link)**
+
+`survey.html` is a 2-minute form in English and Kiswahili for sharing in WhatsApp groups. Answers are saved by `api/save.php` (type `survey`, code in `backoffice/_survey.php`) and appear only on the back office **Survey** tab, which also makes a tagged link for each group (`survey.html?g=group-name`) so results can be filtered by group. One answer per phone: only a keyed fingerprint of the number is stored with the answers. Anyone who ticks "volunteer" is added to the Volunteers list without their vote. The results describe the campaign's own network, not Nyamira voters as a whole, so they must not be published as a poll.
+
 To text a group, filter the Agents, Volunteers or Pledges list (for example one ward, or everyone still "New") and press **Text this list**.
 
 **Files**

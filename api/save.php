@@ -32,6 +32,9 @@ function s(array $a, string $k, int $max = 120): string {
 }
 function phone_ok(string $p): bool { $d = preg_replace('/\D/', '', $p); return strlen($d) >= 9 && strlen($d) <= 15; }
 
+/* The supporter survey (survey.html) has its own rules: see backoffice/_survey.php. */
+if (s($in, 'type', 20) === 'survey') { require __DIR__ . '/../backoffice/_survey.php'; survey_save($in); exit; }
+
 try {
     install_schema();
     if (too_many('save', 15, 3600)) out(429, ['ok' => false, 'error' => 'Too many submissions from this connection. Please try again later.']);

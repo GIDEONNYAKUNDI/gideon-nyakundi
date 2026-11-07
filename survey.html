@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nyamira 2027 · Your voice survey</title>
+<meta name="description" content="A 2-minute survey: what should Nyamira's next governor do first? Run by the Nyakundi 2027 campaign.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="https://www.nyamira2027.com/survey.html">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Nyakundi 2027">
+<meta property="og:title" content="Nyamira 2027 · Your voice survey">
+<meta property="og:description" content="2 minutes: what should Nyamira's next governor do first? Utafiti wa dakika 2.">
+<meta property="og:url" content="https://www.nyamira2027.com/survey.html">
+<meta property="og:image" content="https://www.nyamira2027.com/img/share-card.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="img/favicon.png">
+<style>
+:root{--blue:#13264d;--red:#c0272d;--gold:#d4b04c;--green:#2e7d4f;--ink:#1b2333;--muted:#5d6779;--line:#dde2ea}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#f4f6f9}
+header{background:var(--blue);border-bottom:4px solid var(--red);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+header a{color:#fff;text-decoration:none;font-weight:800;font-size:1.15rem}header a span{color:var(--gold)}
+#lang{font:inherit;font-size:.9rem;font-weight:700;background:#fff;color:var(--blue);border:0;border-radius:16px;padding:6px 14px;cursor:pointer}
+main{max-width:640px;margin:0 auto;padding:22px 16px 60px}
+h1{font-size:1.6rem;line-height:1.2;color:var(--blue);margin:4px 0 8px}
+.intro{color:var(--muted);margin:0 0 18px}
+fieldset{border:0;background:#fff;border:1px solid var(--line);border-radius:10px;padding:16px 16px 12px;margin:0 0 14px}
+legend{float:left;width:100%;padding:0;font-weight:700;color:var(--blue);margin-bottom:10px}
+legend+*{clear:left}
+.opts{display:grid;gap:8px}
+.opts label{display:flex;gap:10px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;background:#fff}
+.opts label:has(input:checked){border-color:var(--blue);background:#eef3fc}
+.opts input{width:20px;height:20px;accent-color:var(--blue);flex:none;margin:0}
+.opts.two{grid-template-columns:1fr 1fr}
+select,input[type=tel],input[type=text]{font:inherit;width:100%;padding:11px 12px;border:1px solid #c5ccd8;border-radius:8px;background:#fff}
+.hint{font-size:.88rem;color:var(--muted);margin:8px 0 0}
+.consent{display:flex;gap:10px;align-items:flex-start;font-size:.95rem}.consent input{width:20px;height:20px;margin-top:3px;flex:none}
+button.go{font:inherit;font-weight:800;font-size:1.05rem;width:100%;background:var(--red);color:#fff;border:0;border-radius:8px;padding:14px;cursor:pointer}
+button.go[disabled]{opacity:.6}
+.err{color:var(--red);font-weight:600;min-height:1.4em}
+.done{background:#fff;border:1px solid var(--line);border-top:4px solid var(--green);border-radius:10px;padding:22px 18px;text-align:center}
+.done h2{color:var(--green);margin:0 0 8px}
+.share{display:inline-block;margin-top:14px;background:#1f8f4e;color:#fff;text-decoration:none;font-weight:800;padding:12px 18px;border-radius:8px}
+.hp{position:absolute;left:-5000px}
+footer{text-align:center;color:var(--muted);font-size:.85rem;padding:0 16px 30px}
+@media (max-width:420px){.opts.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><a href="./">Nyakundi <span>2027</span></a><button type="button" id="lang" aria-label="Change language">Kiswahili</button></header>
+<main>
+  <form id="f" novalidate>
+    <h1 data-t="title">Your voice for Nyamira</h1>
+    <p class="intro" data-t="intro">A 2-minute survey from the Nyakundi 2027 campaign on what Nyamira's next governor should do. One answer per person, please.</p>
+
+    <fieldset><legend data-t="q_ward">1. Which ward do you live in?</legend>
+      <select name="ward" required><option value="" data-t="choose">Choose your ward</option></select>
+    </fieldset>
+
+    <fieldset><legend data-t="q_age">2. Your age</legend><div class="opts two" data-opts="age"></div></fieldset>
+    <fieldset><legend data-t="q_gender">3. You are</legend><div class="opts two" data-opts="gender"></div></fieldset>
+    <fieldset><legend data-t="q_reg">4. Are you registered to vote in Nyamira County?</legend><div class="opts" data-opts="registered"></div></fieldset>
+    <fieldset><legend data-t="q_issue">5. What is the most important problem the next governor of Nyamira should solve?</legend><div class="opts two" data-opts="issue"></div></fieldset>
+    <fieldset><legend data-t="q_vote">6. If the election for Governor of Nyamira were held today, whom would you vote for?</legend><div class="opts" data-opts="vote"></div></fieldset>
+    <fieldset><legend data-t="q_heard">7. Where have you heard about Dr. Gideon Nyakundi?</legend><div class="opts" data-opts="heard"></div></fieldset>
+
+    <fieldset><legend data-t="q_phone">8. Your phone number</legend>
+      <input type="tel" name="phone" inputmode="tel" autocomplete="tel" placeholder="07XX XXX XXX" required>
+      <p class="hint" data-t="phone_hint">Used only to make sure each person answers once. Your number is not kept with your answers.</p>
+    </fieldset>
+
+    <fieldset><legend data-t="q_vol">9. Would you like to volunteer or be a polling station agent? (optional)</legend>
+      <div class="opts two" data-opts="volunteer"></div>
+      <div id="namebox" hidden style="margin-top:10px"><input type="text" name="name" autocomplete="name" data-ph="name_ph" placeholder="Your name"><p class="hint" data-t="vol_hint">The team will call you on the number above. Your name is not linked to how you answered.</p></div>
+    </fieldset>
+
+    <label class="hp" aria-hidden="true">Website<input name="website" tabindex="-1" autocomplete="off"></label>
+    <p class="consent"><input type="checkbox" name="consent" id="consent"><label for="consent" data-t="consent_html">I agree that the Nyakundi 2027 campaign may use my answers as described in the <a href="privacy.html" target="_blank">privacy notice</a>.</label></p>
+    <p class="err" id="err" role="alert"></p>
+    <button class="go" type="submit" data-t="send">Send my answers</button>
+  </form>
+
+  <div class="done" id="done" hidden>
+    <h2 data-t="thanks">Thank you!</h2>
+    <p id="donemsg" data-t="thanks_msg">Your answers have been received. Share this survey so more voices from Nyamira are heard.</p>
+    <a class="share" id="share" href="#" target="_blank" rel="noopener" data-t="share">Share on WhatsApp</a>
+    <p style="margin-top:16px"><a href="./" data-t="visit">Visit the campaign website</a></p>
+  </div>
+</main>
+<footer data-t="foot">Run by the campaign of Dr. Gideon Moseti Nyakundi for Governor, Nyamira County.</footer>
+
+<script>
+(function () {
+  var WARDS = {'Kitutu Masaba':['Rigoma','Gachuba','Kemera','Magombo','Manga','Gesima'],'West Mugirango':['Nyamaiya','Bogichora','Bosamaro','Bonyamatuta','Township'],'North Mugirango':['Bomwagamo','Bokeira','Magwagwa','Ekerenyo','Itibo'],'Borabu':['Mekenene','Esise','Nyansiongo','Kiabonyoru']};
+  /* value (stored, English) -> [English label, Kiswahili label] */
+  var OPTS = {
+    age: [['18-24','18–24','18–24'],['25-34','25–34','25–34'],['35-44','35–44','35–44'],['45-54','45–54','45–54'],['55+','55 or older','55 au zaidi']],
+    gender: [['Woman','Woman','Mwanamke'],['Man','Man','Mwanaume'],['Prefer not to say','Prefer not to say','Sipendi kusema']],
+    registered: [['Yes, in Nyamira','Yes, in Nyamira County','Ndiyo, katika Kaunti ya Nyamira'],['Not yet','Not yet','Bado'],['Registered elsewhere','Registered in another county','Nimesajiliwa kaunti nyingine']],
+    issue: [['Health services','Health services','Huduma za afya'],['Roads','Roads','Barabara'],['Water','Water','Maji'],['Jobs for youth','Jobs for youth','Ajira kwa vijana'],['Farming and markets','Farming and markets','Kilimo na masoko'],['Education','Education','Elimu'],['Corruption','Corruption','Ufisadi'],['Cost of living','Cost of living','Gharama ya maisha'],['Other','Other','Mengineyo']],
+    vote: [['Dr. Gideon Moseti Nyakundi','Dr. Gideon Moseti Nyakundi','Dkt. Gideon Moseti Nyakundi'],['Amos Nyaribo','Governor Amos Nyaribo','Gavana Amos Nyaribo'],['Timothy Bosire','Timothy Bosire','Timothy Bosire'],['Jerusha Momanyi','Jerusha Momanyi','Jerusha Momanyi'],['Ben Momanyi','Ben Momanyi','Ben Momanyi'],['Walter Nyambati','Walter Nyambati','Walter Nyambati'],['Swanya Ogeto','Swanya Ogeto','Swanya Ogeto']],
+    vote_end: [['Someone else','Someone else','Mtu mwingine'],['Undecided','Undecided','Bado sijaamua']],
+    heard: [['WhatsApp','WhatsApp','WhatsApp'],['Facebook or other social media','Facebook or other social media','Facebook au mitandao mingine ya kijamii'],['Rally or meeting','A rally or meeting','Mkutano wa hadhara au mkutano'],['Friend or family','A friend or family member','Rafiki au mwanafamilia'],['Radio or TV','Radio or TV','Redio au TV'],['Had not heard of him before','I had not heard of him before','Sijawahi kumsikia kabla'],['Other','Somewhere else','Mahali pengine']],
+    volunteer: [['1','Yes','Ndiyo'],['0','No','Hapana']]
+  };
+  var T = {
+    title:['Your voice for Nyamira','Sauti yako kwa Nyamira'],
+    intro:["A 2-minute survey from the Nyakundi 2027 campaign on what Nyamira's next governor should do. One answer per person, please.",'Utafiti wa dakika 2 kutoka kampeni ya Nyakundi 2027 kuhusu kile gavana ajaye wa Nyamira anapaswa kufanya. Jibu mara moja tu kwa kila mtu.'],
+    q_ward:['1. Which ward do you live in?','1. Unaishi wadi gani?'], choose:['Choose your ward','Chagua wadi yako'],
+    q_age:['2. Your age','2. Umri wako'], q_gender:['3. You are','3. Wewe ni'],
+    q_reg:['4. Are you registered to vote in Nyamira County?','4. Je, umesajiliwa kama mpiga kura katika Kaunti ya Nyamira?'],
+    q_issue:['5. What is the most important problem the next governor of Nyamira should solve?','5. Ni tatizo gani kubwa zaidi ambalo gavana ajaye wa Nyamira anapaswa kutatua?'],
+    q_vote:['6. If the election for Governor of Nyamira were held today, whom would you vote for?','6. Kama uchaguzi wa Gavana wa Nyamira ungefanyika leo, ungempigia nani kura?'],
+    q_heard:['7. Where have you heard about Dr. Gideon Nyakundi?','7. Umesikia kuhusu Dkt. Gideon Nyakundi kupitia wapi?'],
+    q_phone:['8. Your phone number','8. Nambari yako ya simu'],
+    phone_hint:['Used only to make sure each person answers once. Your number is not kept with your answers.','Inatumika tu kuhakikisha kila mtu anajibu mara moja. Nambari yako haihifadhiwi pamoja na majibu yako.'],
+    q_vol:['9. Would you like to volunteer or be a polling station agent? (optional)','9. Ungependa kujitolea au kuwa wakala wa kituo cha kupigia kura? (si lazima)'],
+    name_ph:['Your name','Jina lako'],
+    vol_hint:['The team will call you on the number above. Your name is not linked to how you answered.','Timu itakupigia kupitia nambari iliyo hapo juu. Jina lako halihusishwi na majibu yako.'],
+    consent_html:['I agree that the Nyakundi 2027 campaign may use my answers as described in the <a href="privacy.html" target="_blank">privacy notice</a>.','Nakubali kampeni ya Nyakundi 2027 itumie majibu yangu kama ilivyoelezwa katika <a href="privacy.html" target="_blank">ilani ya faragha</a>.'],
+    send:['Send my answers','Tuma majibu yangu'],
+    thanks:['Thank you!','Asante!'],
+    thanks_msg:['Your answers have been received. Share this survey so more voices from Nyamira are heard.','Majibu yako yamepokelewa. Shiriki utafiti huu ili sauti zaidi za Nyamira zisikike.'],
+    already:['This phone number has already answered. Thank you! Share the survey with others.','Nambari hii tayari imejibu. Asante! Shiriki utafiti huu na wengine.'],
+    share:['Share on WhatsApp','Shiriki kwenye WhatsApp'], visit:['Visit the campaign website','Tembelea tovuti ya kampeni'],
+    foot:['Run by the campaign of Dr. Gideon Moseti Nyakundi for Governor, Nyamira County.','Inaendeshwa na kampeni ya Dkt. Gideon Moseti Nyakundi kwa Ugavana, Kaunti ya Nyamira.'],
+    e_all:['Please answer every question.','Tafadhali jibu kila swali.'], e_phone:['Please enter a valid phone number.','Tafadhali weka nambari sahihi ya simu.'],
+    e_consent:['Please tick the consent box.','Tafadhali weka alama kwenye kisanduku cha idhini.'], e_name:['Please enter your name so the team can call you.','Tafadhali weka jina lako ili timu ikupigie.'],
+    e_net:['Could not send. Check your internet connection and try again.','Imeshindikana kutuma. Angalia mtandao wako kisha ujaribu tena.'],
+    share_text:["Help shape Nyamira's future: a 2-minute survey on what the next governor should do. ",'Saidia kuunda mustakabali wa Nyamira: utafiti wa dakika 2 kuhusu kile gavana ajaye anapaswa kufanya. ']
+  };
+  var L = 0;
+  try { if (localStorage.getItem('nyk_lang') === 'sw' || /^sw\b/.test(navigator.language || '')) L = 1; } catch (e) {}
+  var src = (new URLSearchParams(location.search).get('g') || '').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 40);
+  var form = document.getElementById('f'), err = document.getElementById('err');
+
+  // Wards grouped by constituency.
+  var sel = form.ward;
+  Object.keys(WARDS).forEach(function (c) { var g = document.createElement('optgroup'); g.label = c; WARDS[c].forEach(function (w) { var o = document.createElement('option'); o.value = o.textContent = w; g.appendChild(o); }); sel.appendChild(g); });
+
+  // Candidates in a random order for each visitor (fair to every candidate); "Someone else" and "Undecided" stay last.
+  var cands = OPTS.vote.slice();
+  for (var i = cands.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = cands[i]; cands[i] = cands[j]; cands[j] = t; }
+  OPTS.vote = cands.concat(OPTS.vote_end);
+
+  function build() {
+    document.querySelectorAll('[data-opts]').forEach(function (box) {
+      var name = box.getAttribute('data-opts'), checked = (form.querySelector('input[name="' + name + '"]:checked') || {}).value;
+      box.innerHTML = '';
+      OPTS[name].forEach(function (o) {
+        var l = document.createElement('label'), r = document.createElement('input');
+        r.type = 'radio'; r.name = name; r.value = o[0]; if (o[0] === checked) r.checked = true;
+        l.appendChild(r); l.appendChild(document.createTextNode(o[1 + L])); box.appendChild(l);
+      });
+    });
+    document.querySelectorAll('[data-t]').forEach(function (el) { var k = el.getAttribute('data-t'), v = T[k]; if (!v) return; if (k.slice(-5) === '_html') el.innerHTML = v[L]; else el.textContent = v[L]; });
+    document.querySelectorAll('[data-ph]').forEach(function (el) { el.placeholder = T[el.getAttribute('data-ph')][L]; });
+    document.documentElement.lang = L ? 'sw' : 'en';
+    document.getElementById('lang').textContent = L ? 'English' : 'Kiswahili';
+  }
+  function volBox() { var v = form.querySelector('input[name="volunteer"]:checked'); document.getElementById('namebox').hidden = !(v && v.value === '1'); }
+  document.getElementById('lang').onclick = function () { L = 1 - L; try { localStorage.setItem('nyk_lang', L ? 'sw' : 'en'); } catch (e) {} build(); volBox(); };
+  form.addEventListener('change', volBox);
+  build();
+
+  var link = location.origin + location.pathname + (src ? '?g=' + src : '');
+  function showDone(already) {
+    form.hidden = true; document.getElementById('done').hidden = false;
+    if (already) document.getElementById('donemsg').textContent = T.already[L];
+    document.getElementById('share').href = 'https://wa.me/?text=' + encodeURIComponent(T.share_text[L] + link);
+    window.scrollTo(0, 0);
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault(); err.textContent = '';
+    var val = function (n) { var r = form.querySelector('input[name="' + n + '"]:checked'); return r ? r.value : ''; };
+    var d = { type: 'survey', src: src, ward: form.ward.value, age: val('age'), gender: val('gender'), registered: val('registered'), issue: val('issue'), vote: val('vote'), heard: val('heard'),
+              phone: form.phone.value.trim(), volunteer: val('volunteer') === '1', name: form.name.value.trim(), consent: form.consent.checked, website: form.website.value };
+    if (!d.ward || !d.age || !d.gender || !d.registered || !d.issue || !d.vote || !d.heard) { err.textContent = T.e_all[L]; return; }
+    var digits = d.phone.replace(/\D/g, '');
+    if (digits.length < 9 || digits.length > 15) { err.textContent = T.e_phone[L]; return; }
+    if (d.volunteer && !d.name) { err.textContent = T.e_name[L]; return; }
+    if (!d.consent) { err.textContent = T.e_consent[L]; return; }
+    var b = form.querySelector('button.go'); b.disabled = true;
+    try {
+      var r = await fetch('api/save.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) });
+      var j = await r.json().catch(function () { return {}; });
+      if (r.ok && j.ok) { showDone(!!j.already); return; }
+      err.textContent = (j.error && j.error !== 'server') ? j.error : T.e_net[L];
+    } catch (x) { err.textContent = T.e_net[L]; }
+    b.disabled = false;
+  });
+})();
+</script>
+</body>
+</html>

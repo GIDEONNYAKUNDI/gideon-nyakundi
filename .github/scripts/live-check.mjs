@@ -48,7 +48,7 @@ async function main() {
   check('no third-party scripts (no trackers or marketers)', scripts.length === 0, scripts.join(', '));
   await browser.close();
   // 1. Private files can never be downloaded
-  for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/_tally.php', '/backoffice/_tally_page.php', '/backoffice/_layout.php', '/backoffice/config.sample.php',
+  for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/_tally.php', '/backoffice/_tally_page.php', '/backoffice/_survey.php', '/backoffice/_layout.php', '/backoffice/config.sample.php',
                    '/.git/config', '/.cpanel.yml', '/README.md', '/ops/install-htaccess.sh', '/.env', '/backoffice/.htaccess',
                    '/press/Nyakundi2027-Manifesto.pdf', '/press/Dr-Gideon-Nyakundi-portrait.jpg', '/press/Dr-Gideon-Nyakundi-office.jpg']) {
     const r = await get(p);
@@ -92,7 +92,7 @@ async function main() {
   r = await get('/api/save.php', { method: 'POST', headers: { Origin: SITE, 'Content-Type': 'application/json' }, data: { type: 'voter', name: 'Check', phone: '0700000000', ward: 'Esise' } });
   if (r) check('API refuses sign-ups without consent', r.status === 400, String(r.status));
 
-  for (const [p, name] of [['/press/view/manifesto-01.webp', 'manifesto viewable in the press room'], ['/privacy.html', 'privacy notice page loads'], ['/img/share-card.jpg', 'link preview image'], ['/sitemap.xml', 'sitemap for search engines']]) {
+  for (const [p, name] of [['/press/view/manifesto-01.webp', 'manifesto viewable in the press room'], ['/privacy.html', 'privacy notice page loads'], ['/img/share-card.jpg', 'link preview image'], ['/sitemap.xml', 'sitemap for search engines'], ['/survey.html', 'supporter survey page loads']]) {
     const x = await get(p); if (x) check(name, x.status === 200, String(x.status));
   }
 }

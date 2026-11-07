@@ -5,6 +5,7 @@ require __DIR__ . '/_lib.php';
 require __DIR__ . '/_messaging.php';
 require __DIR__ . '/_settings.php';
 require __DIR__ . '/_layout.php';
+require __DIR__ . '/_survey.php';
 
 security_headers();
 
@@ -396,6 +397,7 @@ if (!empty($_GET['export'])) {
     if ($p === 'agents') { [$w, $a] = filters('agents', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, station_code, stream, name, phone, email, registered_here, experience, training, status, notes, updated_by FROM agents$w ORDER BY constituency, ward, station, stream"); $s->execute($a); export_csv('agents', $s->fetchAll()); }
     if ($p === 'voters') { [$w, $a] = filters('voters', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, name, phone, email, reg_status, status, notes FROM voters$w ORDER BY constituency, ward"); $s->execute($a); export_csv('voters', $s->fetchAll()); }
     if ($p === 'volunteers') { [$w, $a] = filters('volunteers', $scope); $s = db()->prepare("SELECT id, created_at, constituency, ward, station, stream, village, age, roles, message, name, phone, email, status, notes FROM volunteers$w ORDER BY constituency, ward"); $s->execute($a); export_csv('volunteers', $s->fetchAll()); }
+    if ($p === 'survey' && $isAdmin) survey_export();
     if ($p === 'pledges' && $isAdmin) { [$w, $a] = filters('pledges', ''); $s = db()->prepare("SELECT id, created_at, name, phone, email, amount_ksh, method, status, notes FROM pledges$w ORDER BY created_at DESC"); $s->execute($a); export_csv('pledges', $s->fetchAll()); }
     if ($p === 'gaps') {
         $rows = [];
@@ -513,6 +515,8 @@ if ($p === 'pledges' && $isAdmin) {
     foreach ($s->fetchAll() as $r) echo '<tr><td>' . h(substr($r['created_at'], 0, 10)) . '</td><td><b>' . h($r['name']) . '</b><br>' . h($r['phone']) . sms_link($r['phone']) . mail_link($r['email'] ?? '') . '</td><td>' . number_format((int)$r['amount_ksh']) . '</td><td>' . h($r['method']) . '</td><td>' . status_form('pledges', $r, PLEDGE_STATUSES) . '</td><td>' . delete_btn('pledges', (int)$r['id']) . '</td></tr>';
     echo '</tbody></table>';
 }
+
+if ($p === 'survey' && $isAdmin) survey_page();
 
 if ($p === 'sms' && $isAdmin) {
     $c = sms_cfg();

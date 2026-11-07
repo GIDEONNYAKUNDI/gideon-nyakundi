@@ -51,7 +51,7 @@ details summary{cursor:pointer}
         echo '<nav><a href="?p=tally" class="on">Tallying center</a></nav><span class="who">' . h($me['full_name'] ?: $me['username']) . ' · ' . h(TALLY_ROLES[$me['tally_role']] ?? '') . ' · <a href="?p=logout">Sign out</a></span>';
     } elseif ($me) {
         $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers', 'voters' => 'Voters'];
-        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['import'] = 'Import'; $tabs['settings'] = 'Settings'; $tabs['tally'] = 'Tallying'; }
+        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['survey'] = 'Survey'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['import'] = 'Import'; $tabs['settings'] = 'Settings'; $tabs['tally'] = 'Tallying'; }
         $tabs['account'] = 'Security';
         echo '<nav>'; foreach ($tabs as $k => $v) echo '<a href="?p=' . $k . '"' . ($p === $k ? ' class="on"' : '') . '>' . $v . '</a>'; echo '</nav>';
         echo '<span class="who">' . h($me['username']) . ' · <a href="?p=logout">Sign out</a></span>';
