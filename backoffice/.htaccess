@@ -3,7 +3,7 @@ DirectoryIndex index.php
 Options -Indexes
 
 # Only index.php is a page. config.php (the database password), the code libraries
-# (_lib.php, _messaging.php, _settings.php) and config.sample.php can never be opened from a browser.
+# (_lib.php, _messaging.php, _settings.php, _tally.php, _tally_page.php) and config.sample.php can never be opened from a browser.
 <FilesMatch "\.php$">
     Require all denied
 </FilesMatch>

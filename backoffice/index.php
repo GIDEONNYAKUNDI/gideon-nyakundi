@@ -103,6 +103,13 @@ $isAdmin = $me['role'] === 'admin';
 $scope = $isAdmin ? '' : (string)$me['constituency'];   // coordinators see only their constituency
 $flash = ''; $flashBad = false;
 
+/* ---------- tallying center (its own pages and actions) ---------- */
+if ($p === 'tally' && $isAdmin) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && !csrf_ok()) { http_response_code(400); exit('Session expired. Go back and reload the page.'); }
+    require __DIR__ . '/_tally_page.php';
+    tally_page($me);
+}
+
 /* ---------- actions ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!csrf_ok()) { http_response_code(400); exit('Session expired. Go back and reload the page.'); }
@@ -655,7 +662,7 @@ details summary{cursor:pointer}
 </style></head><body><header><a class="brand" href="./">Nyakundi <span>2027</span> · Back office</a>';
     if ($me) {
         $tabs = ['home' => 'Overview', 'gaps' => 'Streams', 'agents' => 'Agents', 'volunteers' => 'Volunteers', 'voters' => 'Voters'];
-        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['import'] = 'Import'; $tabs['settings'] = 'Settings'; }
+        if ($me['role'] === 'admin') { $tabs['pledges'] = 'Pledges'; $tabs['sms'] = 'SMS'; $tabs['email'] = 'E-mail'; $tabs['import'] = 'Import'; $tabs['settings'] = 'Settings'; $tabs['tally'] = 'Tallying'; }
         $tabs['account'] = 'Security';
         echo '<nav>'; foreach ($tabs as $k => $v) echo '<a href="?p=' . $k . '"' . ($p === $k ? ' class="on"' : '') . '>' . $v . '</a>'; echo '</nav>';
         echo '<span class="who">' . h($me['username']) . ' · <a href="?p=logout">Sign out</a></span>';

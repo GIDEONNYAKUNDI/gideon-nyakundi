@@ -48,7 +48,7 @@ async function main() {
   check('no third-party scripts (no trackers or marketers)', scripts.length === 0, scripts.join(', '));
   await browser.close();
   // 1. Private files can never be downloaded
-  for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/config.sample.php',
+  for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/_tally.php', '/backoffice/_tally_page.php', '/backoffice/config.sample.php',
                    '/.git/config', '/.cpanel.yml', '/README.md', '/ops/install-htaccess.sh', '/.env', '/backoffice/.htaccess',
                    '/press/Nyakundi2027-Manifesto.pdf', '/press/Dr-Gideon-Nyakundi-portrait.jpg', '/press/Dr-Gideon-Nyakundi-office.jpg']) {
     const r = await get(p);
@@ -75,7 +75,7 @@ async function main() {
     check('back office not indexed by search engines', /noindex/i.test(bo.headers['x-robots-tag'] || ''));
     check('back office sends no-store (no caching of private data)', /no-store/i.test(bo.headers['cache-control'] || ''));
   }
-  for (const p of ['?p=voters', '?p=volunteers&export=1', '?p=agents&export=1', '?p=pledges', '?p=settings']) {
+  for (const p of ['?p=voters', '?p=volunteers&export=1', '?p=agents&export=1', '?p=pledges', '?p=settings', '?p=tally', '?p=tally&v=export', '?p=tally&photo=1']) {
     const r = await get('/backoffice/' + p);
     if (r) check(`back office ${p} needs sign-in`, !/text\/csv/.test(r.headers['content-type'] || '') && /sign in/i.test(r.text) && !/07\d{8}/.test(r.text));
   }
