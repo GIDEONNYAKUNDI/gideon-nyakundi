@@ -42,12 +42,12 @@ return [
     // E-mail through SMTP. From cPanel > Email Accounts > Connect Devices.
     'smtp' => [
         'enabled'    => false,      // true once the details below are filled in
-        'host'       => 'mail.kucaparty.com',
+        'host'       => 'mail.nyamira2027.com',
         'port'       => 465,
         'secure'     => 'ssl',      // 'ssl' for port 465, 'tls' for port 587
-        'user'       => 'noreply@kucaparty.com',
+        'user'       => 'noreply@nyamira2027.com',
         'pass'       => 'PUT-THE-EMAIL-PASSWORD-HERE',
-        'from_email' => 'noreply@kucaparty.com',
+        'from_email' => 'noreply@nyamira2027.com',
         'from_name'  => 'Nyakundi 2027 Website',
         // Who gets an e-mail for every new sign-up.
         'notify'     => ['PUT-YOUR-EMAIL-HERE'],

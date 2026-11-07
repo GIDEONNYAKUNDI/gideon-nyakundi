@@ -2,7 +2,7 @@
 // Every check prints PASS or FAIL; the run fails if any check fails.
 // Requests are spaced out so the host's own firewall does not mistake the checker for an attack.
 import { chromium, request } from 'playwright';
-const SITE = process.env.SITE || 'https://kucaparty.com';
+const SITE = process.env.SITE || 'https://www.nyamira2027.com';
 const results = [];
 let unreachable = 0;
 const check = (name, ok, info = '') => {

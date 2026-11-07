@@ -18,7 +18,7 @@ const TEMPLATE_DEFAULTS = [
     'pledge'    => 'Thank you {name} for your pledge of Ksh {amount}. The finance team will call you with the official payment details. Do not send money to individuals.',
 ];
 
-const SIGNATURE = "Dr. Gideon Moseti Nyakundi\nCandidate for Governor, Nyamira County\nkucaparty.com";
+const SIGNATURE = "Dr. Gideon Moseti Nyakundi\nCandidate for Governor, Nyamira County\nnyamira2027.com";
 const MAIL_DEFAULTS = [
     'volunteer' => ['subject' => 'Welcome to Team Nyakundi 2027, {name}',
         'body' => "Dear {name},\n\nThank you for volunteering with Team Nyakundi 2027 in {ward} Ward. Your ward coordinator will call you soon to agree how you can help.\n\nOmonto, Nabanto. Together we will build the new Nyamira.\n\n" . SIGNATURE],
@@ -250,9 +250,9 @@ function smtp_cmd($fp, ?string $cmd, array $expect): void {
 function mime_header(string $s): string { return preg_match('/[^\x20-\x7E]/', $s) ? '=?UTF-8?B?' . base64_encode($s) . '?=' : $s; }
 
 const MAIL_FOOTERS = [
-    'alert'        => 'Automatic message from the Nyakundi 2027 back office at kucaparty.com. You get it because you are on the sign-up alert list.',
-    'confirmation' => 'You received this because this address was entered when signing up at kucaparty.com. If that was not you, please ignore this e-mail.',
-    'test'         => 'Test message from the Nyakundi 2027 back office at kucaparty.com.',
+    'alert'        => 'Automatic message from the Nyakundi 2027 back office at nyamira2027.com. You get it because you are on the sign-up alert list.',
+    'confirmation' => 'You received this because this address was entered when signing up at nyamira2027.com. If that was not you, please ignore this e-mail.',
+    'test'         => 'Test message from the Nyakundi 2027 back office at nyamira2027.com.',
 ];
 
 /* HTML version of a plain-text e-mail, in the campaign colours. Inline styles only, as mail clients require. */
@@ -356,7 +356,7 @@ function notify_signup(string $type, int $id, array $r): void {
         foreach ($r as $k => $v) if ($v !== '' && $v !== null) $lines[] = str_pad(ucfirst(str_replace('_', ' ', $k)) . ':', 18) . ($k === 'amount_ksh' ? number_format((int)$v) : $v);
         $lines[] = str_pad('Received:', 18) . gmdate('j M Y, H:i', time() + 3 * 3600) . ' (Kenya time)';
         $lines[] = '';
-        $lines[] = 'Follow up in the back office: https://' . ($_SERVER['HTTP_HOST'] ?? 'kucaparty.com') . '/backoffice/?p=' . $ref[0] . '&q=' . rawurlencode((string)$r['phone']);
+        $lines[] = 'Follow up in the back office: https://' . ($_SERVER['HTTP_HOST'] ?? 'www.nyamira2027.com') . '/backoffice/?p=' . $ref[0] . '&q=' . rawurlencode((string)$r['phone']);
         send_mail($notify, fill($alert['subject'], $team), implode("\n", $lines), $ref, 'alert');
     }
 }

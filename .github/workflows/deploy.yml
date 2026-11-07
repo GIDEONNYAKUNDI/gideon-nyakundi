@@ -1,8 +1,8 @@
-# Every push to main goes live on kucaparty.com.
+# Every push to main goes live on www.nyamira2027.com.
 # GitHub asks cPanel (Git Version Control) to pull the new commit, then to deploy it,
 # which runs .cpanel.yml and copies the files into public_html.
 # Needs the repository secret CPANEL_TOKEN (cPanel > Security > Manage API Tokens).
-name: Deploy to kucaparty.com
+name: Deploy to nyamira2027.com
 
 on:
   push:
@@ -22,7 +22,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     env:
-      CPANEL_HOST: kucaparty.com
+      CPANEL_HOST: kucaparty.com      # cPanel server address (API only; visitors never see it)
+      SITE_HOST: www.nyamira2027.com  # the public address of the site
       CPANEL_USER: kucapart
       REPO_ROOT: /home/kucapart/repositories/gideon-nyakundi
       CPANEL_TOKEN: ${{ secrets.CPANEL_TOKEN }}
@@ -72,10 +73,16 @@ jobs:
       - name: Check the site responds
         run: |
           set -euo pipefail
-          for url in "https://$CPANEL_HOST/" "https://$CPANEL_HOST/backoffice/"; do
+          for url in "https://$SITE_HOST/" "https://$SITE_HOST/backoffice/"; do
             code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "$url")
             echo "$url -> $code"
             [ "$code" = "200" ] || { echo "::error::$url returned $code after deploying."; exit 1; }
+          done
+          # The old and bare addresses must send visitors to the public address.
+          for url in "https://kucaparty.com/" "https://www.kucaparty.com/" "https://nyamira2027.com/"; do
+            to=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' --max-time 30 "$url" || true)
+            echo "$url -> $to"
+            [ "$to" = "301 https://$SITE_HOST/" ] || echo "::warning::$url should redirect (301) to https://$SITE_HOST/ but gave: $to"
           done
 
       # IndexNow tells Bing, Yandex, Seznam, Naver and Yep that the pages changed, so they recrawl soon.
@@ -85,7 +92,7 @@ jobs:
         env:
           INDEXNOW_KEY: c1f3ee75cf40dcdb3080ba62e7fc5111
         run: |
-          body=$(jq -nc --arg host "$CPANEL_HOST" --arg key "$INDEXNOW_KEY" '{host:$host,key:$key,
+          body=$(jq -nc --arg host "$SITE_HOST" --arg key "$INDEXNOW_KEY" '{host:$host,key:$key,
             keyLocation:"https://\($host)/\($key).txt",
             urlList:["https://\($host)/","https://\($host)/privacy.html","https://\($host)/sitemap.xml"]}')
           code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 -H 'Content-Type: application/json; charset=utf-8' \

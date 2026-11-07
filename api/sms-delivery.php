@@ -1,7 +1,7 @@
 <?php
 /*
  * HostPinnacle delivery reports. Registered from the back office (SMS > Register delivery webhook) as
- *   https://kucaparty.com/api/sms-delivery.php?token=<callback_token from backoffice/config.php>
+ *   https://www.nyamira2027.com/api/sms-delivery.php?token=<callback_token from backoffice/config.php>
  * Every call is kept in webhook_log so the team can see exactly what HostPinnacle sent,
  * then the matching SMS is marked delivered, failed, etc.
  */

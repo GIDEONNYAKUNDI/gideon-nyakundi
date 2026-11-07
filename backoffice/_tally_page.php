@@ -427,7 +427,7 @@ function tally_staff_action(string $user, string $a): void {
 
 function tally_staff_card(): void {
     $c = fn($a, $id, $inner, $btn) => '<form method="post" class="inline"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="' . $a . '"><input type="hidden" name="sid" value="' . $id . '">' . $inner . '<button class="btn sm ghost">' . $btn . '</button></form>';
-    echo '<div class="card"><h2>Center staff accounts</h2><p class="small muted">Clerks, verifiers and the legal desk sign in at <b>kucaparty.com/backoffice/tally.php</b>. They only ever see the tallying center: never volunteers, agents, voters, pledges, SMS or settings. Two-step sign-in is required for every one of them.</p>';
+    echo '<div class="card"><h2>Center staff accounts</h2><p class="small muted">Clerks, verifiers and the legal desk sign in at <b>www.nyamira2027.com/backoffice/tally.php</b>. They only ever see the tallying center: never volunteers, agents, voters, pledges, SMS or settings. Two-step sign-in is required for every one of them.</p>';
     echo '<ul class="small"><li><b>Data clerk:</b> types in forms and attaches photos.</li><li><b>Verifier:</b> re-types forms from the photo without seeing the first entry; can mark a form as disputed.</li><li><b>Legal desk:</b> sees results, every form, photo and the audit log; can mark a form as disputed and download results.</li><li>Only Dr. Gideon or David can accept a disputed form, change setup or manage these accounts.</li></ul>';
     $rows = db()->query('SELECT * FROM tally_staff ORDER BY active DESC, tally_role, full_name')->fetchAll();
     if ($rows) {

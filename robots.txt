@@ -3,4 +3,4 @@ Disallow: /backoffice/
 Disallow: /api/
 Disallow: /ops/
 
-Sitemap: https://kucaparty.com/sitemap.xml
+Sitemap: https://www.nyamira2027.com/sitemap.xml

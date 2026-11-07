@@ -232,7 +232,7 @@ function settings_page(string $tab): void {
                 . '<label>Subject<input name="mail_subject_' . $t . '" maxlength="150" value="' . h($m['subject']) . '" data-key="subject" data-default="' . h(MAIL_DEFAULTS[$t]['subject']) . '"></label>'
                 . '<label>Message<textarea name="mail_body_' . $t . '" rows="8" maxlength="4000" data-key="body" data-default="' . h(MAIL_DEFAULTS[$t]['body']) . '">' . h($m['body']) . '</textarea></label>'
                 . chips(TEMPLATE_TAGS[$t])
-                . '<div class="mail"><div class="mail-top"><small>From</small> ' . h(smtp_cfg()['from_name']) . ' <small>&lt;' . h(smtp_cfg()['from_email'] ?: 'noreply@kucaparty.com') . '&gt;</small><br><small>Subject</small> <b data-show="subject">' . h(fill($m['subject'], sample_for($t))) . '</b></div>'
+                . '<div class="mail"><div class="mail-top"><small>From</small> ' . h(smtp_cfg()['from_name']) . ' <small>&lt;' . h(smtp_cfg()['from_email'] ?: 'noreply@nyamira2027.com') . '&gt;</small><br><small>Subject</small> <b data-show="subject">' . h(fill($m['subject'], sample_for($t))) . '</b></div>'
                 . '<div class="mail-brand">Nyakundi <span>2027</span></div><div class="mail-body" data-show="body">' . h(fill($m['body'], sample_for($t))) . '</div>'
                 . '<div class="mail-foot">' . h(MAIL_FOOTERS['confirmation']) . '</div></div></div>';
             echo '</div></section>';
@@ -298,13 +298,13 @@ JS;
         echo '<div class="cols"><div>';
         echo '<form method="post" class="card stack">' . $csrf . '<input type="hidden" name="action" value="save_email"><h2>Mail server</h2>'
             . '<label class="switch"><input type="checkbox" name="enabled" value="1"' . ($c['enabled'] ? ' checked' : '') . '><span>Send e-mail from the website <small>(team alerts and confirmations to people who sign up)</small></span></label>'
-            . '<div class="two"><label>SMTP server<input name="host" value="' . h($c['host']) . '" placeholder="mail.kucaparty.com" spellcheck="false"></label>'
+            . '<div class="two"><label>SMTP server<input name="host" value="' . h($c['host']) . '" placeholder="mail.nyamira2027.com" spellcheck="false"></label>'
             . '<div class="two"><label>Port<input name="port" value="' . (int)$c['port'] . '" inputmode="numeric"></label><label>Security<select name="secure">';
         foreach (['ssl' => 'SSL (port 465)', 'tls' => 'STARTTLS (port 587)', 'none' => 'None'] as $k => $l) echo '<option value="' . $k . '"' . ($c['secure'] === $k ? ' selected' : '') . '>' . $l . '</option>';
         echo '</select></label></div></div>'
-            . '<div class="two"><label>Username<input name="user" value="' . h($c['user']) . '" placeholder="noreply@kucaparty.com" autocomplete="off" spellcheck="false"></label>'
+            . '<div class="two"><label>Username<input name="user" value="' . h($c['user']) . '" placeholder="noreply@nyamira2027.com" autocomplete="off" spellcheck="false"></label>'
             . '<label>Password<input type="password" name="pass" autocomplete="new-password" placeholder="' . ($c['pass'] !== '' ? 'Saved. Leave blank to keep it' : 'The mailbox password') . '"></label></div>'
-            . '<div class="two"><label>From address<input name="from_email" value="' . h($c['from_email']) . '" placeholder="noreply@kucaparty.com"></label>'
+            . '<div class="two"><label>From address<input name="from_email" value="' . h($c['from_email']) . '" placeholder="noreply@nyamira2027.com"></label>'
             . '<label>From name<input name="from_name" value="' . h($c['from_name']) . '"></label></div>'
             . '<label>Reply-to address <small>(optional)</small><input name="reply_to" value="' . h($c['reply_to']) . '" placeholder="info@nyamira2027.com"><small>Where replies go when someone answers a confirmation e-mail. Leave empty to use the from address.</small></label>'
             . '<label>Send sign-up alerts to<textarea name="notify" rows="2" placeholder="you@example.com, team@example.com">' . h(implode(', ', $c['notify'])) . '</textarea><small>One or more addresses, separated by commas. Their wording is under <a href="?p=settings&amp;tab=messages#alerts">Messages &gt; Team alerts</a>.</small></label>'
@@ -312,7 +312,7 @@ JS;
             . '<div><button class="btn">Save e-mail settings</button></div>' . changed_line('smtp.') . '</form>';
         echo '</div><div>';
         echo '<form method="post" class="card stack">' . $csrf . '<input type="hidden" name="action" value="test_email"><h2>Send a test</h2><input name="email" value="' . h(implode(', ', $c['notify'])) . '" placeholder="you@example.com" required><div><button class="btn ghost">Send test e-mail</button></div><p class="muted small">Every e-mail and its result is listed on the <a href="?p=email">E-mail</a> page.</p></form>';
-        echo '<div class="card help"><h2>Where to find these</h2><ol class="small"><li>cPanel &gt; <b>Email Accounts</b>: create a mailbox such as <b>noreply@kucaparty.com</b>.</li><li>Next to it, <b>Connect Devices</b> shows the <b>outgoing server</b> and <b>SMTP port</b> (usually mail.kucaparty.com, 465, SSL).</li><li>The username is the full address; the password is the mailbox password.</li></ol></div>';
+        echo '<div class="card help"><h2>Where to find these</h2><ol class="small"><li>cPanel &gt; <b>Email Accounts</b>: create a mailbox such as <b>noreply@nyamira2027.com</b>.</li><li>Next to it, <b>Connect Devices</b> shows the <b>outgoing server</b> and <b>SMTP port</b> (usually mail.nyamira2027.com, 465, SSL).</li><li>The username is the full address; the password is the mailbox password.</li></ol></div>';
         echo '</div></div>';
     }
 }

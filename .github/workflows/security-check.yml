@@ -3,7 +3,7 @@ name: Security check (live site)
 
 on:
   workflow_run:
-    workflows: ["Deploy to kucaparty.com"]
+    workflows: ["Deploy to nyamira2027.com"]
     types: [completed]
   schedule:
     - cron: "17 4 * * *"      # daily, 07:17 Nairobi time

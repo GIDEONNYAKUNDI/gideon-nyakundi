@@ -18,27 +18,27 @@ Station names per ward are loaded into the `stations` store from the IEBC regist
 
 ## Deployment
 
-Every push to `main` goes live on kucaparty.com automatically. The GitHub Actions workflow `.github/workflows/deploy.yml` asks cPanel (Git Version Control) to pull the new commit and deploy it (`.cpanel.yml` copies the files into `public_html`), waits for the result, then checks that the site and the back office respond. Progress and any errors are on the repository's **Actions** tab, where **Run workflow** also redeploys by hand.
+Every push to `main` goes live on www.nyamira2027.com automatically. The GitHub Actions workflow `.github/workflows/deploy.yml` asks cPanel (Git Version Control) to pull the new commit and deploy it (`.cpanel.yml` copies the files into `public_html`), waits for the result, then checks that the site and the back office respond. Progress and any errors are on the repository's **Actions** tab, where **Run workflow** also redeploys by hand.
 
 The workflow uses the repository secret `CPANEL_TOKEN`, a cPanel API token for the `kucapart` account (cPanel → Security → Manage API Tokens). To replace the token, create a new one in cPanel, update the secret under Settings → Secrets and variables → Actions, then revoke the old token.
 
 ## Search engines
 
-`index.html` carries the title, description, share-card tags and schema.org data (Person, campaign Organization, WebSite, WebPage). `robots.txt` keeps crawlers out of the back office and points to `sitemap.xml`; update the `lastmod` dates there when the content changes. `ops/htaccess-block.conf` sends `www.kucaparty.com` and `/index.html` to `https://kucaparty.com/` so search engines see a single address.
+`index.html` carries the title, description, share-card tags and schema.org data (Person, campaign Organization, WebSite, WebPage). `robots.txt` keeps crawlers out of the back office and points to `sitemap.xml`; update the `lastmod` dates there when the content changes. `ops/htaccess-block.conf` sends `kucaparty.com`, `www.kucaparty.com`, `nyamira2027.com` and `/index.html` to `https://www.nyamira2027.com/` so visitors and search engines see a single address. The old domain stays registered so old links keep working. The cPanel account and server paths (`kucapart`, `CPANEL_HOST`) keep their original names; visitors never see them.
 
 After every deploy the workflow notifies Bing, Yandex, Seznam, Naver and Yep through IndexNow. The key file `c1f3ee75cf40dcdb3080ba62e7fc5111.txt` at the site root must stay. Google finds the site through the sitemap and Google Search Console.
 
 ## Back office (polling station agents, volunteers, pledges)
 
 The website forms save to a MySQL database on the cPanel hosting, and the team works from a
-password-protected back office at `https://kucaparty.com/backoffice/`.
+password-protected back office at `https://www.nyamira2027.com/backoffice/`.
 
 **One-time setup**
 
 1. cPanel → **MySQL Databases**: create a database (e.g. `kucapart_nyakundi`), create a user with a strong password, and add the user to the database with **All Privileges**.
 2. Deploy this repository as usual (cPanel → Git Version Control → Update from Remote → Deploy HEAD Commit).
 3. cPanel → **File Manager** → `public_html/backoffice/`: copy `config.sample.php` to `config.php` and fill in the database name, user and password, and a long random `secret`. `config.php` is never committed to GitHub.
-4. Open `https://kucaparty.com/backoffice/` and create the first administrator account. The tables are created automatically.
+4. Open `https://www.nyamira2027.com/backoffice/` and create the first administrator account. The tables are created automatically.
 5. In the back office, **Team** → add constituency coordinators. Each coordinator sees only their own constituency.
 
 Requires PHP 7.4 or newer (PHP 8 recommended: cPanel → MultiPHP Manager).
@@ -51,7 +51,7 @@ Everything is set up by an administrator in the back office under **Settings**; 
 
 1. **Settings → HostPinnacle SMS**: enter the HostPinnacle user ID, password, API key and approved sender ID, tick **Send SMS from the website**, save, then **Check connection and balance** and **Send test SMS**. Untick **Test mode** to deliver for real, and press **Register delivery webhook** so each SMS changes from "sent" to "delivered" or "failed".
 2. **Settings → Messages**: for each form (volunteer, polling agent, pledge) write the confirmation **SMS** and the confirmation **e-mail** (subject and message). The e-mail goes to people who entered an address; the e-mail field on the forms is optional. Click `{name}`, `{ward}`, `{station}`, `{stream}` or `{amount}` to insert the person's details; live previews and an SMS counter show the result, each message can be switched off, and any saved message can be sent to your own phone or inbox. **Team alerts** sets the subject and first line of the team e-mail and the SMS to the alert phones.
-3. **Settings → E-mail (SMTP)**: create a mailbox such as `noreply@kucaparty.com` in cPanel → **Email Accounts** (**Connect Devices** shows the server and port), enter it, list who gets sign-up alerts, optionally set a reply-to address (where replies to confirmation e-mails go), save and **Send test e-mail**.
+3. **Settings → E-mail (SMTP)**: create a mailbox such as `noreply@nyamira2027.com` in cPanel → **Email Accounts** (**Connect Devices** shows the server and port), enter it, list who gets sign-up alerts, optionally set a reply-to address (where replies to confirmation e-mails go), save and **Send test e-mail**.
 
 Passwords and API keys entered there are stored encrypted with the `secret` from `config.php`; if that secret is ever changed, re-enter them. The `sms` and `smtp` blocks in `config.php` are optional defaults that the Settings page overrides.
 
