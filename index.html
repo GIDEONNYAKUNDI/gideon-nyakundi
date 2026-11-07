@@ -767,8 +767,14 @@ a[href*="verify.iebc.or.ke"]:hover{color:#fff!important;background:#c0272d}
     <button class="burger" id="burger" aria-expanded="false" aria-controls="mainnav">Menu</button>
     <nav class="main" id="mainnav" aria-label="Main">
       <ul>
-        <li><a href="#about" data-sw="Kuhusu Dkt. Gideon">About Dr. Gideon</a></li>
-        <li><a href="scholarly.html" data-sw="Vitabu na Utafiti">Books &amp; Research</a></li>
+        <li class="has-drop">
+          <button class="drop" aria-expanded="false" aria-controls="aboutMenu" data-sw="Kuhusu Dkt. Gideon ▾">About Dr. Gideon ▾</button>
+          <div class="menu one" id="aboutMenu" hidden>
+            <a href="#about"><b>·</b>Meet Dr. Gideon</a>
+            <a href="bio.html"><b>·</b>Full biography</a>
+            <a href="scholarly.html"><b>·</b>Books &amp; Research</a>
+          </div>
+        </li>
         <li class="has-drop">
           <button class="drop" aria-expanded="false" aria-controls="manifestoMenu">Manifesto ▾</button>
           <div class="menu" id="manifestoMenu" hidden>
