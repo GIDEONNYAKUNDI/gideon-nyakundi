@@ -27,7 +27,10 @@ function t_form_type(): string { $t = (string)($_GET['form'] ?? $_POST['form'] ?
 function tally_page(array $me): void {
     tally_schema();
     $user = (string)$me['username'];
-    $v = (string)($_GET['v'] ?? 'results');
+    $home = tally_can($me, 'results') ? 'results' : (tally_can($me, 'enter') ? 'enter' : 'queue');
+    $v = (string)($_GET['v'] ?? $home);
+    $need = ['results' => 'results', 'export' => 'results', 'enter' => 'enter', 'queue' => 'check', 'check' => 'check', 'forms' => 'forms', 'form' => 'forms', 'missing' => 'missing', 'audit' => 'audit', 'setup' => 'setup'];
+    if (!isset($need[$v]) || !tally_can($me, $need[$v])) $v = $home;
     $live = tally_meta('mode') === 'live';
 
     /* ----- the photo of a signed form, only for signed-in center users ----- */
@@ -64,6 +67,9 @@ function tally_page(array $me): void {
     /* ----- actions ----- */
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $a = (string)($_POST['action'] ?? '');
+        $perm = ['t_enter' => 'enter', 't_check' => 'check', 't_photo' => 'photo', 't_accept' => 'accept', 't_dispute' => 'dispute'][$a] ?? 'setup';
+        if (!tally_can($me, $perm)) { tally_audit($user, 'refused', (int)($_POST['id'] ?? 0), ['action' => $a]); t_go('', 'Your role cannot do that.', true); }
+        if (str_starts_with($a, 't_staff_')) tally_staff_action($user, $a);
 
         if ($a === 't_enter') {
             $form = t_form_type(); $ward = (string)($_POST['ward'] ?? ''); $code = (string)($_POST['centre'] ?? ''); $stream = (int)($_POST['stream'] ?? 0);
@@ -189,7 +195,8 @@ function tally_page(array $me): void {
     $queue = db()->prepare("SELECT COUNT(*) FROM tally_forms f WHERE superseded = 0 AND status = 'Received' AND entered_by <> ? AND NOT EXISTS (SELECT 1 FROM tally_checks c WHERE c.form_id = f.id AND c.by_user = ?)");
     $queue->execute([$user, $user]); $q = (int)$queue->fetchColumn();
     $disp = (int)db()->query("SELECT COUNT(*) FROM tally_forms WHERE superseded = 0 AND status = 'Disputed'")->fetchColumn();
-    $sub = ['results' => 'Results', 'enter' => 'Enter a form', 'queue' => 'Check forms' . ($q ? " ($q)" : ''), 'forms' => 'All forms' . ($disp ? " · $disp disputed" : ''), 'missing' => 'Missing streams', 'audit' => 'Audit log', 'setup' => 'Setup'];
+    $all = ['results' => 'Results', 'enter' => 'Enter a form', 'queue' => 'Check forms' . ($q ? " ($q)" : ''), 'forms' => 'All forms' . ($disp ? " · $disp disputed" : ''), 'missing' => 'Missing streams', 'audit' => 'Audit log', 'setup' => 'Setup'];
+    $sub = array_filter($all, fn($k) => tally_can($me, $need[$k]), ARRAY_FILTER_USE_KEY);
     echo '<nav class="subnav">'; foreach ($sub as $k => $t) echo '<a href="?p=tally&v=' . $k . '"' . ($v === $k || ($v === 'form' && $k === 'forms') || ($v === 'check' && $k === 'queue') ? ' class="on"' : '') . '>' . h($t) . '</a>'; echo '</nav>';
     $fn = 'tally_view_' . $v;
     if (function_exists($fn)) $fn($me); else tally_view_results($me);
@@ -331,10 +338,11 @@ function tally_view_form(array $me): void {
     if ($f['photo_file'] !== '') echo '<div class="card"><a href="?p=tally&photo=' . $id . '" target="_blank" rel="noopener"><img src="?p=tally&photo=' . $id . '" alt="Signed form" style="width:100%;border:1px solid var(--line)"></a><p class="small muted">Photo fingerprint (SHA-256): ' . h(substr($f['photo_sha'], 0, 16)) . '…</p></div>';
     if (!(int)$f['superseded']) {
         $form = fn($action, $inner, $btn, $cls = '') => '<form method="post" enctype="multipart/form-data" class="card stack"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="' . $action . '"><input type="hidden" name="id" value="' . $id . '">' . $inner . '<button class="btn sm' . $cls . '">' . $btn . '</button></form>';
-        if ($f['photo_file'] === '') echo $form('t_photo', '<h2>Attach the photo of the signed form</h2><input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>', 'Attach photo');
-        if ($f['status'] === 'Disputed' && $f['entered_by'] !== $user) echo $form('t_accept', '<h2>Accept the figures</h2><p class="small muted">Only after comparing every figure with the photo. The warnings stay on record.</p><textarea name="note" rows="2" required placeholder="What you checked, e.g. turnout confirmed on the form and with the agent"></textarea>', 'Accept');
-        if ($f['status'] !== 'Disputed') echo $form('t_dispute', '<h2>Dispute this form</h2><textarea name="note" rows="2" required placeholder="Reason"></textarea>', 'Mark as disputed', ' ghost');
-        echo '<p><a class="btn sm ghost" href="?p=tally&v=enter&replaces=' . $id . '">Enter a corrected replacement</a></p>';
+        if ($f['photo_file'] === '' && tally_can($me, 'photo')) echo $form('t_photo', '<h2>Attach the photo of the signed form</h2><input type="file" name="photo" accept="image/jpeg,image/png,image/webp" required>', 'Attach photo');
+        if ($f['status'] === 'Disputed' && $f['entered_by'] !== $user && tally_can($me, 'accept')) echo $form('t_accept', '<h2>Accept the figures</h2><p class="small muted">Only after comparing every figure with the photo. The warnings stay on record.</p><textarea name="note" rows="2" required placeholder="What you checked, e.g. turnout confirmed on the form and with the agent"></textarea>', 'Accept');
+        if ($f['status'] !== 'Disputed' && tally_can($me, 'dispute')) echo $form('t_dispute', '<h2>Dispute this form</h2><textarea name="note" rows="2" required placeholder="Reason"></textarea>', 'Mark as disputed', ' ghost');
+        if (tally_can($me, 'enter')) echo '<p><a class="btn sm ghost" href="?p=tally&v=enter&replaces=' . $id . '">Enter a corrected replacement</a></p>';
+        if ($f['status'] === 'Disputed' && !tally_can($me, 'accept')) echo '<p class="small muted">Disputed forms are decided by Dr. Gideon or David.</p>';
     }
     echo '</div></div>';
 }
@@ -361,6 +369,7 @@ function tally_view_audit(array $me): void {
 
 function tally_view_setup(array $me): void {
     $live = tally_meta('mode') === 'live';
+    tally_staff_card();
     echo '<div class="cols even"><div>';
     foreach (TALLY_FORMS as $k => $t) {
         echo '<div class="card"><h2>Candidates · ' . h($t) . '</h2><p class="small muted">Add them in the order they appear on the IEBC form.</p><table><tbody>';
@@ -373,5 +382,65 @@ function tally_view_setup(array $me): void {
         echo '<form method="post" class="card stack"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="t_clear"><h2>Clear rehearsal results</h2><p class="small muted">Removes all rehearsal forms so you can start another rehearsal. Candidates, settings and the audit log stay.</p><label>Type CLEAR<input name="confirm" autocomplete="off"></label><button class="btn sm ghost">Clear rehearsal results</button></form>';
         echo '<form method="post" class="card stack"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="t_golive"><h2>Start election day</h2><p class="small muted">Removes the rehearsal forms one last time and switches to election day. After this, results can never be cleared. Do this only on election morning.</p><label>Type LIVE<input name="confirm" autocomplete="off"></label><button class="btn sm">Start election day</button></form>';
     } else echo '<div class="card"><h2>Election day mode</h2><p>Results cannot be cleared. Wrong entries are corrected by entering a replacement, and both stay on record.</p></div>';
-    echo '<div class="card help"><h2>Where the photos are kept</h2><p class="small">Photos of signed forms are saved outside the public website folder, so they cannot be opened by anyone on the internet. Only you two, signed in here, can see them. They are named by their fingerprint, so a photo can never be swapped without it showing.</p></div></div></div>';
+    echo '<div class="card help"><h2>Where the photos are kept</h2><p class="small">Photos of signed forms are saved outside the public website folder, so they cannot be opened by anyone on the internet. Only people signed in to the tallying center can see them. They are named by their fingerprint, so a photo can never be swapped without it showing.</p></div></div></div>';
+}
+
+/* ----- tallying-only staff accounts (managed by the two administrators in Setup) ----- */
+function tally_staff_action(string $user, string $a): void {
+    $id = (int)($_POST['sid'] ?? 0);
+    if ($a === 't_staff_add') {
+        $u = mb_strtolower(trim((string)($_POST['username'] ?? ''))); $pw = (string)($_POST['password'] ?? ''); $role = (string)($_POST['tally_role'] ?? '');
+        $name = trim((string)($_POST['full_name'] ?? ''));
+        if (!preg_match('/^[a-z0-9._-]{3,60}$/', $u)) t_go('&v=setup', 'Username: 3 to 60 letters, numbers, dot, dash or underscore.', true);
+        if (!isset(TALLY_ROLES[$role])) t_go('&v=setup', 'Choose a role.', true);
+        if ($name === '') t_go('&v=setup', 'Enter the person\'s full name.', true);
+        if (strlen($pw) < 12) t_go('&v=setup', 'The first password must be at least 12 characters.', true);
+        $s = db()->prepare('SELECT COUNT(*) FROM users WHERE LOWER(username) = ?'); $s->execute([$u]);
+        $t = db()->prepare('SELECT COUNT(*) FROM tally_staff WHERE username = ?'); $t->execute([$u]);
+        if ((int)$s->fetchColumn() || (int)$t->fetchColumn()) t_go('&v=setup', 'That username is already taken.', true);
+        db()->prepare('INSERT INTO tally_staff (username, full_name, phone, pass_hash, tally_role, totp_secret, must_change, active, created_at, created_by, last_login) VALUES (?,?,?,?,?,?,?,?,?,?,?)')
+            ->execute([$u, mb_substr($name, 0, 120), mb_substr(preg_replace('/[^0-9+ ]/', '', (string)($_POST['phone'] ?? '')), 0, 20), password_hash($pw, PASSWORD_DEFAULT), $role, '', 1, 1, now(), $user, '']);
+        tally_audit($user, 'staff_added', 0, ['username' => $u, 'role' => $role]);
+        t_go('&v=setup', 'Account created for ' . $name . '. Give them the username and first password in person. They set their own password and two-step sign-in the first time.');
+    }
+    $s = db()->prepare('SELECT * FROM tally_staff WHERE id = ?'); $s->execute([$id]); $st = $s->fetch();
+    if (!$st) t_go('&v=setup', 'Account not found.', true);
+    if ($a === 't_staff_toggle') {
+        db()->prepare('UPDATE tally_staff SET active = ? WHERE id = ?')->execute([(int)$st['active'] ? 0 : 1, $id]);
+        tally_audit($user, (int)$st['active'] ? 'staff_disabled' : 'staff_enabled', 0, ['username' => $st['username']]);
+        t_go('&v=setup', (int)$st['active'] ? $st['username'] . ' can no longer sign in, and is signed out now.' : $st['username'] . ' can sign in again.');
+    }
+    if ($a === 't_staff_role' && isset(TALLY_ROLES[$_POST['tally_role'] ?? ''])) {
+        db()->prepare('UPDATE tally_staff SET tally_role = ? WHERE id = ?')->execute([$_POST['tally_role'], $id]);
+        tally_audit($user, 'staff_role', 0, ['username' => $st['username'], 'from' => $st['tally_role'], 'to' => $_POST['tally_role']]);
+        t_go('&v=setup', 'Role changed.');
+    }
+    if ($a === 't_staff_reset') {
+        $pw = (string)($_POST['password'] ?? '');
+        if (strlen($pw) < 12) t_go('&v=setup', 'The new first password must be at least 12 characters.', true);
+        db()->prepare("UPDATE tally_staff SET pass_hash = ?, totp_secret = '', must_change = 1 WHERE id = ?")->execute([password_hash($pw, PASSWORD_DEFAULT), $id]);
+        tally_audit($user, 'staff_reset', 0, ['username' => $st['username']]);
+        t_go('&v=setup', 'Reset. ' . $st['username'] . ' signs in with the new first password and sets up two-step sign-in again on a new phone.');
+    }
+    t_go('&v=setup', 'Nothing was changed.', true);
+}
+
+function tally_staff_card(): void {
+    $c = fn($a, $id, $inner, $btn) => '<form method="post" class="inline"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="' . $a . '"><input type="hidden" name="sid" value="' . $id . '">' . $inner . '<button class="btn sm ghost">' . $btn . '</button></form>';
+    echo '<div class="card"><h2>Center staff accounts</h2><p class="small muted">Clerks, verifiers and the legal desk sign in at <b>kucaparty.com/backoffice/tally.php</b>. They only ever see the tallying center: never volunteers, agents, voters, pledges, SMS or settings. Two-step sign-in is required for every one of them.</p>';
+    echo '<ul class="small"><li><b>Data clerk:</b> types in forms and attaches photos.</li><li><b>Verifier:</b> re-types forms from the photo without seeing the first entry; can mark a form as disputed.</li><li><b>Legal desk:</b> sees results, every form, photo and the audit log; can mark a form as disputed and download results.</li><li>Only Dr. Gideon or David can accept a disputed form, change setup or manage these accounts.</li></ul>';
+    $rows = db()->query('SELECT * FROM tally_staff ORDER BY active DESC, tally_role, full_name')->fetchAll();
+    if ($rows) {
+        echo '<table><thead><tr><th>Name</th><th>Role</th><th>Status</th><th>Last sign-in</th><th></th></tr></thead><tbody>';
+        foreach ($rows as $r) {
+            $opts = ''; foreach (TALLY_ROLES as $k => $t) $opts .= '<option value="' . $k . '"' . ($k === $r['tally_role'] ? ' selected' : '') . '>' . h($t) . '</option>';
+            $state = !(int)$r['active'] ? '<span class="pill off">Disabled</span>' : ($r['totp_secret'] === '' ? '<span class="pill test">Not set up yet</span>' : '<span class="pill on">Active</span>');
+            echo '<tr><td><b>' . h($r['full_name']) . '</b><br><small>' . h($r['username']) . ($r['phone'] ? ' · ' . h($r['phone']) : '') . '</small></td><td>' . $c('t_staff_role', (int)$r['id'], '<select name="tally_role">' . $opts . '</select>', 'Change') . '</td><td>' . $state . '</td><td><small>' . ($r['last_login'] ? eat($r['last_login']) : 'never') . '</small></td><td>'
+                . $c('t_staff_toggle', (int)$r['id'], '', (int)$r['active'] ? 'Disable' : 'Enable')
+                . '<details class="small"><summary>Reset password and two-step sign-in</summary>' . $c('t_staff_reset', (int)$r['id'], '<input type="password" name="password" placeholder="New first password (12+)" autocomplete="new-password" required>', 'Reset') . '</details></td></tr>';
+        }
+        echo '</tbody></table>';
+    }
+    $ro = ''; foreach (TALLY_ROLES as $k => $t) $ro .= '<option value="' . $k . '">' . h($t) . '</option>';
+    echo '<h3>Add a person</h3><form method="post" class="two" autocomplete="off"><input type="hidden" name="csrf" value="' . h(csrf()) . '"><input type="hidden" name="action" value="t_staff_add"><label>Full name<input name="full_name" required></label><label>Phone<input name="phone" inputmode="tel"></label><label>Username<input name="username" required pattern="[A-Za-z0-9._-]{3,60}"></label><label>Role<select name="tally_role" required>' . $ro . '</select></label><label>First password (12+ characters; give it in person)<input type="password" name="password" required autocomplete="new-password"></label><div style="align-self:end"><button class="btn">Create account</button></div></form></div>';
 }

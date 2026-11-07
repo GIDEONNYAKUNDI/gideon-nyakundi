@@ -48,7 +48,7 @@ async function main() {
   check('no third-party scripts (no trackers or marketers)', scripts.length === 0, scripts.join(', '));
   await browser.close();
   // 1. Private files can never be downloaded
-  for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/_tally.php', '/backoffice/_tally_page.php', '/backoffice/config.sample.php',
+  for (const p of ['/backoffice/config.php', '/backoffice/_lib.php', '/backoffice/_settings.php', '/backoffice/_tally.php', '/backoffice/_tally_page.php', '/backoffice/_layout.php', '/backoffice/config.sample.php',
                    '/.git/config', '/.cpanel.yml', '/README.md', '/ops/install-htaccess.sh', '/.env', '/backoffice/.htaccess',
                    '/press/Nyakundi2027-Manifesto.pdf', '/press/Dr-Gideon-Nyakundi-portrait.jpg', '/press/Dr-Gideon-Nyakundi-office.jpg']) {
     const r = await get(p);
@@ -80,6 +80,11 @@ async function main() {
     if (r) check(`back office ${p} needs sign-in`, !/text\/csv/.test(r.headers['content-type'] || '') && /sign in/i.test(r.text) && !/07\d{8}/.test(r.text));
   }
 
+  // 4b. Tallying center staff sign-in: only the sign-in page, nothing else
+  for (const p of ['', '?v=results', '?v=export', '?photo=1', '?v=audit']) {
+    const r = await get('/backoffice/tally.php' + p);
+    if (r) check(`tallying center ${p || 'page'} needs sign-in`, r.status === 200 && /sign in/i.test(r.text) && !/text\/csv/.test(r.headers['content-type'] || '') && !/^image\//.test(r.headers['content-type'] || '') && !/Audit log|Totals from/i.test(r.text));
+  }
   // 5. The sign-up API only accepts the website's own forms
   let r = await get('/api/save.php'); if (r) check('API refuses page visits (GET)', r.status === 405, String(r.status));
   r = await get('/api/save.php', { method: 'POST', headers: { Origin: 'https://evil.example', 'Content-Type': 'application/json' }, data: { type: 'voter' } });

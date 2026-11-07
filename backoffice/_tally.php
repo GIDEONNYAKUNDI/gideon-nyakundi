@@ -5,6 +5,25 @@ declare(strict_types=1);
 if (basename($_SERVER['SCRIPT_FILENAME'] ?? '') === '_tally.php') { http_response_code(404); exit; }
 
 const TALLY_FORMS = ['GOV' => 'Form 37A · Governor', 'PRES' => 'Form 34A · President'];
+/* Tallying-only staff. They sign in at tally.php and can never reach the volunteers, agents, voters or pledges lists. */
+const TALLY_ROLES = ['clerk' => 'Data clerk', 'verifier' => 'Verifier', 'legal' => 'Legal desk'];
+const TALLY_CAN = [
+    'enter'   => ['clerk'],
+    'check'   => ['verifier'],
+    'photo'   => ['clerk', 'verifier'],
+    'dispute' => ['verifier', 'legal'],
+    'accept'  => [],
+    'results' => ['legal'],
+    'audit'   => ['legal'],
+    'forms'   => ['clerk', 'verifier', 'legal'],
+    'missing' => ['clerk', 'verifier', 'legal'],
+    'setup'   => [],
+];
+/* The two back office administrators (Dr. Gideon and David) can do everything; staff only what their role allows. */
+function tally_can(array $me, string $what): bool {
+    if (($me['role'] ?? '') === 'admin') return true;
+    return ($me['role'] ?? '') === 'staff' && in_array($me['tally_role'] ?? '', TALLY_CAN[$what] ?? [], true);
+}
 const TALLY_CHANNELS = ['clerk' => 'Typed by a clerk', 'sms' => 'SMS', 'whatsapp' => 'WhatsApp', 'app' => 'Agent app'];
 /* Missing: no form yet for the stream. Received: typed in once, waiting for a second person's blind check.
    Pending: figures confirmed by two people but no photo of the signed form yet (SMS or WhatsApp entry).
@@ -26,6 +45,7 @@ function tally_schema(): void {
     $pk = is_mysql() ? 'INT UNSIGNED AUTO_INCREMENT PRIMARY KEY' : 'INTEGER PRIMARY KEY AUTOINCREMENT';
     $tail = is_mysql() ? ' ENGINE=InnoDB DEFAULT CHARSET=utf8mb4' : '';
     foreach ([
+        "CREATE TABLE IF NOT EXISTS tally_staff (id $pk, username VARCHAR(60) NOT NULL UNIQUE, full_name VARCHAR(120) NOT NULL DEFAULT '', phone VARCHAR(20) NOT NULL DEFAULT '', pass_hash VARCHAR(255) NOT NULL, tally_role VARCHAR(20) NOT NULL, totp_secret VARCHAR(64) NOT NULL DEFAULT '', must_change INT NOT NULL DEFAULT 1, active INT NOT NULL DEFAULT 1, created_at VARCHAR(19) NOT NULL, created_by VARCHAR(60) NOT NULL DEFAULT '', last_login VARCHAR(19) NOT NULL DEFAULT '')$tail",
         "CREATE TABLE IF NOT EXISTS tally_candidates (id $pk, form VARCHAR(8) NOT NULL, name VARCHAR(120) NOT NULL, party VARCHAR(120) NOT NULL DEFAULT '', sort INT NOT NULL DEFAULT 0, ours INT NOT NULL DEFAULT 0)$tail",
         "CREATE TABLE IF NOT EXISTS tally_forms (id $pk, form VARCHAR(8) NOT NULL, constituency VARCHAR(40) NOT NULL, ward VARCHAR(40) NOT NULL, station VARCHAR(160) NOT NULL, centre_code VARCHAR(40) NOT NULL DEFAULT '', stream INT NOT NULL, registered INT NOT NULL DEFAULT 0, serial_no VARCHAR(40) NOT NULL DEFAULT '', total_cast INT NOT NULL, rejected INT NOT NULL, channel VARCHAR(12) NOT NULL, entered_by VARCHAR(80) NOT NULL, entered_at VARCHAR(19) NOT NULL, gps_lat VARCHAR(20) NOT NULL DEFAULT '', gps_lng VARCHAR(20) NOT NULL DEFAULT '', photo_file VARCHAR(120) NOT NULL DEFAULT '', photo_sha VARCHAR(64) NOT NULL DEFAULT '', status VARCHAR(12) NOT NULL DEFAULT 'Received', flags VARCHAR(400) NOT NULL DEFAULT '', accepted_by VARCHAR(80) NOT NULL DEFAULT '', accepted_note TEXT, superseded INT NOT NULL DEFAULT 0, note TEXT)$tail",
         "CREATE TABLE IF NOT EXISTS tally_votes (form_id INT NOT NULL, candidate_id INT NOT NULL, votes INT NOT NULL, PRIMARY KEY (form_id, candidate_id))$tail",
