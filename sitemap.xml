@@ -10,6 +10,18 @@
     <image:image><image:loc>https://www.nyamira2027.com/press/view/office.webp</image:loc></image:image>
   </url>
   <url>
+    <loc>https://www.nyamira2027.com/scholarly.html</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.nyamira2027.com/bio.html</loc>
+    <lastmod>2026-11-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.nyamira2027.com/privacy.html</loc>
     <lastmod>2026-11-01</lastmod>
     <changefreq>yearly</changefreq>

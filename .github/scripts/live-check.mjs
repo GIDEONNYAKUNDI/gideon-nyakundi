@@ -92,7 +92,7 @@ async function main() {
   r = await get('/api/save.php', { method: 'POST', headers: { Origin: SITE, 'Content-Type': 'application/json' }, data: { type: 'voter', name: 'Check', phone: '0700000000', ward: 'Esise' } });
   if (r) check('API refuses sign-ups without consent', r.status === 400, String(r.status));
 
-  for (const [p, name] of [['/press/view/manifesto-01.webp', 'manifesto viewable in the press room'], ['/privacy.html', 'privacy notice page loads'], ['/img/share-card.jpg', 'link preview image'], ['/sitemap.xml', 'sitemap for search engines'], ['/survey.html', 'supporter survey page loads']]) {
+  for (const [p, name] of [['/press/view/manifesto-01.webp', 'manifesto viewable in the press room'], ['/privacy.html', 'privacy notice page loads'], ['/img/share-card.jpg', 'link preview image'], ['/sitemap.xml', 'sitemap for search engines'], ['/scholarly.html', 'books and research page loads'], ['/docs/Dr-Gideon-Nyakundi-Scholarly-Work.pdf', 'scholarly work PDF downloads'], ['/survey.html', 'supporter survey page loads']]) {
     const x = await get(p); if (x) check(name, x.status === 200, String(x.status));
   }
 }
